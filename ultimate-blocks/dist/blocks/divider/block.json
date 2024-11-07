@@ -47,6 +47,10 @@
       "type": "string",
       "default": "center"
     },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
     "padding": {
       "type": "object",
       "default": {}

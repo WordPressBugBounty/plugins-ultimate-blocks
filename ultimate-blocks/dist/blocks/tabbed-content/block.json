@@ -93,6 +93,14 @@
     "margin": {
       "type": "object",
       "default": {}
+    },
+    "tabButtonsBorderRadius": {
+      "type": "object",
+      "default": {}
+    },
+    "tabContentsBorderRadius": {
+      "type": "object",
+      "default": {}
     }
   },
   "supports": {

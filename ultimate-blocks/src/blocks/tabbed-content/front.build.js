@@ -378,19 +378,19 @@ function ub_hashTabSwitch() {
       var tabContentRoot = targetElement.parentElement.parentElement;
       var ancestorTabBlocks = [];
       var ancestorTabIndexes = [];
-      var findTabContentRoot = function findTabContentRoot(currentBlock) {
+      var _findTabContentRoot = function findTabContentRoot(currentBlock) {
         var parentTabbedContent = currentBlock.closest(".wp-block-ub-tabbed-content-tabs-content");
         if (parentTabbedContent) {
           ancestorTabIndexes.push(Array.prototype.slice.call(parentTabbedContent.children).filter(function (t) {
             return t.classList.contains("wp-block-ub-tabbed-content-tab-content-wrap");
           }).indexOf(currentBlock.closest(".wp-block-ub-tabbed-content-tab-content-wrap")));
           ancestorTabBlocks.push(parentTabbedContent.parentElement);
-          return findTabContentRoot(parentTabbedContent.parentElement);
+          return _findTabContentRoot(parentTabbedContent.parentElement);
         } else {
           return currentBlock;
         }
       };
-      findTabContentRoot(targetElement);
+      _findTabContentRoot(targetElement);
       ancestorTabBlocks.unshift(targetElement.parentElement.parentElement);
       ancestorTabIndexes.unshift(tabIndex);
       var displayModes = ancestorTabBlocks.map(function (a) {

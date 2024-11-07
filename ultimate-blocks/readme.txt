@@ -2,8 +2,8 @@
 Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
-Tested up to: 6.6
-Stable tag: 3.2.2
+Tested up to: 6.5
+Stable tag: 3.2.3
 Requires PHP: 5.6
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,17 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.2.3 =
+
+* NEW: Add alignment control in tabbed content block.
+* NEW: Border radius option for tab title and tab content.
+* NEW: Alignment option for the divider block.
+* NEW: Add navigation and pagination color option in image slider.
+* FIX: Editor breaks when changing the styled block mode to bordered.
+* FIX: Styling removed when convert content toggle block into group block.
+* FIX: XSS issue with countdown timer block.
+* PRO: FIX: Wipe animation in editor button block.
 
 = 3.2.2 =
 
