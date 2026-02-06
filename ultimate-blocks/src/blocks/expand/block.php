@@ -3,7 +3,11 @@
 function ub_render_expand_portion_block($attributes, $content){
     extract($attributes);
 	$classNames = array('ub-expand-portion', 'ub-expand-' . esc_attr($displayType));
-	if ($displayType === 'full') {
+
+	// Determine initial visibility state
+	$is_hidden = ($displayType === 'full');
+
+	if ($is_hidden) {
 		$classNames[] = 'ub-hide';
 	}
 	if (isset($className)) {
@@ -14,30 +18,48 @@ function ub_render_expand_portion_block($attributes, $content){
 		'text-align' => isset($attributes['toggleAlign']) ? $attributes['toggleAlign'] : 'left',
 	);
 
+	// Create unique IDs by including the displayType (partial or full)
+	$content_id = $parentID === '' ? '' : "ub-expand-" . esc_attr($displayType) . "-" . $parentID;
+	$button_id = $parentID === '' ? '' : "ub-expand-toggle-" . esc_attr($displayType) . "-" . $parentID;
+
+	// BOTH buttons control the full section (the one that toggles)
+	// Partial button: "show more" - expands full section
+	// Full button: "show less" - collapses full section
+	$controls_id = "ub-expand-full-" . $parentID;
 	$wrapper_attributes = get_block_wrapper_attributes(
 		array(
 			'class' => join(' ', $classNames),
-			'id'    => ($parentID === '' ? '' : "ub-expand-full-" . $parentID),
-			'role'  => 'button',
-			'aria-expanded' => 'false',
-			'aria-controls' => ($parentID === '' ? '' : "ub-expand-full-" . $parentID),
-			'tabindex' => '0'
+			'id'    => $content_id,
+			'aria-hidden' => $is_hidden ? 'true' : 'false',
 		)
 	);
 
 	$filtered_content = apply_filters('ub_expand_portion_fade_content', $content, $attributes);
 
+	// Set aria-expanded based on which content is currently visible
+	// Partial button shows "show more" and expands the full content (so it's collapsed initially)
+	// Full button shows "show less" and when clicked collapses the full content
+	$aria_expanded = $displayType === 'partial' ? 'false' : 'true';
+
+	$button_attributes = sprintf(
+		'id="%1$s" class="ub-expand-toggle-button" style="%2$s" role="button" aria-expanded="%3$s" aria-controls="%4$s" tabindex="0"',
+		esc_attr($button_id),
+		Ultimate_Blocks\includes\generate_css_string($toggle_button_styles),
+		esc_attr($aria_expanded),
+		esc_attr($controls_id)
+	);
+
 	return sprintf(
 		'<div %1$s>
 			%2$s
-			<a class="ub-expand-toggle-button" style="%4$s" role="button">
+			<a %4$s>
 				%3$s
 			</a>
 		</div>',
 		$wrapper_attributes, // 1
 		$filtered_content, // 2
 		$clickText, // 3
-		Ultimate_Blocks\includes\generate_css_string($toggle_button_styles) // 4
+		$button_attributes // 4
 	);
 }
 

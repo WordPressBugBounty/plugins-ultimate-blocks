@@ -29,11 +29,27 @@ Array.prototype.slice.call(document.getElementsByClassName("ub-expand-toggle-but
   }
   var togglePanel = function togglePanel(e) {
     var blockRoot = instance.closest(".ub-expand");
-    blockRoot.querySelector(".ub-expand-partial .ub-expand-toggle-button").classList.toggle("ub-hide");
-    var expandingPart = Array.prototype.slice.call(blockRoot.children).filter(function (child) {
-      return child.classList.contains("ub-expand-full");
-    })[0];
-    expandingPart.classList.toggle("ub-hide");
+    var partialButton = blockRoot.querySelector(".ub-expand-partial .ub-expand-toggle-button");
+    var fullButton = blockRoot.querySelector(".ub-expand-full .ub-expand-toggle-button");
+    var partialSection = blockRoot.querySelector(".ub-expand-partial");
+    var fullSection = blockRoot.querySelector(".ub-expand-full");
+
+    // Toggle visibility classes
+    partialButton.classList.toggle("ub-hide");
+    fullSection.classList.toggle("ub-hide");
+
+    // Update ARIA states based on new visibility
+    var isFullVisible = !fullSection.classList.contains("ub-hide");
+
+    // Update aria-expanded on both buttons (both control the full section)
+    partialButton.setAttribute("aria-expanded", isFullVisible ? "true" : "false");
+    fullButton.setAttribute("aria-expanded", isFullVisible ? "true" : "false");
+
+    // Update aria-hidden only on the full section (partial is always visible)
+    // Partial section should always have aria-hidden="false" since it's never hidden
+    partialSection.setAttribute("aria-hidden", "false");
+    fullSection.setAttribute("aria-hidden", isFullVisible ? "false" : "true");
+    var expandingPart = fullSection;
     if (expandingPart.classList.contains("ub-hide")) {
       var expandRoot = e.target.parentElement.parentElement;
       var rootPosition = expandRoot.getBoundingClientRect().top;

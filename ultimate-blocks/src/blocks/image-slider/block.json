@@ -95,6 +95,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"navigationPosition": {
+			"type": "string",
+			"default": "inside"
+		},
 		"paginationType": {
 			"type": "string",
 			"default": ""

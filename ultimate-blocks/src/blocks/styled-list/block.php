@@ -115,7 +115,14 @@ function ub_render_styled_list_block($attributes, $contents, $block){
 	);
 	if ($isRootList) {
 		$list_layout_styles['column-count'] = isset($attributes['columns']) ? esc_attr($attributes['columns']) : "";
-		$list_layout_styles['--ub-list-mobile-column-count'] = isset($attributes['maxMobileColumns']) ? esc_attr($attributes['maxMobileColumns']) : "";
+
+		// Add responsive column CSS custom properties
+		if (isset($attributes['tabletColumns'])) {
+			$list_layout_styles['--ub-list-tablet-column-count'] = esc_attr($attributes['tabletColumns']);
+		}
+		if (isset($attributes['maxMobileColumns'])) {
+			$list_layout_styles['--ub-list-mobile-column-count'] = esc_attr($attributes['maxMobileColumns']);
+		}
 	}
 
 	if(!empty($listAlignment) && $listAlignment === 'left'){
@@ -196,6 +203,8 @@ function ub_render_styled_list_item_block($attributes, $contents, $block){
 		'margin-right'      			=> !empty($margin['right']) ? esc_attr($margin['right']) . " !important" : "",
 		'margin-bottom'     			=> !empty($margin['bottom']) ? esc_attr($margin['bottom']) . " !important" : "",
 		'font-size'					=> $attributes['fontSize'] > 0 ?  ( $attributes['fontSize'] ) . 'px;' : '',
+		'color'						=> !empty($attributes['itemTextColor']) ? esc_attr($attributes['itemTextColor']) : '',
+		'background-color'			=> !empty($attributes['itemBackgroundColor']) ? esc_attr($attributes['itemBackgroundColor']) : '',
 		'--ub-list-item-icon-top' 		=> ( $attributes['iconSize'] >= 5 ? 3 : ( $attributes['iconSize'] < 3 ? 2 : 0 ) ) . 'px',
 		'--ub-list-item-icon-size' 		=> ( ( 4 + $attributes['iconSize'] ) / 10 ) . 'em',
 		'--ub-list-item-background-image' 	=> 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $iconData[0] . ' ' . $iconData[1] . '"><path fill="%23' . substr( $attributes['iconColor'], 1 ) . '" d="' . $iconData[2] . '"></path></svg>\')',

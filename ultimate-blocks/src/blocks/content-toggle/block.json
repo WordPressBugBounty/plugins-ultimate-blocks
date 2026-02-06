@@ -83,7 +83,15 @@
 		"align": {
 			"type": "string",
 			"default": ""
+		},
+		"panelBorderRadius": {
+			"type": "object",
+			"default": {}
 		}
+	},
+	"providesContext": {
+		"parentID": "blockID",
+		"panelBorderRadius": "panelBorderRadius"
 	},
 	"supports": {},
 	"editorStyle": "ultimate_blocks-cgb-block-editor-css",

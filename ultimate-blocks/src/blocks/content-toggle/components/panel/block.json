@@ -96,6 +96,10 @@
 			"default": false
 		}
 	},
+	"usesContext": [
+		"parentID",
+		"panelBorderRadius"
+	],
 	"supports": {
 		"inserter": false,
 		"reusable": false

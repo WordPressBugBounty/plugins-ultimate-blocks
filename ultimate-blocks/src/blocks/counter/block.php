@@ -50,6 +50,22 @@ class Ultimate_Counter {
 		$label_font_style 	 	= isset( $block_attrs['labelFontAppearance']['fontStyle'] ) ? $block_attrs['labelFontAppearance']['fontStyle'] : "";
 		$label_font_weight 	 	= isset( $block_attrs['labelFontAppearance']['fontWeight'] ) ? $block_attrs['labelFontAppearance']['fontWeight'] : "";
 
+		// Extract new color attributes
+		$counter_color 			= isset($block_attrs['counterColor']) ? $block_attrs['counterColor'] : null;
+		$background_color 		= isset($block_attrs['backgroundColor']) ? $block_attrs['backgroundColor'] : null;
+		$background_gradient 	= isset($block_attrs['backgroundGradient']) ? $block_attrs['backgroundGradient'] : null;
+
+		// Backward compatibility: check old style.color attributes if new ones are not set
+		if (!$counter_color && isset($block_attrs['style']['color']['text'])) {
+			$counter_color = $block_attrs['style']['color']['text'];
+		}
+		if (!$background_color && !$background_gradient && isset($block_attrs['style']['color']['background'])) {
+			$background_color = $block_attrs['style']['color']['background'];
+		}
+
+		// Determine background value (gradient takes priority over color)
+		$background = $background_gradient ? $background_gradient : $background_color;
+
 
 		$label_style = array(
 			'color'            	=> $label_color,
@@ -62,6 +78,7 @@ class Ultimate_Counter {
 			'font-weight'	   	=> $label_font_weight,
 		);
 		$counter_styles = array(
+			'color'					 => $counter_color,
 			'font-size'              => $counter_font_size,
 			'text-decoration'        => $counter_decoration,
 			'font-family'            => $counter_font_family,
@@ -74,6 +91,7 @@ class Ultimate_Counter {
 			'gap'	=> $gap,
 		);
 		$container_styles = array(
+			'background'			 => $background,
 			'padding-top'            => isset($padding['top']) ? $padding['top'] : "",
                'padding-left'           => isset($padding['left']) ? $padding['left'] : "",
                'padding-right'          => isset($padding['right']) ? $padding['right'] : "",

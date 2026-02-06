@@ -78,6 +78,18 @@ class Ultimate_Blocks {
 	{
 		$default_promotions = Promoter::generate_default_promotions(ULTIMATE_BLOCKS_PLUGIN_FILE, 'Ultimate Blocks', 'ultimate-blocks/ultimate-blocks.php');
 		Promoter::add_promotions($default_promotions, ULTIMATE_BLOCKS_PLUGIN_FILE);
+		Promoter::add_promotions([
+			new Promotion(
+				'Ultimate Blocks',
+				'ultimate-blocks/ultimate-blocks.php',
+				'Galleryberg',
+				'galleryberg-gallery-block/galleryberg-gallery-block.php',
+				'Gallery Block by Galleryberg: Lightbox with Tiles, Masonry, Square, and Justified Layouts',
+				['core/gallery'],
+				'https://galleryberg.com/',
+				'Learn More'
+			)
+		], ULTIMATE_BLOCKS_PLUGIN_FILE);
 	}
 
 	/**

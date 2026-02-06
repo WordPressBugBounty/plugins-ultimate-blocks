@@ -79,6 +79,15 @@ function ub_render_content_toggle_panel_block( $attributes, $content, $block_obj
 	if ( isset( $block_context['parentID'] ) ) {
 		$parentID = $block_context['parentID'];
 	}
+
+	$panelBorderRadius = isset( $block_context['panelBorderRadius'] ) ? $block_context['panelBorderRadius'] : array();
+	$border_radius_styles = array(
+		'border-top-left-radius' => ! empty( $panelBorderRadius['topLeft'] ) ? esc_attr( $panelBorderRadius['topLeft'] ) : '',
+		'border-top-right-radius' => ! empty( $panelBorderRadius['topRight'] ) ? esc_attr( $panelBorderRadius['topRight'] ) : '',
+		'border-bottom-left-radius' => ! empty( $panelBorderRadius['bottomLeft'] ) ? esc_attr( $panelBorderRadius['bottomLeft'] ) : '',
+		'border-bottom-right-radius' => ! empty( $panelBorderRadius['bottomRight'] ) ? esc_attr( $panelBorderRadius['bottomRight'] ) : '',
+	);
+
 	$should_collapsed = $collapsed && ! $defaultOpen;
 
 	if (!in_array($titleTag, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'])) {
@@ -113,6 +122,11 @@ function ub_render_content_toggle_panel_block( $attributes, $content, $block_obj
 		$toggle_icon_html // 9
 	);
 
+	$panel_wrapper_styles = array_merge(
+		array( 'border-color' => esc_attr($theme) ),
+		$border_radius_styles
+	);
+
 	return sprintf(
 		'<div %1$s class="%2$s%3$s%10$s"%4$s>
 			%5$s
@@ -121,7 +135,7 @@ function ub_render_content_toggle_panel_block( $attributes, $content, $block_obj
 		$toggleID === '' ? '' : 'id="' . esc_attr($toggleID) . '" ', // 1
 		$border_class, // 2
 		$classNamePrefix . '-accordion', // 3
-		'style="border-color: ' . esc_attr($theme) . ';"', // 4
+		'style="' . Ultimate_Blocks\includes\generate_css_string($panel_wrapper_styles) . '"', // 4
 		$toggle_wrap, // 5
 		json_encode(! $should_collapsed), // 6
 		$classNamePrefix . '-accordion-content-wrap' . ( $should_collapsed ? ' ub-hide' : '' ), // 7

@@ -2,8 +2,8 @@
 Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
-Tested up to: 6.8
-Stable tag: 3.4.2
+Tested up to: 6.9
+Stable tag: 3.5.1
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,71 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.1 =
+
+* NEW: Styled List Block - Added device switcher component for easier responsive editing in block editor.
+
+= 3.5.0 =
+
+* IMPROVE: Styled List Block - Added visual column preview in editor with Gutenberg device preview.
+* IMPROVE: Styled List Block - Default mobile columns set to 1 for better mobile experience.
+
+= 3.4.9 =
+
+* NEW: Image Slider Block - Added option to place navigation arrows outside of the slider for better visibility.
+* NEW: All Blocks - Added copy and paste styles option to easily duplicate styling across blocks.
+* NEW: Content Toggle Block - Added border radius control to customize rounded corners.
+* FIX: Content Toggle Block - Fixed styles panel not appearing.
+
+= 3.4.8 =
+
+* NEW: Image Block - Add support for bold and italic formatting in captions.
+* IMPROVE: Color Settings - Enhanced color picker to include theme colors, custom colors, and default colors in all blocks.
+* IMPROVE: Table of Contents Block - Fixed collapsible icon color issue in editor.
+* IMPROVE: Image Slider Block - Increased slider height option limit for better customization.
+* FIX: Image Slider Block - Fixed link not working properly.
+* FIX: Table of Contents Block - Fixed icon not showing without setting title color.
+* FIX: Styled List Block - Fixed mobile columns not working properly.
+* PRO: FIX: Coupon Block - Fixed deprecated warning.
+* PRO: FIX: Coupon Block - Fixed date picker timezone issue causing incorrect expiration dates.
+* PRO: FIX: Coupon Block - Fixed gradient color not working on coupon wrapper.
+* PRO: FIX: Pro Blocks - Fixed enable/disable not working in settings.
+
+= 3.4.7 =
+
+* FIX: Expand Block - Fixed WCAG 2.0 accessibility violations with duplicate IDs in ARIA attributes.
+* FIX: Expand Block - Fixed aria-controls to properly reference the toggled content section.
+* FIX: Expand Block - Added proper aria-hidden state management for screen reader accessibility.
+* FIX: Expand Block - Both toggle buttons now correctly control the full section that's being toggled.
+* PRO: FIX: Button Block - Fixed SavedStylesInspector panel not showing when pro version is active.
+
+= 3.4.6 =
+
+* FIX: Advanced Video Block - Fixed autoplay not working properly.
+
+= 3.4.5 =
+
+* FIX: Table of Contents Block - Fixed headings not showing when viewing template in editor.
+* UPDATE: Updated Freemius SDK to latest version for improved licensing and updates.
+
+= 3.4.4 =
+
+* PRO: NEW: Countdown Block - Add "Show Expiry Content" option to display custom blocks when timer expires.
+* PRO: NEW: Countdown Block - Add "Redirect on Expiry" option to redirect users to a custom URL when timer reaches zero.
+* PRO: FIX: Animation Extension - Fixed animation trigger to activate when element enters viewport (prevents animation from playing before element is visible).
+* PRO: FIX: Animation Extension - Fixed element blinking before animation starts.
+* NEW: Styled List Block - Add individual list item controls for text color, background color, and icon color.
+* NEW: Image Block - Add copy and paste style controls.
+* NEW: Divider Block - Add copy and paste style controls.
+
+= 3.4.3 =
+
+* NEW: Add Item per view option for Mobile and Tablet in the Horizontal view in timeline block.
+* NEW: Core details block can be converted into content toggle block.
+* NEW: Image block can be converted from core image block.
+* IMPROVE: Icon paste style now can paste it on multiple icon blocks.
+* FIX: Hide font family option if font families not found.
 
 = 3.4.2 =
 

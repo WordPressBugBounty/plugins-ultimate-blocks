@@ -547,6 +547,11 @@ class Ultimate_Blocks_Admin {
 	protected function block_exists( $name ) {
 		$blocks = $this->blocks();
 
+		$blocks = array_merge(
+			$blocks,
+			array_filter( (array) apply_filters( 'ub/filter/admin_block_exists_blocks', array() ) )
+		);
+
 		$unknown_block = true;
 		foreach ( $blocks as $key => $block ) {
 			if ( $block['name'] === $name ) {
@@ -619,7 +624,14 @@ class Ultimate_Blocks_Admin {
 
 		require_once ULTIMATE_BLOCKS_PATH . 'includes/class-ultimate-blocks-util.php';
 
-		return Ultimate_Blocks_Util::blocks();
+		$blocks = Ultimate_Blocks_Util::blocks();
+
+		$blocks = array_merge(
+			$blocks,
+			array_filter( (array) apply_filters( 'ub/filter/admin_blocks', array() ) )
+		);
+
+		return $blocks;
 	}
 
 	/**

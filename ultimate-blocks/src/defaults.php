@@ -646,6 +646,10 @@ $defaultValues = array(
 			'showOnlyOne'       => array(
 				'type'    => 'boolean',
 				'default' => false
+			),
+			'panelBorderRadius' => array(
+				'type'    => 'object',
+				'default' => array()
 			)
 		)
 	),
@@ -2462,7 +2466,7 @@ $defaultValues = array(
             ),
             'maxMobileColumns' => array(
                 'type' => 'number',
-                'default' => 2
+                'default' => 1
             ),
             'isRootList' => array(
                 'type' => 'boolean',
@@ -2515,6 +2519,14 @@ $defaultValues = array(
             'fontSize' => array(
                 'type' => 'number',
                 'default' => 0
+            ),
+            'itemTextColor' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'itemBackgroundColor' => array(
+                'type' => 'string',
+                'default' => ''
             )
         )
     ),

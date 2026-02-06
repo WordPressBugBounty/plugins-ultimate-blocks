@@ -170,7 +170,7 @@ class Image {
 		if ( ! empty( $caption ) ) {
 			$figure .= sprintf(
 				'<figcaption class="wp-element-caption">%1$s</figcaption>',
-				esc_html( $caption )
+				wp_kses_post( $caption )
 			);
 		}
 

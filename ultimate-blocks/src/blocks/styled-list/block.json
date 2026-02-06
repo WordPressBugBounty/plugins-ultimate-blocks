@@ -51,9 +51,12 @@
 			"type": "number",
 			"default": 1
 		},
+		"tabletColumns": {
+			"type": "number"
+		},
 		"maxMobileColumns": {
 			"type": "number",
-			"default": 2
+			"default": 1
 		},
 		"isRootList": {
 			"type": "boolean",
