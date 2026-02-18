@@ -1,9 +1,9 @@
 === Ultimate Blocks – 25+ Gutenberg Blocks for Block Editor ===
-Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08
+Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08, farhanshafi
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 3.5.1
+Stable tag: 3.5.2
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,13 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.2 =
+
+* NEW: Styled List Block - Added custom SVG icon support for list items.
+* NEW: Table Of Contents Block - Added spacing option to control space between list items.
+* NEW: Styled List Block - Added full typography control for list and list items.
+* NEW: Content Toggle Block - Added border control for customization.
 
 = 3.5.1 =
 

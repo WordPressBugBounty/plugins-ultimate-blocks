@@ -23,6 +23,14 @@
       "type": "string",
       "default": "check"
     },
+    "iconSource": {
+      "type": "string",
+      "default": "fontawesome"
+    },
+    "customIconSVG": {
+      "type": "string",
+      "default": ""
+    },
     "iconColor": {
       "type": "string",
       "default": "#000000"
@@ -48,6 +56,37 @@
       "default": ""
     },
     "itemBackgroundColor": {
+      "type": "string",
+      "default": ""
+    },
+    "itemFontFamily": {
+      "type": "string",
+      "default": ""
+    },
+    "itemFontSize": {
+      "type": "string",
+      "default": ""
+    },
+    "itemFontAppearance": {
+      "type": "object",
+      "default": {
+        "fontStyle": "",
+        "fontWeight": ""
+      }
+    },
+    "itemLineHeight": {
+      "type": "string",
+      "default": ""
+    },
+    "itemLetterSpacing": {
+      "type": "string",
+      "default": ""
+    },
+    "itemTextDecoration": {
+      "type": "string",
+      "default": ""
+    },
+    "itemTextTransform": {
       "type": "string",
       "default": ""
     }

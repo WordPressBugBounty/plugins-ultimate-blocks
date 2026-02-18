@@ -236,6 +236,13 @@ function ub_render_table_of_contents_block($attributes, $_, $block){
 		Ultimate_Blocks\includes\generate_css_string($header_container_styles)
 	);
 	$list_styles = array();
+	$item_spacing = isset($attributes['itemSpacing']) ? $attributes['itemSpacing'] : array();
+	if ( ! empty( $item_spacing ) ) {
+		$item_spacing_css = Ultimate_Blocks\includes\get_spacing_css( $item_spacing );
+		if ( ! empty( $item_spacing_css['top'] ) ) {
+			$list_styles['--ub-toc-item-spacing'] = $item_spacing_css['top'];
+		}
+	}
 	if ($attributes['listStyle'] === 'plain') {
 		$list_styles['list-style'] = 'none';
 	}

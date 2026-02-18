@@ -94,11 +94,20 @@
     "showOnlyOne": {
       "type": "boolean",
       "default": false
+    },
+    "panelBorder": {
+      "type": "object",
+      "default": {}
+    },
+    "panelBorderRadius": {
+      "type": "object",
+      "default": {}
     }
   },
   "usesContext": [
     "parentID",
-    "panelBorderRadius"
+    "panelBorderRadius",
+    "panelBorder"
   ],
   "supports": {
     "inserter": false,

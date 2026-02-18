@@ -136,6 +136,10 @@
     "borderRadius": {
       "type": "object",
       "default": {}
+    },
+    "itemSpacing": {
+      "type": "object",
+      "default": {}
     }
   },
   "supports": {

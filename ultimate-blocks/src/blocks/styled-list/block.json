@@ -23,6 +23,14 @@
 			"type": "string",
 			"default": "check"
 		},
+		"iconSource": {
+			"type": "string",
+			"default": "fontawesome"
+		},
+		"customIconSVG": {
+			"type": "string",
+			"default": ""
+		},
 		"alignment": {
 			"type": "string",
 			"default": "left"
@@ -77,6 +85,37 @@
 		"margin": {
 			"type": "object",
 			"default": {}
+		},
+		"listFontFamily": {
+			"type": "string",
+			"default": ""
+		},
+		"listFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"listFontAppearance": {
+			"type": "object",
+			"default": {
+				"fontStyle": "",
+				"fontWeight": ""
+			}
+		},
+		"listLineHeight": {
+			"type": "string",
+			"default": ""
+		},
+		"listLetterSpacing": {
+			"type": "string",
+			"default": ""
+		},
+		"listTextDecoration": {
+			"type": "string",
+			"default": ""
+		},
+		"listTextTransform": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {},

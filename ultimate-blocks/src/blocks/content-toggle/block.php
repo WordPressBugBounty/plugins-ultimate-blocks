@@ -70,7 +70,6 @@ function ub_render_content_toggle_block( $attributes, $content, $block ) {
 function ub_render_content_toggle_panel_block( $attributes, $content, $block_object ) {
 	$classNamePrefix = 'wp-block-ub-content-toggle';
 	extract( $attributes );
-	$border_class = $border ? '' : 'no-border ';
 	$icons        = json_decode( file_get_contents( __DIR__ . '/icons/icons.json' ) );
 	$icon_class   = $icons->$toggleIcon;
 
@@ -87,6 +86,19 @@ function ub_render_content_toggle_panel_block( $attributes, $content, $block_obj
 		'border-bottom-left-radius' => ! empty( $panelBorderRadius['bottomLeft'] ) ? esc_attr( $panelBorderRadius['bottomLeft'] ) : '',
 		'border-bottom-right-radius' => ! empty( $panelBorderRadius['bottomRight'] ) ? esc_attr( $panelBorderRadius['bottomRight'] ) : '',
 	);
+
+	$panelBorder = isset( $block_context['panelBorder'] ) ? $block_context['panelBorder'] : array();
+	if ( ! empty( $panelBorder ) ) {
+		$border_css = Ultimate_Blocks\includes\get_border_css( $panelBorder );
+		$border_styles = array(
+			'border-top' => esc_attr( Ultimate_Blocks\includes\get_single_side_border_value( $border_css, 'top' ) ),
+			'border-right' => esc_attr( Ultimate_Blocks\includes\get_single_side_border_value( $border_css, 'right' ) ),
+			'border-bottom' => esc_attr( Ultimate_Blocks\includes\get_single_side_border_value( $border_css, 'bottom' ) ),
+			'border-left' => esc_attr( Ultimate_Blocks\includes\get_single_side_border_value( $border_css, 'left' ) ),
+		);
+	} else {
+		$border_styles = array( 'border-color' => esc_attr( $theme ) );
+	}
 
 	$should_collapsed = $collapsed && ! $defaultOpen;
 
@@ -123,25 +135,24 @@ function ub_render_content_toggle_panel_block( $attributes, $content, $block_obj
 	);
 
 	$panel_wrapper_styles = array_merge(
-		array( 'border-color' => esc_attr($theme) ),
+		$border_styles,
 		$border_radius_styles
 	);
 
 	return sprintf(
-		'<div %1$s class="%2$s%3$s%10$s"%4$s>
+		'<div %1$s class="%2$s%3$s"%4$s>
 			%5$s
 			<div role="region" aria-expanded="%6$s" class="%7$s" id="%8$s">%9$s</div>
 		</div>',
 		$toggleID === '' ? '' : 'id="' . esc_attr($toggleID) . '" ', // 1
-		$border_class, // 2
-		$classNamePrefix . '-accordion', // 3
+		$classNamePrefix . '-accordion', // 2
+		isset($className) ? ' ' . esc_attr($className) : '', // 3
 		'style="' . Ultimate_Blocks\includes\generate_css_string($panel_wrapper_styles) . '"', // 4
 		$toggle_wrap, // 5
 		json_encode(! $should_collapsed), // 6
 		$classNamePrefix . '-accordion-content-wrap' . ( $should_collapsed ? ' ub-hide' : '' ), // 7
 		'ub-content-toggle-panel-' . esc_attr($index) . '-' . esc_attr($parentID), // 8
-		$content, // 9
-		isset($className) ? ' ' . esc_attr($className) : '' // 10
+		$content // 9
 	);
 }
 function ub_register_content_toggle_panel_block() {

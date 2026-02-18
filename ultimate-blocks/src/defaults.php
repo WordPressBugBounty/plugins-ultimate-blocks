@@ -650,6 +650,10 @@ $defaultValues = array(
 			'panelBorderRadius' => array(
 				'type'    => 'object',
 				'default' => array()
+			),
+			'panelBorder' => array(
+				'type'    => 'object',
+				'default' => array()
 			)
 		)
 	),
@@ -2480,6 +2484,37 @@ $defaultValues = array(
                 'type' => 'string',
                 'default' => ''
             ),
+            'listFontFamily' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'listFontSize' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'listFontAppearance' => array(
+                'type' => 'object',
+                'default' => array(
+                    'fontStyle' => '',
+                    'fontWeight' => ''
+                )
+            ),
+            'listLineHeight' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'listLetterSpacing' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'listTextDecoration' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'listTextTransform' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
         )
     ),
     'ub/styled-list-item' => array(
@@ -2525,6 +2560,37 @@ $defaultValues = array(
                 'default' => ''
             ),
             'itemBackgroundColor' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'itemFontFamily' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'itemFontSize' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'itemFontAppearance' => array(
+                'type' => 'object',
+                'default' => array(
+                    'fontStyle' => '',
+                    'fontWeight' => ''
+                )
+            ),
+            'itemLineHeight' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'itemLetterSpacing' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'itemTextDecoration' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'itemTextTransform' => array(
                 'type' => 'string',
                 'default' => ''
             )
@@ -2762,6 +2828,10 @@ $defaultValues = array(
             'hideText' => array(
                 'type' => 'string',
                 'default' => 'hide'
+            ),
+            'itemSpacing' => array(
+                'type' => 'object',
+                'default' => array()
             ),
         )
     ),

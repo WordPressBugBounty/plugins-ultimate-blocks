@@ -87,11 +87,16 @@
     "panelBorderRadius": {
       "type": "object",
       "default": {}
+    },
+    "panelBorder": {
+      "type": "object",
+      "default": {}
     }
   },
   "providesContext": {
     "parentID": "blockID",
-    "panelBorderRadius": "panelBorderRadius"
+    "panelBorderRadius": "panelBorderRadius",
+    "panelBorder": "panelBorder"
   },
   "supports": {},
   "editorStyle": "ultimate_blocks-cgb-block-editor-css",

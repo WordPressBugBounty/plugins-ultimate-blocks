@@ -72,7 +72,93 @@ function ub_render_styled_list_block($attributes, $contents, $block){
 
     	$padding = Ultimate_Blocks\includes\get_spacing_css( isset($block_attributes['padding']) ? $block_attributes['padding'] : array() );
 	$margin = Ultimate_Blocks\includes\get_spacing_css( isset($block_attributes['margin']) ? $block_attributes['margin'] : array() );
-	$iconData = Ultimate_Blocks_IconSet::generate_fontawesome_icon( $attributes['selectedIcon'] );
+
+	// Handle icon rendering based on icon source
+	$iconSource = isset($attributes['iconSource']) ? $attributes['iconSource'] : 'fontawesome';
+	$customIconSVG = isset($attributes['customIconSVG']) ? $attributes['customIconSVG'] : '';
+
+	if ($iconSource === 'custom' && !empty($customIconSVG)) {
+		// Use custom SVG - we'll embed it in CSS as a data URI
+		$iconData = array();
+		// Sanitize the SVG
+		$sanitized_svg = wp_kses($customIconSVG, array(
+			'svg' => array(
+				'xmlns' => array(),
+				'viewbox' => array(),
+				'width' => array(),
+				'height' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+				'aria-hidden' => array(),
+				'aria-labelledby' => array(),
+				'role' => array(),
+			),
+			'path' => array(
+				'd' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'circle' => array(
+				'cx' => array(),
+				'cy' => array(),
+				'r' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'rect' => array(
+				'x' => array(),
+				'y' => array(),
+				'width' => array(),
+				'height' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'line' => array(
+				'x1' => array(),
+				'y1' => array(),
+				'x2' => array(),
+				'y2' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'polyline' => array(
+				'points' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'polygon' => array(
+				'points' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'g' => array(
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+		));
+		// URL encode for data URI
+		$encoded_svg = rawurlencode($sanitized_svg);
+		$iconBackgroundImage = 'url(\'data:image/svg+xml,' . $encoded_svg . '\')';
+	} else {
+		// Use FontAwesome icon
+		$iconData = Ultimate_Blocks_IconSet::generate_fontawesome_icon( $attributes['selectedIcon'] );
+		$iconBackgroundImage = 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $iconData[0] . ' ' . $iconData[1] . '"><path fill="%23' . substr( $attributes['iconColor'], 1 ) . '" d="' . $iconData[2] . '"></path></svg>\')';
+	}
 
 	$list_styles = array(
 		'padding-top'         => isset($padding['top']) ? esc_attr($padding['top']) : "",
@@ -93,9 +179,35 @@ function ub_render_styled_list_block($attributes, $contents, $block){
 	if (isset($attributes['backgroundColor'])) {
 		$list_styles['background-color'] = $attributes['backgroundColor'];
 	}
+
+	// Typography styles for parent list
+	if (!empty($attributes['listFontFamily'])) {
+		$list_styles['font-family'] = esc_attr($attributes['listFontFamily']);
+	}
+	if (!empty($attributes['listFontSize'])) {
+		$list_styles['font-size'] = esc_attr($attributes['listFontSize']);
+	}
+	if (!empty($attributes['listFontAppearance']['fontStyle'])) {
+		$list_styles['font-style'] = esc_attr($attributes['listFontAppearance']['fontStyle']);
+	}
+	if (!empty($attributes['listFontAppearance']['fontWeight'])) {
+		$list_styles['font-weight'] = esc_attr($attributes['listFontAppearance']['fontWeight']);
+	}
+	if (!empty($attributes['listLineHeight'])) {
+		$list_styles['line-height'] = esc_attr($attributes['listLineHeight']);
+	}
+	if (!empty($attributes['listLetterSpacing'])) {
+		$list_styles['letter-spacing'] = esc_attr($attributes['listLetterSpacing']);
+	}
+	if (!empty($attributes['listTextDecoration'])) {
+		$list_styles['text-decoration'] = esc_attr($attributes['listTextDecoration']);
+	}
+	if (!empty($attributes['listTextTransform'])) {
+		$list_styles['text-transform'] = esc_attr($attributes['listTextTransform']);
+	}
 	$list_styles['--ub-list-item-icon-top'] = ( $attributes['iconSize'] >= 5 ? 3 : ( $attributes['iconSize'] < 3 ? 2 : 0 ) ) . 'px;';
 	$list_styles['--ub-list-item-icon-size'] = ( ( 4 + $attributes['iconSize'] ) / 10 ) . 'em';
-	$list_styles['--ub-list-item-background-image'] = 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $iconData[0] . ' ' . $iconData[1] . '"><path fill="%23' . substr( $attributes['iconColor'], 1 ) . '" d="' . $iconData[2] . '"></path></svg>\')';
+	$list_styles['--ub-list-item-background-image'] = $iconBackgroundImage;
 	if ( $attributes['iconSize'] < 3 ) {
 		$list_styles['--ub-list-item-fa-li-top'] = '-0.1em';
 	} elseif ( $attributes['iconSize'] >= 5 ) {
@@ -191,7 +303,103 @@ function ub_render_styled_list_item_block($attributes, $contents, $block){
 
     	$padding 	= Ultimate_Blocks\includes\get_spacing_css( isset($block_attributes['padding']) ? $block_attributes['padding'] : array() );
 	$margin 	= Ultimate_Blocks\includes\get_spacing_css( isset($block_attributes['margin']) ? $block_attributes['margin'] : array() );
-	$iconData = !empty($attributes['selectedIcon'] ) ?  Ultimate_Blocks_IconSet::generate_fontawesome_icon( $attributes['selectedIcon'] ) : array();
+
+	// Handle icon rendering based on icon source
+	$iconSource = isset($attributes['iconSource']) ? $attributes['iconSource'] : 'fontawesome';
+	$customIconSVG = isset($attributes['customIconSVG']) ? $attributes['customIconSVG'] : '';
+
+	$iconHTML = '';
+	if ($iconSource === 'custom' && !empty($customIconSVG)) {
+		// Use custom SVG - sanitize and render directly
+		$sanitized_svg = wp_kses($customIconSVG, array(
+			'svg' => array(
+				'xmlns' => array(),
+				'viewbox' => array(),
+				'width' => array(),
+				'height' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+				'aria-hidden' => array(),
+				'aria-labelledby' => array(),
+				'role' => array(),
+			),
+			'path' => array(
+				'd' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'circle' => array(
+				'cx' => array(),
+				'cy' => array(),
+				'r' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'rect' => array(
+				'x' => array(),
+				'y' => array(),
+				'width' => array(),
+				'height' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'line' => array(
+				'x1' => array(),
+				'y1' => array(),
+				'x2' => array(),
+				'y2' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'polyline' => array(
+				'points' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'polygon' => array(
+				'points' => array(),
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+			'g' => array(
+				'fill' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'class' => array(),
+			),
+		));
+		$iconHTML = $sanitized_svg;
+		$iconData = array(); // Not needed for custom SVG
+		$encoded_svg = rawurlencode($sanitized_svg);
+		$iconBackgroundImage = 'url(\'data:image/svg+xml,' . $encoded_svg . '\')';
+	} else {
+		// Use FontAwesome icon
+		$iconData = !empty($attributes['selectedIcon']) ? Ultimate_Blocks_IconSet::generate_fontawesome_icon( $attributes['selectedIcon'] ) : array();
+		if (!empty($iconData)) {
+			$iconHTML = sprintf(
+				'<svg width="%1$s" height="%1$s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %2$s %3$s"><path fill="%4$s" d="%5$s"></path></svg>',
+				esc_attr(( ( 4 + $attributes['iconSize'] ) / 10 ) . 'em'),
+				esc_attr($iconData[0]),
+				esc_attr($iconData[1]),
+				esc_attr($attributes['iconColor']),
+				esc_attr($iconData[2])
+			);
+		}
+		$iconBackgroundImage = !empty($iconData) ? 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $iconData[0] . ' ' . $iconData[1] . '"><path fill="%23' . substr( $attributes['iconColor'], 1 ) . '" d="' . $iconData[2] . '"></path></svg>\')' : '';
+	}
 
 	$list_item_styles = array(
 		'padding-top'         			=> isset($padding['top']) ? esc_attr($padding['top']) : "",
@@ -207,15 +415,39 @@ function ub_render_styled_list_item_block($attributes, $contents, $block){
 		'background-color'			=> !empty($attributes['itemBackgroundColor']) ? esc_attr($attributes['itemBackgroundColor']) : '',
 		'--ub-list-item-icon-top' 		=> ( $attributes['iconSize'] >= 5 ? 3 : ( $attributes['iconSize'] < 3 ? 2 : 0 ) ) . 'px',
 		'--ub-list-item-icon-size' 		=> ( ( 4 + $attributes['iconSize'] ) / 10 ) . 'em',
-		'--ub-list-item-background-image' 	=> 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $iconData[0] . ' ' . $iconData[1] . '"><path fill="%23' . substr( $attributes['iconColor'], 1 ) . '" d="' . $iconData[2] . '"></path></svg>\')',
+		'--ub-list-item-background-image' 	=> $iconBackgroundImage,
 	);
+
+	// Typography styles for list item (overrides parent when set)
+	if (!empty($attributes['itemFontFamily'])) {
+		$list_item_styles['font-family'] = esc_attr($attributes['itemFontFamily']);
+	}
+	if (!empty($attributes['itemFontSize'])) {
+		$list_item_styles['font-size'] = esc_attr($attributes['itemFontSize']);
+	}
+	if (!empty($attributes['itemFontAppearance']['fontStyle'])) {
+		$list_item_styles['font-style'] = esc_attr($attributes['itemFontAppearance']['fontStyle']);
+	}
+	if (!empty($attributes['itemFontAppearance']['fontWeight'])) {
+		$list_item_styles['font-weight'] = esc_attr($attributes['itemFontAppearance']['fontWeight']);
+	}
+	if (!empty($attributes['itemLineHeight'])) {
+		$list_item_styles['line-height'] = esc_attr($attributes['itemLineHeight']);
+	}
+	if (!empty($attributes['itemLetterSpacing'])) {
+		$list_item_styles['letter-spacing'] = esc_attr($attributes['itemLetterSpacing']);
+	}
+	if (!empty($attributes['itemTextDecoration'])) {
+		$list_item_styles['text-decoration'] = esc_attr($attributes['itemTextDecoration']);
+	}
+	if (!empty($attributes['itemTextTransform'])) {
+		$list_item_styles['text-transform'] = esc_attr($attributes['itemTextTransform']);
+	}
 	return sprintf(
 		'<li class="ub_styled_list_item" style="%1$s">
 			<div class="ub_list_item_content">
 				<span class="ub_list_item_icon">
-					<svg width="%8$s" height="%8$s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %4$s %5$s">
-						<path fill="%6$s" d="%7$s"></path>
-					</svg>
+					%8$s
 				</span>
 				<span class="ub_list_item_text">%2$s</span>
 			</div>
@@ -224,11 +456,11 @@ function ub_render_styled_list_item_block($attributes, $contents, $block){
 		Ultimate_Blocks\includes\generate_css_string( $list_item_styles ), // 1
 		wp_kses_post($itemText), // 2
 		Ultimate_Blocks\includes\strip_xss($contents), // 3
-		esc_attr($iconData[0]), // 4 - SVG width
-		esc_attr($iconData[1]), // 5 - SVG height
-		esc_attr($attributes['iconColor']), // 6 - Icon color
-		esc_attr($iconData[2]), // 7 - SVG path data
-		esc_attr(( ( 4 + $attributes['iconSize'] ) / 10 ) . 'em') // 8 - Icon size
+		'', // 4 - deprecated
+		'', // 5 - deprecated
+		'', // 6 - deprecated
+		'', // 7 - deprecated
+		$iconHTML // 8 - Icon HTML (either custom SVG or FontAwesome)
 	);
 }
 
