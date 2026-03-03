@@ -55,7 +55,7 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
     $ratings = '';
 
     foreach($parsedItems as $key => $item){
-        $ratings .= '<div class="ub_review_' . ($valueType === 'percent' ? 'percentage_' : '') . 'entry"><span>' . $item['label'] . '</span>' .
+        $ratings .= '<div class="ub_review_' . ($valueType === 'percent' ? 'percentage_' : '') . 'entry"><span>' . esc_html($item['label']) . '</span>' .
         ($valueType === 'star' ? ub_generateStarDisplay($item['value'], $starCount, $blockID . '-' . $key,
                                 $inactiveStarColor, $activeStarColor, $starOutlineColor, "ub_review_stars", "ub_review_star_filter-")
                                 : ub_generatePercentageBar($item['value'], $blockID . '-' . $key, $activePercentBarColor, $percentBarColor ?: '#d9d9d9')  ) . '</div>';
@@ -81,10 +81,10 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
 
     $all_buttons_offer = json_encode($offers, JSON_UNESCAPED_SLASHES);
     $aggregate_offer = '{
-        "@type": "' . $offerType . '",
+        "@type": "' . esc_js($offerType) . '",
         "priceCurrency": "' . ub_filterJsonldString($offerCurrency) . '",
-        "lowPrice": "' . $offerLowPrice . '",
-        "highPrice": "' . $offerHighPrice . '",
+        "lowPrice": "' . esc_js($offerLowPrice) . '",
+        "highPrice": "' . esc_js($offerHighPrice) . '",
         "offerCount": "' . absint($offerCount) . '"
     }';
     $offerCode = '"offers":' . ($offerType === 'AggregateOffer' ? $aggregate_offer : $all_buttons_offer );
@@ -162,7 +162,7 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
         ($useSummary ? '"reviewBody": "' . ub_filterJsonldString($summaryDescription) . '",' : '') .
         '"description": "' . ub_filterJsonldString($description) . '",
         "itemReviewed": {
-            "@type":"' . ($itemSubsubtype ?: $itemSubtype ?: $itemType) . '",' .
+            "@type":"' . esc_js($itemSubsubtype ?: $itemSubtype ?: $itemType) . '",' .
             ($itemName ? ('"name":"' . ub_filterJsonldString($itemName) . '",') : '') .
             ($imgURL ? (($itemSubtype === 'VideoObject' ? '"thumbnailUrl' : '"image') . '": "' . esc_url($imgURL) . '",') : '') .
             '"description": "' . ub_filterJsonldString($description) .'"'

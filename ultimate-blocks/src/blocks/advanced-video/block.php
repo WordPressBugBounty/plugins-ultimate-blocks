@@ -100,7 +100,7 @@ function ub_render_advanced_video_block($attributes, $_, $block){
 		),
 		($autofit && in_array($videoSource, ['youtube', 'vimeo', 'dailymotion']) ? (' ub-advanced-video-autofit-' . esc_attr($videoSource)) : ''), //3
 		($thumbnail !== '' && !in_array($videoSource, ['local', 'unknown', 'videopress']) ? ' hidden' : ''), //4
-		$videoEmbedCode, //5
+		wp_kses($videoEmbedCode, ub_get_video_embed_kses_tags()), //5
 		($autofit && $videoSource === 'vimeo' ? '<script src="https://player.vimeo.com/api/player.js"></script>' : ''), //6
 		Ultimate_Blocks\includes\generate_css_string($video_embed_styles) //7
 	);

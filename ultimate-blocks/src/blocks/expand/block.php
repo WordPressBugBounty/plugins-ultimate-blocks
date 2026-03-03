@@ -58,7 +58,7 @@ function ub_render_expand_portion_block($attributes, $content){
 		</div>',
 		$wrapper_attributes, // 1
 		$filtered_content, // 2
-		$clickText, // 3
+		wp_kses_post($clickText), // 3
 		$button_attributes // 4
 	);
 }

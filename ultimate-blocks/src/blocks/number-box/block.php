@@ -20,7 +20,7 @@ function ub_render_number_box_block($attributes){
     </div>';
 
     $column3 = '<div class="ub_number_3" style="border-color: '. esc_attr($borderColor) .';">
-        <div class="ub_number_box_number" style="background-color: '. wp_kses_post($numberBackground) .';">
+        <div class="ub_number_box_number" style="background-color: '. esc_attr($numberBackground) .';">
             <p class="ub_number_three_number" style="color: '. esc_attr($numberColor) .';">'. wp_kses_post($columnThreeNumber) .'</p>
         </div>
         <p class="ub_number_three_title" style="text-align: '. esc_attr($title3Align) .';">'. wp_kses_post($columnThreeTitle) .'</p>

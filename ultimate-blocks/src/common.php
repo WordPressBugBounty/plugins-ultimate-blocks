@@ -10062,3 +10062,43 @@ if(!function_exists('ub_generateStarDisplay')){
 		return '<div class="' . $className . '">' . $stars . '</div>';
 	}
 }
+
+if ( ! function_exists( 'ub_get_video_embed_kses_tags' ) ) {
+	function ub_get_video_embed_kses_tags() {
+		return array(
+			'iframe' => array(
+				'src'             => true,
+				'width'           => true,
+				'height'          => true,
+				'frameborder'     => true,
+				'allowfullscreen' => true,
+				'allow'           => true,
+				'title'           => true,
+				'loading'         => true,
+				'referrerpolicy'  => true,
+			),
+			'video'  => array(
+				'src'      => true,
+				'width'    => true,
+				'height'   => true,
+				'controls' => true,
+				'autoplay' => true,
+				'muted'    => true,
+				'loop'     => true,
+				'preload'  => true,
+				'poster'   => true,
+				'class'    => true,
+				'id'       => true,
+			),
+			'source' => array(
+				'src'  => true,
+				'type' => true,
+			),
+			'div'    => array(
+				'class' => true,
+				'id'    => true,
+				'style' => true,
+			),
+		);
+	}
+}

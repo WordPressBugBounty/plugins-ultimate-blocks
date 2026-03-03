@@ -56,7 +56,7 @@ function ub_render_click_to_tweet_block( $attributes, $_, $block ) {
 		Ultimate_Blocks\includes\generate_css_string($wrapper_styles), //3
 		esc_attr($tweetFontSize), //4
 		esc_attr($tweetColor), //5
-		$tweet, //6
+		wp_kses_post($tweet), //6
 		esc_url($url) //7
 	);
 

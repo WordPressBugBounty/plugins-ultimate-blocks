@@ -73,7 +73,7 @@ function ub_render_divider_block($attributes, $_ ,$block){
 		$wrapper_attributes, // 1
 		isset($className) ? ' ' . esc_attr($className) : '', // 2
 		$divider_style_string, // 3
-		$alignment, // 4
+		esc_attr($alignment), // 4
 		Ultimate_Blocks\includes\generate_css_string($divider_wrapper_style), //5
 		apply_filters('ubpro_divider_content', '', $attributes, $block) // 6
 	);

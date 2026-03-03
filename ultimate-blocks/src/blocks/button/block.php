@@ -205,12 +205,12 @@ function ub_multi_buttons_parse($b){
 		($buttonWidth === 'full' ? ' ub-button-full-container' : ''),
 		esc_url($url),
 		($openInNewTab ? '_blank' : '_self'),
-		(!empty($link_rel) ? ' rel="' . $link_rel . '"' : ''),
-		$link_class,
+		(!empty($link_rel) ? ' rel="' . esc_attr($link_rel) . '"' : ''),
+		esc_attr($link_class),
 		$icon,
-		$buttonText,
+		wp_kses_post($buttonText),
 		$iconPosition === 'left' ? 'row' : 'row-reverse',
-		$link_style
+		esc_attr($link_style)
 	);
 }
 
@@ -343,9 +343,9 @@ function ub_single_button_parse($b) {
 		'href="%s" target="%s"%s class="%s" style="%s"',
 		esc_url($url),
 		($openInNewTab ? '_blank' : '_self'),
-		(!empty($link_rel) ? ' rel="' . $link_rel . '"' : ''),
-		$link_class,
-		$link_style
+		(!empty($link_rel) ? ' rel="' . esc_attr($link_rel) . '"' : ''),
+		esc_attr($link_class),
+		esc_attr($link_style)
 	);
 
 	if ($chosenIcon !== '') {
@@ -429,8 +429,8 @@ function ub_render_button_block($attributes, $_, $block){
 
     $block_attributes = get_block_wrapper_attributes(
             array(
-				'class' => esc_attr(implode(" ", $classes)),
-				'style' => esc_attr($styles),
+				'class' => implode(" ", $classes),
+				'style' => $styles,
             )
     );
 

@@ -153,9 +153,9 @@ function ub_render_how_to_block($attributes, $_, $block)
 			foreach ($s['steps'] as $j => $step) {
 				$stepsCode .= '{"@type": "HowToStep",' . PHP_EOL
 					. '"name": "' . str_replace("\'", "'", wp_kses_post($step['title'])) . '",' . PHP_EOL
-					. ($advancedMode ? '"url": "' . get_permalink() . '#' . $step['anchor'] . '",' . PHP_EOL
-						. ($step['hasVideoClip'] ? '"video":{"@id": "' . $step['anchor'] . '"},' : '') . PHP_EOL : '')
-					. '"image": "' . $step['stepPic']['url'] . '",' . PHP_EOL
+					. ($advancedMode ? '"url": "' . get_permalink() . '#' . esc_js($step['anchor']) . '",' . PHP_EOL
+						. ($step['hasVideoClip'] ? '"video":{"@id": "' . esc_js($step['anchor']) . '"},' : '') . PHP_EOL : '')
+					. '"image": "' . esc_url($step['stepPic']['url']) . '",' . PHP_EOL
 					. '"itemListElement" :[{' . PHP_EOL;
 
 				$stepPic = $step['stepPic'];
@@ -165,18 +165,18 @@ function ub_render_how_to_block($attributes, $_, $block)
 
 					(
 						($stepPic['width'] > 0) ?
-						'--ub-howto-image-width: ' . $stepPic['width'] . 'px;' .
+						'--ub-howto-image-width: ' . esc_attr($stepPic['width']) . 'px;' .
 						(($stepPic['float'] === 'left') ? '--ub-howto-image-padding-right: 10px;' : '--ub-howto-image-padding-right: 0px;') .
 						(($stepPic['float'] === 'right') ? '--ub-howto-image-padding-left: 10px;' : '--ub-howto-image-padding-left: 0px;') .
-						(($stepPic['float'] !== 'none') ? '--ub-howto-image-float: ' . $stepPic['float'] . ';' : '--ub-howto-image-float: none;') :
+						(($stepPic['float'] !== 'none') ? '--ub-howto-image-float: ' . esc_attr($stepPic['float']) . ';' : '--ub-howto-image-float: none;') :
 						''
 					)
 
-					. '"><' . esc_attr($thirdLevelTag) . ' id="' . $step['anchor'] . '">'
-					. $step['title'] . '</' . esc_attr($thirdLevelTag) . '>' . ($step['stepPic']['url'] !== '' ?
+				. '"><' . esc_attr($thirdLevelTag) . ' id="' . esc_attr($step['anchor']) . '">'
+					. wp_kses_post($step['title']) . '</' . esc_attr($thirdLevelTag) . '>' . ($step['stepPic']['url'] !== '' ?
 						($step['stepPic']['caption'] === '' ? '' : '<figure>') .
-						'<img class="ub_howto-step-image" src="' . $step['stepPic']['url'] . '">'
-						. ($step['stepPic']['caption'] === '' ? '' : '<figcaption>' . $step['stepPic']['caption'] . '</figcaption></figure>')
+						'<img class="ub_howto-step-image" src="' . esc_url($step['stepPic']['url']) . '">'
+						. ($step['stepPic']['caption'] === '' ? '' : '<figcaption>' . wp_kses_post($step['stepPic']['caption']) . '</figcaption></figure>')
 						: '')
 					. ub_convert_to_paragraphs($step['direction']) . PHP_EOL;
 
@@ -214,25 +214,25 @@ function ub_render_how_to_block($attributes, $_, $block)
 
 					(
 						($stepPic['width'] > 0) ?
-						'--ub-howto-image-width: ' . $stepPic['width'] . 'px;' .
+						'--ub-howto-image-width: ' . esc_attr($stepPic['width']) . 'px;' .
 						(($stepPic['float'] === 'left') ? '--ub-howto-image-padding-right: 10px;' : '--ub-howto-image-padding-right: 0px;') .
 						(($stepPic['float'] === 'right') ? '--ub-howto-image-padding-left: 10px;' : '--ub-howto-image-padding-left: 0px;') .
-						(($stepPic['float'] !== 'none') ? '--ub-howto-image-float: ' . $stepPic['float'] . ';' : '--ub-howto-image-float: none;') :
+						(($stepPic['float'] !== 'none') ? '--ub-howto-image-float: ' . esc_attr($stepPic['float']) . ';' : '--ub-howto-image-float: none;') :
 						''
 					) .
 
-					'"><' . esc_attr($thirdLevelTag) . ' id="' . $step['anchor'] . '">'
-					. $step['title'] . '</' . esc_attr($thirdLevelTag) . '>' . ($step['stepPic']['url'] !== '' ?
+				'"><' . esc_attr($thirdLevelTag) . ' id="' . esc_attr($step['anchor']) . '">'
+					. wp_kses_post($step['title']) . '</' . esc_attr($thirdLevelTag) . '>' . ($step['stepPic']['url'] !== '' ?
 						(!isset($step['stepPic']['caption']) && $step['stepPic']['caption'] === '' ? '' : '<figure>') .
-						'<img class="ub_howto-step-image" src="' . $step['stepPic']['url'] . '">' .
-						(!isset($step['stepPic']['caption']) && $step['stepPic']['caption'] === '' ? '' : '<figcaption>' . $step['stepPic']['caption'] . '</figcaption></figure>') : '') .
+						'<img class="ub_howto-step-image" src="' . esc_url($step['stepPic']['url']) . '">' .
+						(!isset($step['stepPic']['caption']) && $step['stepPic']['caption'] === '' ? '' : '<figcaption>' . wp_kses_post($step['stepPic']['caption']) . '</figcaption></figure>') : '') .
 					ub_convert_to_paragraphs($step['direction']);
 
 				$stepsCode .= '{"@type": "HowToStep",' . PHP_EOL
 					. '"name": "' . str_replace("\'", "'", wp_kses_post($step['title'])) . '",' . PHP_EOL
-					. ($advancedMode ? '"url": "' . get_permalink() . '#' . $step['anchor'] . '",' . PHP_EOL
-						. ($step['hasVideoClip'] ? '"video":{"@id": "' . $step['anchor'] . '"},' : '') . PHP_EOL : '')
-					. '"image": "' . $step['stepPic']['url'] . '",' . PHP_EOL
+					. ($advancedMode ? '"url": "' . get_permalink() . '#' . esc_js($step['anchor']) . '",' . PHP_EOL
+						. ($step['hasVideoClip'] ? '"video":{"@id": "' . esc_js($step['anchor']) . '"},' : '') . PHP_EOL : '')
+					. '"image": "' . esc_url($step['stepPic']['url']) . '",' . PHP_EOL
 					. '"itemListElement" :[{' . PHP_EOL
 					. '"@type": "HowToDirection",' . PHP_EOL
 					. '"text": "' . ($step['title'] === '' || !$advancedMode ? '' : str_replace("\'", "'", wp_kses_post($step['title'])) . ' ')
@@ -282,11 +282,11 @@ function ub_render_how_to_block($attributes, $_, $block)
 					$clips .= ',';
 				}
 				$clips .= '{"@type": "Clip",
-                            "@id": "' . $step['anchor'] . '",
-                            "name": "' . str_replace("\'", "'", $step['title']) . '",
-                            "startOffset": "' . $step['videoClipStart'] . '",
-                            "endOffset": "' . $step['videoClipEnd'] . '",
-                            "url": "' . esc_url($videoURL) . $videoClipArg . $step['videoClipStart'] . '" }';
+                            "@id": "' . esc_js($step['anchor']) . '",
+                            "name": "' . str_replace("\'", "'", esc_js($step['title'])) . '",
+                            "startOffset": "' . esc_js($step['videoClipStart']) . '",
+                            "endOffset": "' . esc_js($step['videoClipEnd']) . '",
+                            "url": "' . esc_url($videoURL) . $videoClipArg . esc_js($step['videoClipStart']) . '" }';
 			}
 		}
 	}
@@ -323,7 +323,7 @@ function ub_render_how_to_block($attributes, $_, $block)
 
 	return '<div class="wp-block-ub-how-to ub_howto" style="' . ub_get_spacing_styles($block_attrs) . '" id="ub_howto_' . esc_attr($blockID) . '"><' . esc_attr($firstLevelTag) . '>'
 		. wp_kses_post($title) . '</' . esc_attr($firstLevelTag) . '>' . ub_convert_to_paragraphs($introduction) . $header .
-		($advancedMode ? ($videoURL === '' ? '' : $videoEmbedCode)
+		($advancedMode ? ($videoURL === '' ? '' : wp_kses($videoEmbedCode, ub_get_video_embed_kses_tags()))
 			. '<p>' . wp_kses_post($costDisplayText) . wp_kses_post($costDisplay) . '</p>'
 			. $timeDisplay : '') . $stepsDisplay .
 		'<div class="ub_howto-yield" style="' .
