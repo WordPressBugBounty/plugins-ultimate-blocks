@@ -3,7 +3,7 @@ Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, 
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 3.5.3
+Stable tag: 3.5.4
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,11 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.4 =
+
+* FIX: Expand Block - Fixed infinite loop issue.
+* FIX: Review Block - Preserved HTML formatting in item labels.
 
 = 3.5.3 =
 
