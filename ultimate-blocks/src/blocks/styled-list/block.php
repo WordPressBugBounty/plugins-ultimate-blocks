@@ -253,6 +253,9 @@ function ub_render_styled_list_block($attributes, $contents, $block){
 		$list_layout_styles['margin-left'] = 'auto';
 	}
 
+	// Merge layout styles onto <ul> — putting a <div> inside <ul> is invalid HTML (ADA compliance)
+	$list_styles = array_merge($list_styles, array_filter($list_layout_styles, function($v) { return $v !== ''; }));
+
 	$classes = array('wp-block-ub-styled-list');
 	$classes[] = $isRootList ? "ub_styled_list" : "ub_styled_list_sublist";
 	if (!empty($list_alignment_class)) {
@@ -271,10 +274,9 @@ function ub_render_styled_list_block($attributes, $contents, $block){
 	);
     if($list === ''){
 		return sprintf(
-			'<ul %1$s><div class="ub-block-list__layout" style="%3$s">%2$s</div></ul>',
+			'<ul %1$s>%2$s</ul>',
 			$wrapper_attributes, //1
-			Ultimate_Blocks\includes\strip_xss($contents), //2
-			Ultimate_Blocks\includes\generate_css_string($list_layout_styles) //3
+			Ultimate_Blocks\includes\strip_xss($contents) //2
 		);
     }
     else{

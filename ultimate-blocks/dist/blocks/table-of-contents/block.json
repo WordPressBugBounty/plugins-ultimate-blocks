@@ -140,6 +140,14 @@
     "itemSpacing": {
       "type": "object",
       "default": {}
+    },
+    "titleFontSize": {
+      "type": "string",
+      "default": ""
+    },
+    "listFontSize": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

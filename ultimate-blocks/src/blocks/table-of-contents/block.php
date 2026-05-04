@@ -223,17 +223,22 @@ function ub_render_table_of_contents_block($attributes, $_, $block){
 		'background-color' => isset($attributes['titleBackgroundColor']) ? $attributes['titleBackgroundColor'] : '',
 		'color' => isset($attributes['titleColor']) ? $attributes['titleColor'] : '',
 	);
+	$title_styles = array(
+		'font-size' => !empty($attributes['titleFontSize']) ? esc_attr($attributes['titleFontSize']) : '',
+		'color'     => isset($attributes['titleColor']) ? $attributes['titleColor'] : '',
+	);
 	$headerContainer = sprintf(
 		'<div class="ub_table-of-contents-header-container" style="%4$s">
 			<div class="ub_table-of-contents-header" style="%3$s">
-				<div class="ub_table-of-contents-title">%1$s</div>
+				<div class="ub_table-of-contents-title" style="%5$s">%1$s</div>
 				%2$s
 			</div>
 		</div>',
 		wp_kses_post($title),
 		$headerToggle,
 		Ultimate_Blocks\includes\generate_css_string($contents_header_styles),
-		Ultimate_Blocks\includes\generate_css_string($header_container_styles)
+		Ultimate_Blocks\includes\generate_css_string($header_container_styles),
+		Ultimate_Blocks\includes\generate_css_string($title_styles)
 	);
 	$list_styles = array();
 	$item_spacing = isset($attributes['itemSpacing']) ? $attributes['itemSpacing'] : array();
@@ -253,6 +258,7 @@ function ub_render_table_of_contents_block($attributes, $_, $block){
 	);
 	$list_container_styles = array(
 		'background-color' => isset($attributes['listBackgroundColor']) ? $attributes['listBackgroundColor'] : '',
+		'font-size'        => !empty($attributes['listFontSize']) ? esc_attr($attributes['listFontSize']) : '',
 	);
 	$listContainer = sprintf(
 		'<div class="ub_table-of-contents-extra-container" style="%6$s">

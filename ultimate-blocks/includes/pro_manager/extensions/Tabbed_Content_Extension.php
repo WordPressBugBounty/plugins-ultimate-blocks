@@ -43,7 +43,12 @@ class Tabbed_Content_Extension extends Pro_Extension_Upsell {
 				__( 'Tab Title Icons', 'ultimate-blocks' ),
 				__( "Add icons to your tab headers, making it easier for your users to quickly identify and navigate to the content they're looking for.",
 					'ultimate-blocks' )
-			]
+			],
+			'stickyTabNav'       => [
+				__( 'Sticky Tab Navigation', 'ultimate-blocks' ),
+				__( 'Keep the tab bar visible at all times as users scroll through your content, so they can switch tabs without having to scroll back to the top.',
+					'ultimate-blocks' )
+			],
 		];
 
 		return Saved_Styles_Common::inject_upsell_data( $base_data );
@@ -70,6 +75,11 @@ class Tabbed_Content_Extension extends Pro_Extension_Upsell {
 				__( 'Tab title secondary text', 'ultimate-blocks' ) ),
 			Pro_Editor_Control_Data::generate_toggle_control_data( 'titleIcon',
 				__( 'Tab title icons', 'ultimate-blocks' ) ),
+			Pro_Editor_Control_Data::generate_toggle_control_data(
+				'stickyTabNav',
+				__( 'Sticky tab navigation', 'ultimate-blocks' ),
+				__( 'Keep the tab bar visible while visitors scroll so they can switch tabs without going back to the top.', 'ultimate-blocks' )
+			),
 		];
 
 

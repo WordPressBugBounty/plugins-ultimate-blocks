@@ -3,7 +3,7 @@ Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, 
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 3.5.4
+Stable tag: 3.5.5
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,14 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.5 =
+
+* PRO: NEW: Tabbed Content Block - Added sticky tab navigation option to keep tabs visible while scrolling.
+* NEW: Table of Contents Block - Added font size control for table of contents items.
+* NEW: Content Toggle Block - Added ability to convert a list of questions (Heading Block) and answers (Paragraph Block) into a Content Toggle block with multiple panels automatically.
+* IMPROVE: Content Toggle Block - Panels now open correctly when collapsed option is enabled.
+* FIX: Styled List Block - Fixed accessibility complaint issue.
 
 = 3.5.4 =
 
