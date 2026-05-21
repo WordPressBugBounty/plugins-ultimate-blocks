@@ -424,11 +424,25 @@ function ub_hashTabSwitch() {
           targetElement.parentElement.parentElement.dataset.activeTabs = JSON.stringify([ancestorTabIndexes[i]]);
         } else {
           var tabBar = targetElement.parentElement.previousElementSibling.children[0];
+
+          // Capture styles before modifying classes to avoid mismatch that causes
+          // all tabs to appear active when ub_handleTabEvent reads inverted styles
+          var tabBarChildren = Array.prototype.slice.call(tabBar.children);
+          var activeTabEl = tabBarChildren.find(function (t) {
+            return t.classList.contains("active");
+          });
+          var inactiveTabEl = tabBarChildren.find(function (t) {
+            return !t.classList.contains("active");
+          });
+          var activeStyle = activeTabEl ? activeTabEl.getAttribute("style") : null;
+          var defaultStyle = inactiveTabEl ? inactiveTabEl.getAttribute("style") : null;
           Array.prototype.slice.call(tabBar.children).forEach(function (tab, j) {
             var probableAccordionToggle = tabContents[ancestorTabIndexes[i]].previousElementSibling;
             tab.setAttribute("aria-selected", j === ancestorTabIndexes[i]);
             if (j === ancestorTabIndexes[i]) {
               tab.classList.add("active");
+              tab.setAttribute("tabindex", 0);
+              if (activeStyle) tab.setAttribute("style", activeStyle);
               tabContents[j].classList.add("active");
               tabContents[j].classList.remove("ub-hide");
               if (probableAccordionToggle && probableAccordionToggle.classList.contains("".concat(classNamePrefix, "-accordion-toggle"))) {
@@ -440,6 +454,8 @@ function ub_hashTabSwitch() {
               });
             } else {
               tab.classList.remove("active");
+              tab.setAttribute("tabindex", -1);
+              if (defaultStyle) tab.setAttribute("style", defaultStyle);
               tabContents[j].classList.remove("active");
               tabContents[j].classList.add("ub-hide");
               if (probableAccordionToggle && probableAccordionToggle.classList.contains("".concat(classNamePrefix, "-accordion-toggle"))) {

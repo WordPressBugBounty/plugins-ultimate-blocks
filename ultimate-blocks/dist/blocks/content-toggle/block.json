@@ -2,10 +2,12 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "ub/content-toggle-block",
-  "title": "Content Toggle",
+  "title": "Accordions (UB)",
   "category": "ultimateblocks",
   "description": "Add contents in accordions. Let visitors expand them and show the content.",
   "keywords": [
+    "Accordions",
+    "Content Toggle",
     "Content Accordion",
     "Toggle Collapse",
     "FAQ",

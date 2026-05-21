@@ -2,6 +2,7 @@
 
 use DotCamp\Promoter\Promotion;
 use DotCamp\Promoter\Promoter;
+use Ultimate_Blocks\admin\Setup_Wizard;
 use Ultimate_Blocks\includes\Editor_Data_Manager;
 use Ultimate_Blocks\includes\managers\Render_Assistant;
 use Ultimate_Blocks\includes\pro_manager\Pro_Manager;
@@ -134,6 +135,11 @@ class Ultimate_Blocks {
 		require_once ULTIMATE_BLOCKS_PATH . 'admin/class-ultimate-blocks-help.php';
 
 		/**
+		 * The setup wizard shown to new users on first activation.
+		 */
+		require_once ULTIMATE_BLOCKS_PATH . 'admin/class-ultimate-blocks-setup-wizard.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
@@ -167,6 +173,9 @@ class Ultimate_Blocks {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
+
+		// Initialize the first-run setup wizard.
+		Setup_Wizard::init();
 
 		$plugin_admin = new Ultimate_Blocks_Admin();
 		$plugin_help  = new Ultimate_Blocks_Help();

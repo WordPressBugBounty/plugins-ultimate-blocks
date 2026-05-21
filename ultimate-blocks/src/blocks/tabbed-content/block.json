@@ -2,12 +2,12 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "ub/tabbed-content-block",
-	"title": "Tabbed Content",
+	"title": "Tabs",
 	"category": "ultimateblocks",
 	"description": "Add tabbed content in your posts/pages with this block.",
 	"keywords": [
-		"Tabbed Content",
 		"Tabs",
+		"Tabbed Content",
 		"Ultimate Blocks"
 	],
 	"attributes": {

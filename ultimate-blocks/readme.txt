@@ -2,8 +2,8 @@
 Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08, farhanshafi
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
-Tested up to: 6.9
-Stable tag: 3.5.5
+Tested up to: 7.0
+Stable tag: 3.5.6
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,17 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.6 =
+
+* FIX: Styled List Block - Fixed icon styling for newly added list items.
+* FIX: Fixed a bug where clicking a tab anchor link caused all tabs to appear active.
+* UPDATE: Updated block names and labels for Accordions (UB) and Tabs.
+* NEW: Table of Contents Block - Shows the table of contents title by default, and you can edit it anytime.
+* NEW: Tabs Block - Added an option to choose which tab opens first.
+* NEW: Progress Bar Block - Added text position control for both line and circle styles.
+* NEW: Updated setup wizard
+* Tested with WordPress 7.0.
 
 = 3.5.5 =
 

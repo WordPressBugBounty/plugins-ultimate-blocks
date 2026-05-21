@@ -1798,6 +1798,10 @@ $defaultValues = array(
 				'type'    => 'string',
 				'default' => 'bottom'
 			),
+			'textPosition'       => array(
+				'type'    => 'string',
+				'default' => 'top'
+			),
 			'isStripe'         	 => array(
 				'type'    => 'boolean',
 				'default' => false
@@ -2721,7 +2725,7 @@ $defaultValues = array(
             ),
             'title' => array(
                 'type' => 'string',
-                'default' => ''
+				'default' => 'Table of Contents'
             ),
 		  'padding' => array(
 				'type' 	=> 'array',

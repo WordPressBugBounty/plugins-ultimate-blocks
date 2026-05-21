@@ -20,7 +20,7 @@
     },
     "title": {
       "type": "string",
-      "default": ""
+      "default": "Table of Contents"
     },
     "allowedHeaders": {
       "type": "array",

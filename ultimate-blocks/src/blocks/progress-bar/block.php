@@ -13,6 +13,7 @@ function ub_render_progress_bar_block($attributes, $block_content, $block){
 	$is_style_half_circle = isset($attributes['className']) ? strpos($className, "is-style-ub-progress-bar-half-circle-wrapper") !== false : "";
 
 	$percentage_position = $attributes['percentagePosition'];
+	$text_position = isset($attributes['textPosition']) ? $attributes['textPosition'] : 'top';
 
 	$padding = Ultimate_Blocks\includes\get_spacing_css( isset($block_attrs['padding']) ? $block_attrs['padding'] : array() );
 	$margin = Ultimate_Blocks\includes\get_spacing_css( isset($block_attrs['margin']) ? $block_attrs['margin'] : array() );
@@ -67,13 +68,17 @@ function ub_render_progress_bar_block($attributes, $block_content, $block){
 		wp_kses_post($number_suffix) // 6
 	);
 
-    $top_percentage = $show_number && $percentage_position === 'top'  ?
-    '<div class="ub_progress-detail-wrapper">
-         ' . $detail_text . '
-         ' . $percentage_text . '
-    </div>' : '<div class="ub_progress-detail-wrapper">
-         ' . $detail_text . '
-    </div>';
+    if ($text_position === 'bottom') {
+        $top_percentage = $show_number && $percentage_position === 'top'
+            ? '<div class="ub_progress-detail-wrapper">' . $percentage_text . '</div>'
+            : '';
+        $bottom_detail = $detail_text;
+    } else {
+        $top_percentage = $show_number && $percentage_position === 'top'
+            ? '<div class="ub_progress-detail-wrapper">' . $detail_text . $percentage_text . '</div>'
+            : '<div class="ub_progress-detail-wrapper">' . $detail_text . '</div>';
+        $bottom_detail = '';
+    }
     $inside_percentage = $show_number && $percentage_position === 'inside'  ?
     '<foreignObject width="100%" height="100%" viewBox="0 0 120 10" x="0" y="0">
         ' . $percentage_text . '
@@ -118,6 +123,7 @@ function ub_render_progress_bar_block($attributes, $block_content, $block){
 				%11$s
 			</svg>
 			%12$s
+			%15$s
 			</div>',
 			$blockName, // 1
 			$inside_percentage_class, // 2
@@ -132,7 +138,8 @@ function ub_render_progress_bar_block($attributes, $block_content, $block){
 			$inside_percentage, // 11
 			$bottom_percentage, // 12
 			Ultimate_Blocks\includes\generate_css_string($line_path_styles), // 13
-			Ultimate_Blocks\includes\generate_css_string($line_bar_styles) // 14
+			Ultimate_Blocks\includes\generate_css_string($line_bar_styles), // 14
+			$bottom_detail // 15
 		);
     } else if ($is_style_circle) {
 	    	$circleRadius = 50 - ($barThickness + 3) / 2;
@@ -200,11 +207,13 @@ function ub_render_progress_bar_block($attributes, $block_content, $block){
 		$stroke_dasharray_initial =   '0px, ' . $halfCirclePathLength . 'px';
 		$stroke_linecap = 'round';
 		$stroke_dasharray_final =  $halfCircleStrokeArcLength . 'px, ' . $halfCirclePathLength . 'px';
+		$half_circle_size = isset($circleSize) ? $circleSize : 100;
 		$ub_progress_bar_half_circle_container_styles = array(
-			'height' => isset($circleSize) ? $circleSize . 'px' : '100px',
-			'width' => isset($circleSize) ? $circleSize . 'px' : '100px',
-			'float' => isset($detailAlign) && in_array($detailAlign, ['left', 'right']) ? $detailAlign : 'auto',
-			'margin' => isset($detailAlign) && in_array($detailAlign, ['left', 'right']) ? '0' : 'auto'
+			'height' => $half_circle_size . 'px',
+			'width' => $half_circle_size . 'px',
+			'margin-bottom' => '-' . floor($half_circle_size * 0.4) . 'px',
+			'margin-left' => isset($detailAlign) && in_array($detailAlign, ['left', 'right']) ? '0' : 'auto',
+			'margin-right' => isset($detailAlign) && in_array($detailAlign, ['left', 'right']) ? '0' : 'auto',
 		);
 		$ub_progress_bar_half_circle_trail_styles = array(
 			'stroke-dasharray' => $halfCirclePathLength . 'px,' . $halfCirclePathLength . 'px'
@@ -253,12 +262,17 @@ function ub_render_progress_bar_block($attributes, $block_content, $block){
 		)
 	);
 
+	$is_circle_style = $is_style_circle || $is_style_half_circle;
+	$circle_detail_before = $is_circle_style && $text_position !== 'bottom' ? $detail_text : '';
+	$circle_detail_after  = $is_circle_style && $text_position === 'bottom'  ? $detail_text : '';
+
 	return sprintf(
-		'<div %1$s%2$s>%3$s%4$s</div>',
+		'<div %1$s%2$s>%3$s%4$s%5$s</div>',
 		$block_wrapper_attributes, // 1
 		$blockID === '' ? '' : ' id="ub-progress-bar-' . esc_attr($blockID) . '"', // 2
-		($is_style_circle || $is_style_half_circle ? $detail_text : ""), // 3
-		$chosenProgressBar // 4
+		$circle_detail_before, // 3
+		$chosenProgressBar, // 4
+		$circle_detail_after // 5
 	);
 }
 

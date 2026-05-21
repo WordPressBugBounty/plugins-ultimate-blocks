@@ -67,7 +67,7 @@ class Ultimate_Blocks_Util {
 				'active' => true,
 			),
 			array(
-				'label'  => 'Content Toggle',
+				'label'  => 'Accordions (UB)',
 				'name'   => 'ub/content-toggle-block',
 				'active' => true,
 			),
@@ -132,7 +132,7 @@ class Ultimate_Blocks_Util {
 				'active' => true,
 			),
 			array(
-				'label'  => 'Tabbed Content',
+				'label'  => 'Tabs',
 				'name'   => 'ub/tabbed-content-block',
 				'active' => true,
 			),

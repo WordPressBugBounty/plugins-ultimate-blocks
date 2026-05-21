@@ -221,7 +221,7 @@ class Pro_Manager {
 					'has_addons'          => true,
 					'menu'                => array(
 						'slug'       => 'ultimate-blocks-settings',
-						'first-path' => 'admin.php?page=ultimate-blocks-settings&route=welcome',
+						'first-path' => 'admin.php?page=ub-setup-wizard&route=welcome',
 						'account'    => true,
 						'contact'    => true,
 						'support'    => false,

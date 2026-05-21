@@ -71,6 +71,10 @@
 			"type": "string",
 			"default": "bottom"
 		},
+		"textPosition": {
+			"type": "string",
+			"default": "top"
+		},
 		"isStripe": {
 			"type": "boolean",
 			"default": false
