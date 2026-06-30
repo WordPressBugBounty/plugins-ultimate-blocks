@@ -3,7 +3,7 @@ Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, 
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 3.5.6
+Stable tag: 3.5.7
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,13 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.7 =
+
+* FIX: Content Toggle Block - Fixed hover controls positioning and replaced dashicons with SVG icons.
+* FIX: Tabs Block - Replaced dashicons with SVG icons for drag, remove, and add tab controls.
+* FIX: Content Filter Block - Replaced dashicons with SVG icons for delete filter controls.
+* FIX: Custom CSS - Fixed quotes being HTML-encoded in CSS output.
 
 = 3.5.6 =
 

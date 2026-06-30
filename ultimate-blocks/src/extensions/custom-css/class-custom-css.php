@@ -129,7 +129,7 @@ class Ultimate_Blocks_Custom_CSS  {
 
 ?>
 			<style id="ub-generated-styles<?php echo esc_attr($styles_id_suffix); ?>">
-				<?php echo esc_html($generated_ub_styles); ?>
+				<?php echo wp_strip_all_tags($generated_ub_styles); ?>
 			</style>
 <?php
 		}
