@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "ub/countdown",
-	"title": "Countdown",
+	"title": "Countdown Timer",
 	"category": "ultimateblocks",
 	"description": "Add a countdown in your post/pages. Comes with three different styles.",
 	"keywords": [

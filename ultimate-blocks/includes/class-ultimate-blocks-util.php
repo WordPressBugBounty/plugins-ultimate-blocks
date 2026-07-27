@@ -72,7 +72,7 @@ class Ultimate_Blocks_Util {
 				'active' => true,
 			),
 			array(
-				'label'  => 'Countdown',
+				'label'  => 'Countdown Timer',
 				'name'   => 'ub/countdown',
 				'active' => true,
 			),

@@ -99,6 +99,15 @@ function ub_prepare_social_share_icon($icon, $iconShape, $siteName, $link, $capt
 	$text_style = array();
 	$site_container_styles = array();
 
+	if ( $iconShape === 'square' ) {
+		$icon_border_radius = isset( $attributes['iconBorderRadius'] ) ? $attributes['iconBorderRadius'] : array();
+
+		$icon_styles['border-top-left-radius']     = ! empty( $icon_border_radius['topLeft'] ) ? $icon_border_radius['topLeft'] : '';
+		$icon_styles['border-top-right-radius']    = ! empty( $icon_border_radius['topRight'] ) ? $icon_border_radius['topRight'] : '';
+		$icon_styles['border-bottom-left-radius']  = ! empty( $icon_border_radius['bottomLeft'] ) ? $icon_border_radius['bottomLeft'] : '';
+		$icon_styles['border-bottom-right-radius'] = ! empty( $icon_border_radius['bottomRight'] ) ? $icon_border_radius['bottomRight'] : '';
+	}
+
 	if ( $attributes['buttonColor'] !== '' ) {
 		if( $attributes['useCaptions'] ){
 			$icon_styles['background-color'] = $iconShape === 'none' ? 'transparent' : $attributes['buttonColor'];

@@ -1,9 +1,9 @@
-=== Ultimate Blocks – 25+ Gutenberg Blocks for Block Editor ===
+=== Ultimate Blocks – 25+ Blocks for Block Editor ===
 Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08, farhanshafi
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 3.5.7
+Stable tag: 3.5.8
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,19 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.8 =
+
+* PRO: NEW: Image Hotspots Block - Added a new Pro block for placing interactive hotspots with rich tooltips on top of any image.
+* NEW: Accordions Block - Panels now have an 8px border-radius by default.
+* NEW: Social Share Block - Added a Radius option for square-shaped icons, with an 8px default.
+* UPDATE: Countdown Block - Renamed to "Countdown Timer" for clarity.
+* UPDATE: Setup Wizard - Updated the OpinionCamp description and changed the ConvertForce/OpinionCamp badges from "Optional" to "Free".
+* FIX: Icon Block - Padding now applies to the icon itself instead of the block wrapper, so it no longer looks identical to Margin.
+* FIX: Advanced Video Block - Fixed the editor preview failing to load for YouTube, Vimeo, and Dailymotion embeds (was showing a YouTube "Error 153" / blank preview).
+* FIX: Advanced Video Block - Fixed an unwanted scrollbar appearing on the video preview in the editor.
+* PRO: FIX: Social Share Block - Fixed the block becoming unselectable in the editor when Pro is active.
+* PRO: FIX: Admin Notices - Fixed messages showing raw HTML tags instead of rendering them (e.g. bold text) in the "requires Ultimate Blocks" and license activation notices.
 
 = 3.5.7 =
 

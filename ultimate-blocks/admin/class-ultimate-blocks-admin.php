@@ -510,6 +510,42 @@ class Ultimate_Blocks_Admin {
 					$new_blocks[] = $block;
 				}
 			}
+
+			// Drop stale pro-block entries left behind by a rename or removal
+			// (e.g. a block registered under an old name before a fix landed).
+			// $blocks is only the complete free+pro set while the pro plugin's
+			// 'ub/filter/admin_blocks' filter is hooked, so only prune then —
+			// otherwise a temporarily-deactivated pro plugin would wipe saved
+			// pro block toggle preferences.
+			if ( has_filter( 'ub/filter/admin_blocks' ) ) {
+				$current_names = wp_list_pluck( $blocks, 'name' );
+				$registered_blocks = array_values(
+					array_filter(
+						$registered_blocks,
+						function ( $block ) use ( $current_names ) {
+							return in_array( $block['name'], $current_names, true );
+						}
+					)
+				);
+
+				// Refresh the label of already-saved pro block entries. Pro
+				// block labels/descriptions can change between versions, and
+				// (unlike the static free block list) new pro blocks weren't
+				// always registered with a well-formed label from day one —
+				// without this, a bad label persisted once would stay wrong
+				// forever, since the loop above only ever adds missing blocks.
+				$pro_blocks_by_name = array_column(
+					array_filter( (array) apply_filters( 'ub/filter/admin_blocks', array() ) ),
+					null,
+					'name'
+				);
+				foreach ( $registered_blocks as $key => $block ) {
+					if ( isset( $pro_blocks_by_name[ $block['name'] ]['label'] ) ) {
+						$registered_blocks[ $key ]['label'] = $pro_blocks_by_name[ $block['name'] ]['label'];
+					}
+				}
+			}
+
 			$registered_blocks = array_merge( $registered_blocks, $new_blocks );
 			update_option( 'ultimate_blocks', $registered_blocks );
 		} else {

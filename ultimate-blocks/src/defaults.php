@@ -649,7 +649,12 @@ $defaultValues = array(
 			),
 			'panelBorderRadius' => array(
 				'type'    => 'object',
-				'default' => array()
+				'default' => array(
+					"topLeft" => "8px",
+					"topRight" => "8px",
+					"bottomLeft" => "8px",
+					"bottomRight" => "8px"
+				)
 			),
 			'panelBorder' => array(
 				'type'    => 'object',

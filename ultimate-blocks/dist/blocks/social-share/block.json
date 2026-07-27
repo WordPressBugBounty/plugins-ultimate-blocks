@@ -109,6 +109,15 @@
     "margin": {
       "type": "object",
       "default": {}
+    },
+    "iconBorderRadius": {
+      "type": "object",
+      "default": {
+        "topLeft": "8px",
+        "topRight": "8px",
+        "bottomLeft": "8px",
+        "bottomRight": "8px"
+      }
     }
   },
   "supports": {},
