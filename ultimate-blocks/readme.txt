@@ -1,9 +1,9 @@
-=== Ultimate Blocks – 25+ Blocks for Block Editor ===
+=== Ultimate Blocks – 25+ Gutenberg Blocks for Block Editor ===
 Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08, farhanshafi
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 3.5.8
+Stable tag: 3.5.9
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,23 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.5.9 =
+
+* PRO: NEW: Image Hotspots Block - Added Border, Border Radius, Caption, and Link options, plus Duotone filter support.
+* PRO: NEW: Image Hotspots Block - Added an option to transform an Image block into an Image Hotspots block.
+* NEW: Review Block - Added shipping and return policy schema markup for Product reviews.
+* NEW: Review Block - Added review and aggregateRating fields to Product schema markup.
+* NEW: Review Block - Added a notice highlighting missing or recommended schema fields.
+* UPDATE: Accordions Block - Renamed the "Container Color" label to "Title Container Color" for clarity.
+* UPDATE: Accordions Block - Panels now also collapse in the editor when the "Collapsed" option is enabled, matching the frontend.
+* UPDATE: Setup Wizard - Added Image Hotspots to the Pro Blocks list and AssistCamp to the Optional Plugins list; updated the "Get WP Block Suite" button link.
+* FIX: Review Block - Fixed Offer Price showing as 0 after reopening a saved post.
+* FIX: Review Block - Fixed Offer Status missing from schema markup.
+* FIX: Review Block - New blocks now default to today's date instead of a fixed 2023 publication date.
+* FIX: Accordions Block - Fixed inconsistent spacing in the color settings panel.
+* PRO: FIX: Fixed the Pro block toggle silently reactivating after a page reload.
+* FIX: Saved Styles - Fixed the hover preview causing a visible "bounce" in the editor for Accordions, Content Toggle, and Social Share blocks.
 
 = 3.5.8 =
 

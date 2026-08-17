@@ -2065,6 +2065,52 @@ $defaultValues = array(
 				'type'    => 'number',
 				'default' => 0
 			),
+			//BEGIN SHIPPING/RETURN POLICY ATTRIBUTES
+			'enableShippingDetails'   => array(
+				'type'    => 'boolean',
+				'default' => false
+			),
+			'shippingCountry'         => array(
+				'type'    => 'string',
+				'default' => 'US'
+			),
+			'shippingRate'            => array(
+				'type'    => 'number',
+				'default' => 0
+			),
+			'shippingHandlingDays'    => array(
+				'type'    => 'number',
+				'default' => 1
+			),
+			'shippingTransitDays'     => array(
+				'type'    => 'number',
+				'default' => 5
+			),
+			'enableReturnPolicy'      => array(
+				'type'    => 'boolean',
+				'default' => false
+			),
+			'returnPolicyCategory'    => array(
+				'type'    => 'string',
+				'default' => 'MerchantReturnFiniteReturnWindow'
+			),
+			'merchantReturnDays'      => array(
+				'type'    => 'number',
+				'default' => 30
+			),
+			'returnMethod'            => array(
+				'type'    => 'string',
+				'default' => 'ReturnByMail'
+			),
+			'returnFees'              => array(
+				'type'    => 'string',
+				'default' => 'FreeReturn'
+			),
+			'returnApplicableCountry' => array(
+				'type'    => 'string',
+				'default' => 'US'
+			),
+			//END SHIPPING/RETURN POLICY ATTRIBUTES
 			//BEGIN SOFTWAREAPPLICATION ATTRIBUTES
 			'appCategory'             => array(
 				'type'    => 'string',

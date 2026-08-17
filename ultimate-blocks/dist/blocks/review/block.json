@@ -242,6 +242,50 @@
       "type": "number",
       "default": 0
     },
+    "enableShippingDetails": {
+      "type": "boolean",
+      "default": false
+    },
+    "shippingCountry": {
+      "type": "string",
+      "default": "US"
+    },
+    "shippingRate": {
+      "type": "number",
+      "default": 0
+    },
+    "shippingHandlingDays": {
+      "type": "number",
+      "default": 1
+    },
+    "shippingTransitDays": {
+      "type": "number",
+      "default": 5
+    },
+    "enableReturnPolicy": {
+      "type": "boolean",
+      "default": false
+    },
+    "returnPolicyCategory": {
+      "type": "string",
+      "default": "MerchantReturnFiniteReturnWindow"
+    },
+    "merchantReturnDays": {
+      "type": "number",
+      "default": 30
+    },
+    "returnMethod": {
+      "type": "string",
+      "default": "ReturnByMail"
+    },
+    "returnFees": {
+      "type": "string",
+      "default": "FreeReturn"
+    },
+    "returnApplicableCountry": {
+      "type": "string",
+      "default": "US"
+    },
     "usePhysicalAddress": {
       "type": "boolean",
       "default": true

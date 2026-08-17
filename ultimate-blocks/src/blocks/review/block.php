@@ -63,6 +63,51 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
     $button_block = !empty($block_instance->parsed_block['innerBlocks']) ? $block_instance->parsed_block['innerBlocks'][0] : array();
     $buttons = isset($button_block['attrs']['buttons']) ? $button_block['attrs']['buttons'] : array();
 
+    $shippingDetails = null;
+    if(!empty($enableShippingDetails)){
+        $shippingDetails = array(
+            "@type" => "OfferShippingDetails",
+            "shippingRate" => array(
+                "@type" => "MonetaryAmount",
+                "value" => (string) $shippingRate,
+                "currency" => ub_filterJsonldString($offerCurrency),
+            ),
+            "shippingDestination" => array(
+                "@type" => "DefinedRegion",
+                "addressCountry" => ub_filterJsonldString($shippingCountry),
+            ),
+            "deliveryTime" => array(
+                "@type" => "ShippingDeliveryTime",
+                "handlingTime" => array(
+                    "@type" => "QuantitativeValue",
+                    "minValue" => 0,
+                    "maxValue" => absint($shippingHandlingDays),
+                    "unitCode" => "DAY",
+                ),
+                "transitTime" => array(
+                    "@type" => "QuantitativeValue",
+                    "minValue" => 0,
+                    "maxValue" => absint($shippingTransitDays),
+                    "unitCode" => "DAY",
+                ),
+            ),
+        );
+    }
+
+    $returnPolicy = null;
+    if(!empty($enableReturnPolicy)){
+        $returnPolicy = array(
+            "@type" => "MerchantReturnPolicy",
+            "applicableCountry" => ub_filterJsonldString($returnApplicableCountry),
+            "returnPolicyCategory" => "https://schema.org/" . ub_filterJsonldString($returnPolicyCategory),
+            "returnMethod" => "https://schema.org/" . ub_filterJsonldString($returnMethod),
+            "returnFees" => "https://schema.org/" . ub_filterJsonldString($returnFees),
+        );
+        if($returnPolicyCategory === 'MerchantReturnFiniteReturnWindow'){
+            $returnPolicy["merchantReturnDays"] = absint($merchantReturnDays);
+        }
+    }
+
     $offers = array();
 
     foreach ($buttons as $button) {
@@ -71,12 +116,27 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
             "url" => esc_url($button['url']),
             "priceCurrency" => ub_filterJsonldString($offerCurrency),
             "price" => ub_filterJsonldString($offerPrice),
+            "availability" => "https://schema.org/" . ub_filterJsonldString($offerStatus),
         );
         if($offerExpiry > 0){
             $offer = array_merge($offer, array('priceValidUntil'=>date("Y-m-d", $offerExpiry)));
         }
+        if($shippingDetails){
+            $offer['shippingDetails'] = $shippingDetails;
+        }
+        if($returnPolicy){
+            $offer['hasMerchantReturnPolicy'] = $returnPolicy;
+        }
 
         $offers[] = $offer;
+    }
+
+    $shippingReturnJsonFragment = '';
+    if($shippingDetails){
+        $shippingReturnJsonFragment .= ',"shippingDetails":' . json_encode($shippingDetails, JSON_UNESCAPED_SLASHES);
+    }
+    if($returnPolicy){
+        $shippingReturnJsonFragment .= ',"hasMerchantReturnPolicy":' . json_encode($returnPolicy, JSON_UNESCAPED_SLASHES);
     }
 
     $all_buttons_offer = json_encode($offers, JSON_UNESCAPED_SLASHES);
@@ -85,11 +145,15 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
         "priceCurrency": "' . ub_filterJsonldString($offerCurrency) . '",
         "lowPrice": "' . esc_js($offerLowPrice) . '",
         "highPrice": "' . esc_js($offerHighPrice) . '",
-        "offerCount": "' . absint($offerCount) . '"
+        "offerCount": "' . absint($offerCount) . '",
+        "availability": "https://schema.org/' . ub_filterJsonldString($offerStatus) . '"' . $shippingReturnJsonFragment . '
     }';
     $offerCode = '"offers":' . ($offerType === 'AggregateOffer' ? $aggregate_offer : $all_buttons_offer );
 
     $itemExtras = '';
+
+    $rating_value = ((int)$average % 1 === 0 ? $average : number_format($average, 1, '.', ''));
+    $best_rating = ($valueType === 'star' ? $starCount : '100');
 
     switch ($itemType){
         case 'Book':
@@ -121,7 +185,25 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
                                 "name": "' . ub_filterJsonldString($brand) . '"
                             },
                             "sku": "'. ub_filterJsonldString($sku) .'",
-                            "' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",' . $offerCode;
+                            "' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",
+                            "review": {
+                                "@type": "Review",
+                                "reviewRating": {
+                                    "@type": "Rating",
+                                    "ratingValue": "' . $rating_value . '",
+                                    "bestRating": "' . $best_rating . '"
+                                },
+                                "author": {
+                                    "@type": "Person",
+                                    "name": "' . ub_filterJsonldString($authorName) . '"
+                                }
+                            },
+                            "aggregateRating": {
+                                "@type": "AggregateRating",
+                                "ratingValue": "' . $rating_value . '",
+                                "bestRating": "' . $best_rating . '",
+                                "reviewCount": "1"
+                            },' . $offerCode;
         break;
         case 'LocalBusiness':
             $itemExtras = '';
@@ -170,8 +252,8 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
         '},
         "reviewRating":{
             "@type": "Rating",
-            "ratingValue": "' . ((int)$average % 1 === 0 ? $average : number_format($average, 1, '.', '')) . '",
-            "bestRating": "' . ($valueType === 'star' ? $starCount : '100') . '"
+            "ratingValue": "' . $rating_value . '",
+            "bestRating": "' . $best_rating . '"
         },
         "author":{
             "@type": "Person",
