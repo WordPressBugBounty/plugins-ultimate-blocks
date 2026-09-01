@@ -3,7 +3,7 @@ Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, 
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 3.5.9
+Stable tag: 3.6.0
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,17 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.6.0 =
+
+* FIX: Review Block - Fixed Product reviews being counted several times over in Google Search.
+* FIX: React 19 Compatibility - Fixed the Blocks settings screen going blank on sites where WordPress serves React 19. Plugin scripts now use the React version WordPress provides instead of bundling their own copy.
+* PRO: FIX: Accordions Block - Fixed the search box icons not appearing on the frontend.
+* PRO: FIX: Accordions Block - Fixed the search icon being drawn inside an unwanted border box.
+* PRO: FIX: Tabs Block, Review Block - Fixed tab icons and pros/cons icons that could fail to appear for the same reason.
+* PRO: IMPROVE: Accordions Block - The frontend search script is now 4 KB instead of 3.7 MB and no longer loads React on the frontend, so pages using a searchable accordion load considerably faster.
+* IMPROVE: Settings Page - The Blocks settings screen script is now 148 KB instead of 281 KB.
+* IMPROVE: Setup Wizard - The setup wizard script is now 40 KB instead of 165 KB.
 
 = 3.5.9 =
 

@@ -94,16 +94,26 @@ class Setup_Wizard {
 
 		wp_enqueue_style(
 			'ub-setup-wizard',
-			trailingslashit( ULTIMATE_BLOCKS_URL ) . 'bundle-dist/setup-wizard.css',
+			trailingslashit( ULTIMATE_BLOCKS_URL ) . 'dist/setup-wizard.css',
 			array(),
 			ULTIMATE_BLOCKS_VERSION
 		);
 
+		// Dependencies and version are generated at build time so the wizard
+		// always loads against the React instance WordPress provides.
+		$wizard_asset_path = ULTIMATE_BLOCKS_PATH . 'dist/setup-wizard.build.asset.php';
+		$wizard_asset      = file_exists( $wizard_asset_path )
+			? require $wizard_asset_path
+			: array(
+				'dependencies' => array( 'react', 'wp-element' ),
+				'version'      => ULTIMATE_BLOCKS_VERSION,
+			);
+
 		wp_enqueue_script(
 			'ub-setup-wizard',
-			trailingslashit( ULTIMATE_BLOCKS_URL ) . 'bundle-dist/setup-wizard.js',
-			array(),
-			ULTIMATE_BLOCKS_VERSION,
+			trailingslashit( ULTIMATE_BLOCKS_URL ) . 'dist/setup-wizard.build.js',
+			$wizard_asset['dependencies'],
+			$wizard_asset['version'],
 			true
 		);
 

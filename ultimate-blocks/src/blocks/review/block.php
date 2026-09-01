@@ -154,6 +154,21 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
 
     $rating_value = ((int)$average % 1 === 0 ? $average : number_format($average, 1, '.', ''));
     $best_rating = ($valueType === 'star' ? $starCount : '100');
+    $reviewDetails =
+        ($useSummary ? '"reviewBody": "' . ub_filterJsonldString($summaryDescription) . '",' : '') .
+        '"description": "' . ub_filterJsonldString($description) . '",
+        "reviewRating":{
+            "@type": "Rating",
+            "ratingValue": "' . $rating_value . '",
+            "bestRating": "' . $best_rating . '"
+        },
+        "author":{
+            "@type": "Person",
+            "name": "'. ub_filterJsonldString($authorName) .'"
+        },
+        "publisher": "' . ub_filterJsonldString($reviewPublisher) . '",
+        "datePublished": "' . date("Y-m-d", $publicationDate) . '",
+        "url": "' . get_permalink() . '"';
 
     switch ($itemType){
         case 'Book':
@@ -188,15 +203,7 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
                             "' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",
                             "review": {
                                 "@type": "Review",
-                                "reviewRating": {
-                                    "@type": "Rating",
-                                    "ratingValue": "' . $rating_value . '",
-                                    "bestRating": "' . $best_rating . '"
-                                },
-                                "author": {
-                                    "@type": "Person",
-                                    "name": "' . ub_filterJsonldString($authorName) . '"
-                                }
+                                ' . $reviewDetails . '
                             },
                             "aggregateRating": {
                                 "@type": "AggregateRating",
@@ -238,30 +245,23 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
         break;
     }
 
-    $schema_json_content = '{
-        "@context": "http://schema.org/",
-        "@type": "Review",' .
-        ($useSummary ? '"reviewBody": "' . ub_filterJsonldString($summaryDescription) . '",' : '') .
-        '"description": "' . ub_filterJsonldString($description) . '",
-        "itemReviewed": {
-            "@type":"' . esc_js($itemSubsubtype ?: $itemSubtype ?: $itemType) . '",' .
-            ($itemName ? ('"name":"' . ub_filterJsonldString($itemName) . '",') : '') .
-            ($imgURL ? (($itemSubtype === 'VideoObject' ? '"thumbnailUrl' : '"image') . '": "' . esc_url($imgURL) . '",') : '') .
-            '"description": "' . ub_filterJsonldString($description) .'"'
-                . ($itemExtras === '' ? '' : ',' . $itemExtras ) .
-        '},
-        "reviewRating":{
-            "@type": "Rating",
-            "ratingValue": "' . $rating_value . '",
-            "bestRating": "' . $best_rating . '"
-        },
-        "author":{
-            "@type": "Person",
-            "name": "'. ub_filterJsonldString($authorName) .'"
-        },
-        "publisher": "' . ub_filterJsonldString($reviewPublisher) . '",
-        "datePublished": "' . date("Y-m-d", $publicationDate) . '",
-        "url": "' . get_permalink() . '"
+    $reviewedItemProperties =
+        '"@type":"' . esc_js($itemSubsubtype ?: $itemSubtype ?: $itemType) . '",' .
+        ($itemName ? ('"name":"' . ub_filterJsonldString($itemName) . '",') : '') .
+        ($imgURL ? (($itemSubtype === 'VideoObject' ? '"thumbnailUrl' : '"image') . '": "' . esc_url($imgURL) . '",') : '') .
+        '"description": "' . ub_filterJsonldString($description) .'"'
+        . ($itemExtras === '' ? '' : ',' . $itemExtras );
+    $reviewedItem = '{' . $reviewedItemProperties . '}';
+
+    $schema_json_content = $itemType === 'Product' ?
+        '{
+            "@context": "http://schema.org/",' .
+            $reviewedItemProperties . '}' :
+        '{
+            "@context": "http://schema.org/",
+            "@type": "Review",
+            ' . $reviewDetails . ',
+            "itemReviewed": ' . $reviewedItem . '
     }';
 
 	// review schema filter hook

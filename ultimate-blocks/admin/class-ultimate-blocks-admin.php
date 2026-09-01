@@ -150,7 +150,7 @@ class Ultimate_Blocks_Admin {
 
 		wp_enqueue_style(
 			$this->plugin_name,
-			trailingslashit( $this->plugin_url ) . 'bundle-dist/ub-admin-settings.css',
+			trailingslashit( $this->plugin_url ) . 'dist/ub-admin-settings.css',
 			array(),
 			$this->version,
 			'all'
@@ -203,11 +203,21 @@ class Ultimate_Blocks_Admin {
 		// ub/action/settings_menu_block_registry action hook.
 		do_action( 'ub/action/settings_menu_block_registry' );
 
+		// Dependencies and version are generated at build time so the settings
+		// app always loads against the React instance WordPress provides.
+		$admin_asset_path = $this->plugin_path . 'dist/ub-admin-settings.build.asset.php';
+		$admin_asset      = file_exists( $admin_asset_path )
+			? require $admin_asset_path
+			: array(
+				'dependencies' => array( 'react', 'react-dom', 'wp-element' ),
+				'version'      => $this->version,
+			);
+
 		wp_enqueue_script(
 			$this->plugin_name,
-			trailingslashit( $this->plugin_url ) . 'bundle-dist/ub-admin-settings.js',
-			array(),
-			$this->version,
+			trailingslashit( $this->plugin_url ) . 'dist/ub-admin-settings.build.js',
+			$admin_asset['dependencies'],
+			$admin_asset['version'],
 			true
 		);
 
