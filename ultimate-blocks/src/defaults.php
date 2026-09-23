@@ -2009,6 +2009,14 @@ $defaultValues = array(
 				'type'    => 'boolean',
 				'default' => true
 			),
+			'enableProductReview'     => array(
+				'type'    => 'boolean',
+				'default' => true
+			),
+			'enableAggregateRating'   => array(
+				'type'    => 'boolean',
+				'default' => false
+			),
 			'starOutlineColor'        => array(
 				'type'    => 'string',
 				'default' => ''

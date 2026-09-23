@@ -2,8 +2,8 @@
 Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, alexius08, farhanshafi
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
-Tested up to: 7.0
-Stable tag: 3.6.0
+Tested up to: 7.1
+Stable tag: 3.6.1
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,13 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.6.1 =
+
+* FIX: Accordions Block, Tabs Block, Table of Contents Block, Expand Block, Review Block, Divider Block, Image Slider Block, Progress Bar Block, Social Share Block - Fixed these blocks breaking in the editor on sites that also run the Widget Options plugin.
+* FIX: Button Block - Fixed the transform from the core Buttons block failing with an error, and stopped one button's colors carrying over to the next one.
+* FIX: Block Settings - Fixed the spacing control icon sitting slightly below its slider in some settings panels.
+* PRO: NEW: Summarize with AI Block - Lets readers send the post they are reading to an AI tool for a summary, with ChatGPT, Claude, Perplexity, Gemini and Grok, an editable prompt, and rules for archives, private, password protected and noindex content.
 
 = 3.6.0 =
 

@@ -178,6 +178,14 @@
 			"type": "boolean",
 			"default": true
 		},
+		"enableProductReview": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableAggregateRating": {
+			"type": "boolean",
+			"default": false
+		},
 		"enableImage": {
 			"type": "boolean",
 			"default": true

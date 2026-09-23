@@ -16,6 +16,7 @@ use Ultimate_Blocks\includes\pro_manager\base\Pro_Block_Upsell;
 use Ultimate_Blocks\includes\pro_manager\blocks\coupon\Coupon_Pro_Block;
 use Ultimate_Blocks\includes\pro_manager\blocks\timeline\Timeline_Pro_Block;
 use Ultimate_Blocks\includes\pro_manager\blocks\image_hotspots\Image_Hotspots_Pro_Block;
+use Ultimate_Blocks\includes\pro_manager\blocks\ai_summarize\Ai_Summarize_Pro_Block;
 use Ultimate_Blocks\includes\pro_manager\extensions\Button_Extension;
 use Ultimate_Blocks\includes\pro_manager\extensions\Buttons_Extension;
 use Ultimate_Blocks\includes\pro_manager\extensions\Single_Button_Extension;
@@ -58,6 +59,7 @@ class Pro_Manager {
 		Coupon_Pro_Block::class,
 		Timeline_Pro_Block::class,
 		Image_Hotspots_Pro_Block::class,
+		Ai_Summarize_Pro_Block::class,
 	);
 
 	/**
@@ -207,7 +209,7 @@ class Pro_Manager {
 		global $ub_fs;
 		if ( ! isset( $ub_fs ) ) {
 			// Include Freemius SDK.
-			require_once ULTIMATE_BLOCKS_PATH . 'library/freemius/start.php';
+			require_once ULTIMATE_BLOCKS_PATH . 'vendor/freemius/start.php';
 
 			$ub_fs = fs_dynamic_init(
 				array(

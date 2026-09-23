@@ -195,22 +195,33 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
             "performer": "' . ub_filterJsonldString($performer) . '"';
         break;
         case 'Product':
+            // Both are optional. Each one Google reads is reported as its own item,
+            // so a page with six products and both switched on is counted as twelve.
+            // "offers" is always present, which keeps the product snippet eligible
+            // even when a user turns both of these off.
+            $productReview = (!isset($enableProductReview) || $enableProductReview) ?
+                            '"review": {
+                                "@type": "Review",
+                                ' . $reviewDetails . '
+                            },' : '';
+
+            $productAggregateRating = (isset($enableAggregateRating) && $enableAggregateRating) ?
+                            '"aggregateRating": {
+                                "@type": "AggregateRating",
+                                "ratingValue": "' . $rating_value . '",
+                                "bestRating": "' . $best_rating . '",
+                                "reviewCount": "1"
+                            },' : '';
+
             $itemExtras = '"brand": {
                                 "@type": "Brand",
                                 "name": "' . ub_filterJsonldString($brand) . '"
                             },
                             "sku": "'. ub_filterJsonldString($sku) .'",
-                            "' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",
-                            "review": {
-                                "@type": "Review",
-                                ' . $reviewDetails . '
-                            },
-                            "aggregateRating": {
-                                "@type": "AggregateRating",
-                                "ratingValue": "' . $rating_value . '",
-                                "bestRating": "' . $best_rating . '",
-                                "reviewCount": "1"
-                            },' . $offerCode;
+                            "' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",'
+                            . $productReview
+                            . $productAggregateRating
+                            . $offerCode;
         break;
         case 'LocalBusiness':
             $itemExtras = '';

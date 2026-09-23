@@ -56,6 +56,6 @@ class Image_Hotspots_Pro_Block extends Pro_Block_Upsell {
 	 * @return string image url location
 	 */
 	public function block_upsell_screenshot() {
-		return trailingslashit( ULTIMATE_BLOCKS_URL ) . 'includes/pro_manager/blocks/image_hotspots/assets/image-hotspots-ss.png';
+		return trailingslashit( ULTIMATE_BLOCKS_URL ) . 'includes/pro_manager/blocks/image_hotspots/assets/image-hotspots-ss.jpg';
 	}
 }
