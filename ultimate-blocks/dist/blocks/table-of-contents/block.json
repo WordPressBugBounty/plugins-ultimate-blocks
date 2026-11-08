@@ -148,6 +148,22 @@
     "listFontSize": {
       "type": "string",
       "default": ""
+    },
+    "enableShowMore": {
+      "type": "boolean",
+      "default": false
+    },
+    "showMoreLimit": {
+      "type": "number",
+      "default": 5
+    },
+    "showMoreText": {
+      "type": "string",
+      "default": ""
+    },
+    "showLessText": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

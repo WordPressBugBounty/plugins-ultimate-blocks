@@ -3,7 +3,7 @@ Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, 
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 7.1
-Stable tag: 3.6.1
+Stable tag: 3.6.2
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,26 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.6.2 =
+
+* NEW: Table of Contents Block - Added an optional "Show more" link that shortens long lists.
+* NEW: Tabs Block - Added a Tab Spacing control to set the space between tab buttons, including no space at all.
+* NEW: Tabs Block - Added a Show Border option that removes all of the block's borders.
+* NEW: Styled List Block - Paragraph blocks can now be transformed into a Styled List.
+* UPDATE: Tabs Block - Renamed to "Tabs (UB)" so it is easy to tell apart from the core Tabs block.
+* UPDATE: Updated Freemius SDK to the latest version.
+* FIX: Countdown Block - New timers now start 7 days from today instead of showing as already finished.
+* FIX: Accordions Block - The "Default Open" panel now shows open in the editor when Collapsed is enabled.
+* FIX: Video Block - Fixed white bars inside Vimeo videos when a border is set.
+* FIX: Video Block - Fixed the video becoming much wider than the page when autofit is turned off.
+* FIX: Video Block - Rounded corners now apply to the video itself, not only to its border.
+* FIX: Review Block - The Offer schema is now kept when the block has no call-to-action button.
+* FIX: Review Block - Invalid GTIN values and empty SKU and publisher fields are no longer added to the schema.
+* PRO: NEW: Summarize with AI Block - Added a background color, a full width buttons option and a side by side layout for the heading and buttons.
+* PRO: FIX: Coupon Block - "Doesn't Expire" coupons no longer show as "Expired" on the frontend.
+* PRO: FIX: Coupon Block - New coupons now start with an expiration date one week ahead.
+* PRO: FIX: Fixed PHP 8.5 deprecation notices.
 
 = 3.6.1 =
 

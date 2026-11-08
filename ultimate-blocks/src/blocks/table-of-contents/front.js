@@ -326,3 +326,27 @@ Array.prototype.slice
 			}
 		});
 	});
+
+document.addEventListener("DOMContentLoaded", function () {
+	document
+		.querySelectorAll(".ub_table-of-contents-show-more")
+		.forEach(function (toggle) {
+			const container = toggle.closest(".ub_table-of-contents-container");
+
+			const flip = function (event) {
+				event.preventDefault();
+				const expanded = container.classList.toggle("ub-toc-show-all");
+				toggle.setAttribute("aria-expanded", String(expanded));
+				toggle.textContent = expanded
+					? toggle.dataset.showlesstext
+					: toggle.dataset.showmoretext;
+			};
+
+			toggle.addEventListener("click", flip);
+			toggle.addEventListener("keydown", function (event) {
+				if (event.key === "Enter" || event.key === " ") {
+					flip(event);
+				}
+			});
+		});
+});

@@ -60,22 +60,25 @@
 }
 
 .ub-advanced-video-embed {
+	// Clip the video to the border radius.
+	overflow: hidden;
 	video {
 		max-width: 100%;
 		aspect-ratio: var(--ub-advanced-video-aspect-ratio);
 		height: auto !important;
 		object-fit: cover;
 	}
-	&.ub-advanced-video-autofit-youtube {
+	// The iframe carries the aspect ratio. On the wrapper it would fix the
+	// height, and with overflow hidden cut off the channel details below.
+	&.ub-advanced-video-autofit-youtube,
+	&.ub-advanced-video-autofit-vimeo {
 		width: 100%;
-		aspect-ratio: var(--ub-advanced-video-aspect-ratio);
 		> iframe {
 			width: 100%;
 			aspect-ratio: var(--ub-advanced-video-aspect-ratio);
 			height: auto !important;
 		}
 	}
-	&.ub-advanced-video-autofit-vimeo,
 	&.ub-advanced-video-autofit-dailymotion {
 		position: relative;
 		> iframe {

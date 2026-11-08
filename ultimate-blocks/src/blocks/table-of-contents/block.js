@@ -248,6 +248,37 @@ registerBlockType(metadata.name, {
 				props.setAttributes({ blockID: block.clientId });
 			}
 		}, [block?.clientId]);
+		// "Show more" works in the editor the same way as on the page: items
+		// past the limit, counted in reading order across all levels like
+		// block.php does, get the same class and stay hidden until the link is
+		// clicked. The list is rendered by its own component, so its items are
+		// marked after every render.
+		const { enableShowMore, showMoreLimit } = props.attributes;
+		const [showAllItems, setShowAllItems] = useState(false);
+		useEffect(() => {
+			const canvas =
+				document.querySelector('iframe[name="editor-canvas"]')
+					?.contentDocument ?? document;
+			const container = canvas.querySelector(
+				`#block-${props.clientId} .ub_table-of-contents-container`,
+			);
+			if (!container) {
+				return;
+			}
+			container.classList.toggle(
+				"ub-toc-show-all",
+				!enableShowMore || showAllItems,
+			);
+			container
+				.querySelectorAll("li")
+				.forEach((item, index) =>
+					item.classList.toggle(
+						"ub_table-of-contents-extra-item",
+						enableShowMore && index >= showMoreLimit,
+					),
+				);
+		});
+
 		const paddingObj = getSpacingCss(padding);
 		const marginObj = getSpacingCss(margin);
 
@@ -284,6 +315,8 @@ registerBlockType(metadata.name, {
 						...props,
 						canRemoveItemFocus,
 						toggleCanRemoveItemFocus,
+						showAllItems,
+						setShowAllItems,
 					})}
 				</div>
 			</div>,

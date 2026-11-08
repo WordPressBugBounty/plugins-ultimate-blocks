@@ -35,6 +35,35 @@ function ub_filterJsonldString($string){
     return $string;
 }
 
+/**
+ * JSON-LD fragment for the product identifier, or '' when there is nothing
+ * valid to output. A GTIN must be all digits with a valid length, otherwise
+ * Google reports an error in the Merchant listings report.
+ */
+function ub_review_schema_identifier($identifierType, $identifier){
+    $identifier = trim(wp_strip_all_tags((string) $identifier));
+    if ($identifier === '') {
+        return '';
+    }
+
+    $gtinLengths = array(
+        'gtin'   => array(8, 12, 13, 14),
+        'gtin8'  => array(8),
+        'gtin12' => array(12),
+        'gtin13' => array(13),
+        'gtin14' => array(14),
+    );
+    if (isset($gtinLengths[$identifierType])) {
+        // GTINs are often written with spaces or hyphens between digit groups.
+        $identifier = preg_replace('/[\s-]+/', '', $identifier);
+        if (!preg_match('/^\d+$/', $identifier) || !in_array(strlen($identifier), $gtinLengths[$identifierType], true)) {
+            return '';
+        }
+    }
+
+    return '"' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",';
+}
+
 function ub_render_review_block($attributes, $block_content, $block_instance){
     require_once dirname(dirname(__DIR__)) . '/common.php';
 
@@ -110,14 +139,27 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
 
     $offers = array();
 
+    // One offer per call-to-action button. Without a button there is still an
+    // offer, otherwise price, availability, shipping and returns all vanish
+    // from the schema.
+    $offerUrls = array();
     foreach ($buttons as $button) {
-        $offer = array(
-            "@type" => "Offer",
-            "url" => esc_url($button['url']),
+        $offerUrls[] = isset($button['url']) ? $button['url'] : '';
+    }
+    if (empty($offerUrls)) {
+        $offerUrls[] = '';
+    }
+
+    foreach ($offerUrls as $offerUrl) {
+        $offer = array("@type" => "Offer");
+        if ($offerUrl !== '') {
+            $offer['url'] = esc_url($offerUrl);
+        }
+        $offer = array_merge($offer, array(
             "priceCurrency" => ub_filterJsonldString($offerCurrency),
             "price" => ub_filterJsonldString($offerPrice),
             "availability" => "https://schema.org/" . ub_filterJsonldString($offerStatus),
-        );
+        ));
         if($offerExpiry > 0){
             $offer = array_merge($offer, array('priceValidUntil'=>date("Y-m-d", $offerExpiry)));
         }
@@ -166,7 +208,7 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
             "@type": "Person",
             "name": "'. ub_filterJsonldString($authorName) .'"
         },
-        "publisher": "' . ub_filterJsonldString($reviewPublisher) . '",
+        ' . (trim($reviewPublisher) !== '' ? '"publisher": "' . ub_filterJsonldString($reviewPublisher) . '",' : '') . '
         "datePublished": "' . date("Y-m-d", $publicationDate) . '",
         "url": "' . get_permalink() . '"';
 
@@ -217,8 +259,8 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
                                 "@type": "Brand",
                                 "name": "' . ub_filterJsonldString($brand) . '"
                             },
-                            "sku": "'. ub_filterJsonldString($sku) .'",
-                            "' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",'
+                            ' . (trim($sku) !== '' ? '"sku": "' . ub_filterJsonldString($sku) . '",' : '')
+                            . ub_review_schema_identifier($identifierType, $identifier)
                             . $productReview
                             . $productAggregateRating
                             . $offerCode;

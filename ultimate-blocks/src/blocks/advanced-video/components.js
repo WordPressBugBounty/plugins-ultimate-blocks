@@ -807,10 +807,9 @@ export function AdvancedVideoBlock(props) {
 				!isEmpty(aspectRatio) && aspectRatio !== "auto"
 					? aspectRatio
 					: `${origWidth}/${origHeight}`;
-			autofitContainerStyle = Object.assign(
-				{},
-				{ aspectRatio: currentAspectRatio },
-			);
+			// The iframe carries the aspect ratio. On the container it would fix
+			// the height, and with overflow hidden cut off the channel details.
+			autofitContainerStyle = {};
 			extraEmbeds = (
 				<style>
 					{`#ub-advanced-video-${blockID}.ub-advanced-video-autofit-youtube iframe{
@@ -821,11 +820,19 @@ export function AdvancedVideoBlock(props) {
 			);
 			break;
 		case "vimeo":
-			autofitContainerStyle = Object.assign(
-				{},
-				{ padding: `${(origHeight / origWidth) * 100}% 0 0 0` },
+			// Same as YouTube, see block.php.
+			autofitContainerStyle = {};
+			extraEmbeds = (
+				<>
+					<style>
+						{`#ub-advanced-video-${blockID}.ub-advanced-video-autofit-vimeo iframe{
+							aspect-ratio: ${origWidth}/${origHeight};
+							height: auto !important;
+						}`}
+					</style>
+					<script src="https://player.vimeo.com/api/player.js" />
+				</>
 			);
-			extraEmbeds = <script src="https://player.vimeo.com/api/player.js" />;
 			break;
 		case "dailymotion":
 			autofitContainerStyle = Object.assign(
@@ -948,7 +955,8 @@ export function AdvancedVideoBlock(props) {
 			: ""
 	}`;
 	const embedContainerStyle = Object.assign(
-		autofit ? autofitContainerStyle : { width: `${width}%` },
+		// The width is a percentage, but some sources stored pixels (600).
+		autofit ? autofitContainerStyle : { width: `${Math.min(width, 100)}%` },
 		{
 			borderTop: getSingleSideBorderValue(getBorderCSS(border), "top"),
 			borderLeft: getSingleSideBorderValue(getBorderCSS(border), "left"),

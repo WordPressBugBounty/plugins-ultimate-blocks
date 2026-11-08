@@ -127,6 +127,30 @@ function ub_render_table_of_contents_block($attributes, $_, $block){
         }
     }
 
+    // "Show more": items past the limit, counted in reading order across all
+    // levels, are hidden in the markup itself so nothing jumps while the page
+    // loads. The list is built as one string, so its <li> tags are already in
+    // that order.
+    $showMoreLink = '';
+    if (!empty($attributes['enableShowMore'])) {
+        $showMoreLimit = max(1, (int) $attributes['showMoreLimit']);
+        $itemCount     = 0;
+        $listItems     = preg_replace_callback('/<li\b/', function ($match) use (&$itemCount, $showMoreLimit) {
+            $itemCount++;
+            return $itemCount > $showMoreLimit ? '<li class="ub_table-of-contents-extra-item"' : $match[0];
+        }, $listItems);
+
+        if ($itemCount > $showMoreLimit) {
+            $showMoreText = !empty($attributes['showMoreText']) ? $attributes['showMoreText'] : __('Show more', 'ultimate-blocks');
+            $showLessText = !empty($attributes['showLessText']) ? $attributes['showLessText'] : __('Show less', 'ultimate-blocks');
+            $showMoreLink = sprintf(
+                '<a class="ub_table-of-contents-show-more" role="button" tabindex="0" aria-expanded="false" data-showmoretext="%1$s" data-showlesstext="%2$s">%1$s</a>',
+                esc_attr($showMoreText),
+                esc_attr($showLessText)
+            );
+        }
+    }
+
     $targetType = '';
     if ($scrollTargetType === 'id'){
         $targetType = '#';
@@ -263,7 +287,7 @@ function ub_render_table_of_contents_block($attributes, $_, $block){
 	$listContainer = sprintf(
 		'<div class="ub_table-of-contents-extra-container" style="%6$s">
 			<div class="ub_table-of-contents-container ub_table-of-contents-%1$s-column %2$s">
-				%3$s%4$s%5$s
+				%3$s%4$s%5$s%7$s
 			</div>
 		</div>',
 		esc_attr($numColumns),
@@ -271,7 +295,8 @@ function ub_render_table_of_contents_block($attributes, $_, $block){
 		$listOpeningTag,
 		$listItems,
 		$listStyle === 'numbered' ? '</ol>' : '</ul>',
-		Ultimate_Blocks\includes\generate_css_string($list_container_styles)
+		Ultimate_Blocks\includes\generate_css_string($list_container_styles),
+		$showMoreLink
 	);
 	$sticky_data = apply_filters('ubpro_table_of_contents_sticky_data', "", $attributes);
 

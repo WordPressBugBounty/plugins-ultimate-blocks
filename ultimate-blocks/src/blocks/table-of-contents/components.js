@@ -760,6 +760,7 @@ class TableOfContents extends Component {
 								: parseList(makeHeaderArray(headers))}
 						</ul>
 					)}
+					{this.props.showMoreLink}
 				</div>
 			);
 		} else {
@@ -789,6 +790,10 @@ export const inspectorControls = (props) => {
 		showList,
 		hideOnMobile,
 		allowToCHiding,
+		enableShowMore,
+		showMoreLimit,
+		showMoreText,
+		showLessText,
 		enableSmoothScroll,
 		allowToLatin,
 		removeDiacritics,
@@ -937,6 +942,42 @@ export const inspectorControls = (props) => {
 								onChange={() => setAttributes({ hideOnMobile: !hideOnMobile })}
 							/>
 							{toggleButtonTypeControl && toggleButtonTypeControl}
+						</>
+					)}
+				</PanelBody>
+				<PanelBody title={__("Show more", "ultimate-blocks")} initialOpen={false}>
+					<ToggleControl
+						label={__("Show more link", "ultimate-blocks")}
+						help={__(
+							"Shorten long lists. The rest of the items appear when the link is clicked.",
+							"ultimate-blocks",
+						)}
+						checked={enableShowMore}
+						onChange={(enableShowMore) => setAttributes({ enableShowMore })}
+					/>
+					{enableShowMore && (
+						<>
+							<RangeControl
+								label={__("Items shown", "ultimate-blocks")}
+								value={showMoreLimit}
+								onChange={(showMoreLimit) =>
+									setAttributes({ showMoreLimit: showMoreLimit || 1 })
+								}
+								min={1}
+								max={30}
+							/>
+							<TextControl
+								label={__("Show more text", "ultimate-blocks")}
+								placeholder={__("Show more", "ultimate-blocks")}
+								value={showMoreText}
+								onChange={(showMoreText) => setAttributes({ showMoreText })}
+							/>
+							<TextControl
+								label={__("Show less text", "ultimate-blocks")}
+								placeholder={__("Show less", "ultimate-blocks")}
+								value={showLessText}
+								onChange={(showLessText) => setAttributes({ showLessText })}
+							/>
 						</>
 					)}
 				</PanelBody>
@@ -1215,6 +1256,8 @@ export const editorDisplay = (props) => {
 		listIcon,
 		toggleButtonType,
 		styleTagPro,
+		showAllItems,
+		setShowAllItems,
 	} = props;
 
 	const {
@@ -1238,7 +1281,40 @@ export const editorDisplay = (props) => {
 		hideText,
 		titleFontSize,
 		listFontSize,
+		enableShowMore,
+		showMoreLimit,
+		showMoreText,
+		showLessText,
 	} = props.attributes;
+
+	const visibleHeaderCount = (links ? JSON.parse(links) : []).filter(
+		(header) => allowedHeaders[header.level - 1] && !header.disabled,
+	).length;
+
+	const toggleShowAll = (event) => {
+		event.preventDefault();
+		setShowAllItems(!showAllItems);
+	};
+
+	const showMoreLink =
+		enableShowMore && visibleHeaderCount > showMoreLimit ? (
+			<a
+				className="ub_table-of-contents-show-more"
+				role="button"
+				tabIndex={0}
+				aria-expanded={showAllItems}
+				onClick={toggleShowAll}
+				onKeyDown={(event) => {
+					if (event.key === "Enter" || event.key === " ") {
+						toggleShowAll(event);
+					}
+				}}
+			>
+				{showAllItems
+					? showLessText || __("Show less", "ultimate-blocks")
+					: showMoreText || __("Show more", "ultimate-blocks")}
+			</a>
+		) : null;
 
 	return (
 		<>
@@ -1304,6 +1380,7 @@ export const editorDisplay = (props) => {
 						fontSize: listFontSize || undefined,
 					}}
 					toggleButtonType={toggleButtonType}
+					showMoreLink={showMoreLink}
 				/>
 			)}
 			{styleTagPro ? (

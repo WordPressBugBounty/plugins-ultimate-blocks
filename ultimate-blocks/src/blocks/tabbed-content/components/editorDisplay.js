@@ -334,6 +334,7 @@ export const TabHolder = (props) => {
 			"tabStyle",
 			"align",
 			"gap",
+			"tabButtonsGap",
 			"contentColor",
 			"contentBackground",
 			"padding",
@@ -483,6 +484,11 @@ export const TabHolder = (props) => {
 							propz.attributes.tabButtonsBorderRadius?.bottomLeft,
 						borderBottomRightRadius:
 							propz.attributes.tabButtonsBorderRadius?.bottomRight,
+						marginRight: tabVertical
+							? undefined
+							: getSpacingPresetCssVar(
+									propz.attributes.tabButtonsGap?.all,
+								),
 					})}
 					onClick={(e) => {
 						toggleTitle("tab-title", i);
@@ -647,7 +653,7 @@ export const TabHolder = (props) => {
 	const blockProps = useBlockProps({
 		className: `${className}${tabStyle === "tabs" ? "" : `-${tabStyle}`} ${className}-holder ${
 			attributes.tabVertical ? "vertical-holder" : ""
-		}`,
+		}${attributes.showBorder === false ? " ub-tabs-no-border" : ""}`,
 		style: generateStyles(styles),
 	});
 	const tabContentsStyles = generateStyles({
@@ -667,7 +673,7 @@ export const TabHolder = (props) => {
 						attributes={attributes}
 						setAttributes={setAttributes}
 						clipboard={styleClipboard}
-						blockName="Tabs"
+						blockName="Tabs (UB)"
 					/>
 					<BlockAlignmentControl
 						value={align}
@@ -717,6 +723,7 @@ export const TabHolder = (props) => {
 					ProInspectorControls,
 					showControls,
 					editorActiveTab,
+					clientId: props.clientId,
 				}}
 			/>
 		),

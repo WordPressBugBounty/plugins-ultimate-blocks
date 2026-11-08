@@ -123,7 +123,7 @@
 			active: true
 		},
 		{
-			label: "Tabs",
+			label: "Tabs (UB)",
 			name: "ub/tabbed-content",
 			active: true
 		},

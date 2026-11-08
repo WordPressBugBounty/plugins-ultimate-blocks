@@ -44,7 +44,7 @@
 
 	&:not(.wp-block-ub-tabbed-content-pills):not(
 			.wp-block-ub-tabbed-content-underline
-		) {
+		):not(.ub-tabs-no-border) {
 		.wp-block-ub-tabbed-content-tabs-content {
 			border: 1px solid lightgrey;
 		}
@@ -133,7 +133,7 @@
 	}
 	&:not(.wp-block-ub-tabbed-content-pills):not(
 			.wp-block-ub-tabbed-content-underline
-		) {
+		):not(.ub-tabs-no-border) {
 		.wp-block-ub-tabbed-content-tab-title-wrap {
 			border-right: 1px solid lightgrey;
 		}
@@ -275,6 +275,18 @@
 				display: flex;
 			}
 		}
+	}
+}
+
+// "Show Border" off: no borders on tab buttons, content or the mobile accordion.
+// The underline style's active indicator stays, it is the style itself.
+.wp-block-ub-tabbed-content-holder.ub-tabs-no-border {
+	.wp-block-ub-tabbed-content-tab-title-wrap,
+	.wp-block-ub-tabbed-content-tab-title-vertical-wrap,
+	.wp-block-ub-tabbed-content-tabs-content,
+	.wp-block-ub-tabbed-content-accordion-toggle,
+	.wp-block-ub-tabbed-content-tab-content-wrap {
+		border: none;
 	}
 }
 

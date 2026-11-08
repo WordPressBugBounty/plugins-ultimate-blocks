@@ -29,6 +29,18 @@ import {
 import { useSelect } from "@wordpress/data";
 import { generateStyles, getSpacingCss } from "../utils/styling-helpers";
 
+// block.json can only hold a fixed timestamp, so a freshly inserted timer
+// gets a real target here instead of starting out already expired.
+const DEFAULT_END_DATE = metadata.attributes.endDate.default;
+const DEFAULT_COUNTDOWN_DAYS = 7;
+
+const getDefaultEndDate = () => {
+	const target = new Date();
+	target.setDate(target.getDate() + DEFAULT_COUNTDOWN_DAYS);
+	target.setSeconds(0, 0);
+	return Math.floor(target.getTime() / 1000);
+};
+
 function CountdownMain(props) {
 	const [forceUpdate, setForceUpdate] = useState(false);
 	const { block, rootBlockClientId } = useSelect((select) => {
@@ -106,6 +118,9 @@ function CountdownMain(props) {
 		}
 		if (blockID === "") {
 			setAttributes({ blockID: block.clientId });
+		}
+		if (blockID === "" && endDate === DEFAULT_END_DATE) {
+			setAttributes({ endDate: getDefaultEndDate() });
 		}
 	}, []);
 	useEffect(() => {

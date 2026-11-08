@@ -5,13 +5,15 @@
 
 .wp-block > .ub-advanced-video-container {
 	width: initial;
-	&.ub-advanced-video-autofit-youtube {
+	// Clip the video to the border radius.
+	overflow: hidden;
+	&.ub-advanced-video-autofit-youtube,
+	&.ub-advanced-video-autofit-vimeo {
 		width: 100%;
 		> iframe {
 			width: 100%;
 		}
 	}
-	&.ub-advanced-video-autofit-vimeo,
 	&.ub-advanced-video-autofit-dailymotion {
 		position: relative;
 		> iframe {

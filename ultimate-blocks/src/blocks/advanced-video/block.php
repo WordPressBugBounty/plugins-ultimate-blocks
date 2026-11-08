@@ -54,7 +54,10 @@ function ub_render_advanced_video_block($attributes, $_, $block){
 				$video_embed_styles['--ub-advanced-video-aspect-ratio'] = $current_aspect_ratio;
 				break;
 			case 'vimeo':
-				$video_embed_styles['padding-top'] = ( $attributes['origHeight'] / $attributes['origWidth'] * 100 ) . '%';
+				// Same as YouTube: an aspect ratio on the iframe keeps the video
+				// filling the box. A padding-top percentage is measured from the
+				// width outside the border, so a border left white bars around it.
+				$video_embed_styles['--ub-advanced-video-aspect-ratio'] = $attributes['origWidth'] . '/' . $attributes['origHeight'];
 				break;
 			case 'dailymotion':
 				$video_embed_styles['padding-bottom'] = ( $attributes['origHeight'] / $attributes['origWidth'] * 100 ) . '%';
@@ -69,7 +72,8 @@ function ub_render_advanced_video_block($attributes, $_, $block){
 		$video_thumbnail_styles['aspect-ratio'] = $attributes['origWidth'] . '/' . $attributes['origHeight'];
 	}
 	if (isset($attributes['autofit']) && !$attributes['autofit']) {
-		$video_embed_styles['width'] = $attributes['width'] . '%';
+		// The width is a percentage, but some sources stored pixels (600).
+		$video_embed_styles['width'] = min( $attributes['width'], 100 ) . '%';
 	}
 
     $block_wrapper_attributes = get_block_wrapper_attributes(

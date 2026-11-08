@@ -87,6 +87,12 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
         }
     }
 
+	// Space between horizontal tab buttons. Without a value the stylesheet's
+	// 5px applies. spacing_preset_css_var() and generate_css_string() both
+	// drop "0", so an explicit 0 is written as 0px.
+	$tab_buttons_gap_value = isset( $attributes['tabButtonsGap']['all'] ) ? (string) $attributes['tabButtonsGap']['all'] : '';
+	$tab_buttons_gap       = '0' === $tab_buttons_gap_value ? '0px' : Ultimate_Blocks\includes\spacing_preset_css_var( $tab_buttons_gap_value );
+
 	foreach($tabsTitle as $key=>$title){
 		$tab_buttons_styles = array(
 			'--ub-tabbed-title-background-color' => ($tabStyle === 'underline' ? 'inherit' : ($activeTab === $key ? esc_attr($theme) : (isset($normalColor) ? esc_attr($normalColor) : 'inherit'))),
@@ -97,7 +103,8 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
 			'border-top-right-radius' => !empty( $block_attrs['tabButtonsBorderRadius']['topRight'] ) ?  esc_attr($block_attrs['tabButtonsBorderRadius']['topRight']) . ';': "",
 			'border-bottom-left-radius' => !empty( $block_attrs['tabButtonsBorderRadius']['bottomLeft'] ) ?  esc_attr($block_attrs['tabButtonsBorderRadius']['bottomLeft']) . ';': "",
 			'border-bottom-right-radius' => !empty( $block_attrs['tabButtonsBorderRadius']['bottomRight'] ) ?  esc_attr($block_attrs['tabButtonsBorderRadius']['bottomRight']) . ';': "",
-			'text-align' => isset($attributes['tabsTitleAlignment'][$key]) ? $attributes['tabsTitleAlignment'][$key] : 'left'
+			'text-align' => isset($attributes['tabsTitleAlignment'][$key]) ? $attributes['tabsTitleAlignment'][$key] : 'left',
+			'margin-right' => $tabVertical ? '' : $tab_buttons_gap,
 		);
 
 		$tabs .= sprintf(
@@ -158,7 +165,7 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
 		($tabStyle !== 'tabs' ? '-' . esc_attr($tabStyle) : ''), // 2
 		$blockName, // 3
 		($tabVertical ? ' vertical-holder' : ''), // 4
-		(isset($className) ? ' ' . esc_attr($className) : ''), // 5
+		(isset($className) ? ' ' . esc_attr($className) : '') . (false === $attributes['showBorder'] ? ' ub-tabs-no-border' : ''), // 5
 		(isset($align) ? ' align' . esc_attr($align) : ''), // 6
 		($mobileTabDisplay !== 'accordion' ? ' ' . $blockName . '-' . $mobileTabStyle . '-holder-mobile' : ''), // 7
 		($tabletTabDisplay !== 'accordion' ? ' ' . $blockName . '-' . $tabletTabStyle . '-holder-tablet' : ''), // 8

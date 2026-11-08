@@ -16,6 +16,28 @@ registerBlockType(listMetadata.name, {
 	transforms: {
 		from: [
 			{
+				// Like core/list: each selected paragraph becomes an item, and a
+				// single paragraph is split into items at its line breaks.
+				type: "block",
+				blocks: ["core/paragraph"],
+				isMultiBlock: true,
+				transform: (paragraphs) => {
+					const texts =
+						paragraphs.length === 1
+							? String(paragraphs[0].content ?? "").split(/<br\s*\/?>/i)
+							: paragraphs.map(({ content }) => String(content ?? ""));
+					const items = texts.filter((text) => text.trim() !== "");
+
+					return createBlock(
+						"ub/styled-list",
+						{},
+						(items.length ? items : [""]).map((itemText) =>
+							createBlock("ub/styled-list-item", { itemText }),
+						),
+					);
+				},
+			},
+			{
 				type: "block",
 				blocks: ["core/list"],
 				transform: (attributes, innerBlocks) => {

@@ -247,3 +247,20 @@ Array.prototype.slice.call(document.querySelectorAll(".ub_table-of-contents-cont
     }
   });
 });
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".ub_table-of-contents-show-more").forEach(function (toggle) {
+    var container = toggle.closest(".ub_table-of-contents-container");
+    var flip = function flip(event) {
+      event.preventDefault();
+      var expanded = container.classList.toggle("ub-toc-show-all");
+      toggle.setAttribute("aria-expanded", String(expanded));
+      toggle.textContent = expanded ? toggle.dataset.showlesstext : toggle.dataset.showmoretext;
+    };
+    toggle.addEventListener("click", flip);
+    toggle.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        flip(event);
+      }
+    });
+  });
+});

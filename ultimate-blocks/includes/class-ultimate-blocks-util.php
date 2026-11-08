@@ -132,7 +132,7 @@ class Ultimate_Blocks_Util {
 				'active' => true,
 			),
 			array(
-				'label'  => 'Tabs',
+				'label'  => 'Tabs (UB)',
 				'name'   => 'ub/tabbed-content-block',
 				'active' => true,
 			),

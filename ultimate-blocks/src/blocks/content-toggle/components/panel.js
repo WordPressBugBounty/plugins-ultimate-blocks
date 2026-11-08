@@ -133,7 +133,11 @@ const attributes = {
 };
 
 function ContentTogglePanel(props) {
-	const [showPanel, setPanelStatus] = useState(!props.attributes.collapsed);
+	// Mirrors block.php: a collapsed panel still starts open when it is the
+	// "Default Open" panel.
+	const [showPanel, setPanelStatus] = useState(
+		!props.attributes.collapsed || props.attributes.defaultOpen,
+	);
 	const blockProps = useBlockProps();
 
 	const styleClipboard = createStyleClipboard(
@@ -149,6 +153,7 @@ function ContentTogglePanel(props) {
 			panelTitle,
 			collapsed,
 			collapsedOnMobile,
+			defaultOpen,
 			hasFAQSchema,
 			titleTag,
 			preventCollapse,
@@ -188,8 +193,8 @@ function ContentTogglePanel(props) {
 	}, []);
 
 	useEffect(() => {
-		setPanelStatus(!collapsed);
-	}, [collapsed]);
+		setPanelStatus(!collapsed || defaultOpen);
+	}, [collapsed, defaultOpen]);
 
 	const panels = blockParent?.innerBlocks ?? [];
 

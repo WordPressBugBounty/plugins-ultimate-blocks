@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "ub/tabbed-content-block",
-	"title": "Tabs",
+	"title": "Tabs (UB)",
 	"category": "ultimateblocks",
 	"description": "Add tabbed content in your posts/pages with this block.",
 	"keywords": [
@@ -23,6 +23,12 @@
 			"default": 0
 		},
 		"gap": {
+			"type": "object",
+			"default": {
+				"all": ""
+			}
+		},
+		"tabButtonsGap": {
 			"type": "object",
 			"default": {
 				"all": ""
@@ -51,6 +57,10 @@
 		"normalTitleColor": {
 			"type": "string",
 			"default": "#000000"
+		},
+		"showBorder": {
+			"type": "boolean",
+			"default": true
 		},
 		"borderColor": {
 			"type": "string",

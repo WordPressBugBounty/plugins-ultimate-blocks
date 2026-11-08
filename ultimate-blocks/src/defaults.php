@@ -2725,6 +2725,10 @@ $defaultValues = array(
                 'type' => 'string',
                 'default' => ''
             ),
+            'showBorder' => array(
+                'type' => 'boolean',
+                'default' => true
+            ),
             'borderColor' => array(
                 'type' => 'string',
                 'default' => '#d3d3d3'
@@ -2895,6 +2899,22 @@ $defaultValues = array(
             'itemSpacing' => array(
                 'type' => 'object',
                 'default' => array()
+            ),
+            'enableShowMore' => array(
+                'type' => 'boolean',
+                'default' => false
+            ),
+            'showMoreLimit' => array(
+                'type' => 'number',
+                'default' => 5
+            ),
+            'showMoreText' => array(
+                'type' => 'string',
+                'default' => ''
+            ),
+            'showLessText' => array(
+                'type' => 'string',
+                'default' => ''
             ),
         )
     ),

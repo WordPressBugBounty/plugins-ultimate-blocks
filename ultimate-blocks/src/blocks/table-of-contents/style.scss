@@ -117,3 +117,23 @@
 	width: 100%;
 	white-space: pre;
 }
+
+/*** Show more ***/
+.ub_table-of-contents-container:not(.ub-toc-show-all) .ub_table-of-contents-extra-item {
+	display: none;
+}
+
+.ub_table-of-contents-show-more {
+	display: block;
+	//under all the columns of a multi-column list, not inside the last one
+	column-span: all;
+	//only the text is clickable, not the whole line
+	width: fit-content;
+	margin-top: 8px;
+	cursor: pointer;
+
+	//no focus ring from a mouse click, keyboard users still get one
+	&:focus:not(:focus-visible) {
+		outline: none;
+	}
+}

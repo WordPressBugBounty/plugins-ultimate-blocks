@@ -21,6 +21,7 @@ const {
 	TextControl,
 	ButtonGroup,
 	Button,
+	__experimentalToolsPanelItem: ToolsPanelItem,
 } = wp.components;
 
 /**
@@ -50,6 +51,7 @@ class Inspector extends Component {
 			tabsAnchor,
 			useAnchors,
 			tabStyle,
+			showBorder,
 		} = attributes;
 
 		return (
@@ -360,6 +362,14 @@ class Inspector extends Component {
 							attrKey="gap"
 							label={__("Gap", "ultimate-blocks")}
 						/>
+						{!tabVertical && (
+							<SpacingControl
+								showByDefault
+								sides={["all"]}
+								attrKey="tabButtonsGap"
+								label={__("Tab Spacing", "ultimate-blocks")}
+							/>
+						)}
 					</PanelBody>
 				</InspectorControls>
 				<InspectorControls group="color">
@@ -396,6 +406,21 @@ class Inspector extends Component {
 					/>
 				</InspectorControls>
 				<InspectorControls group="border">
+					<ToolsPanelItem
+						panelId={this.props.clientId}
+						isShownByDefault
+						label={__("Show Border", "ultimate-blocks")}
+						resetAllFilter={() => setAttributes({ showBorder: true })}
+						hasValue={() => showBorder === false}
+						onDeselect={() => setAttributes({ showBorder: true })}
+					>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={__("Show Border", "ultimate-blocks")}
+							checked={showBorder !== false}
+							onChange={(value) => setAttributes({ showBorder: value })}
+						/>
+					</ToolsPanelItem>
 					<BorderControl
 						isShowBorder={false}
 						showDefaultBorderRadius
