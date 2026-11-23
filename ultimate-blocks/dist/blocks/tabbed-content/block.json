@@ -117,6 +117,44 @@
     "tabContentsBorderRadius": {
       "type": "object",
       "default": {}
+    },
+    "tabTitleFontSize": {
+      "type": "string",
+      "default": ""
+    },
+    "tabTitleFontFamily": {
+      "type": "string",
+      "default": ""
+    },
+    "tabTitleFontAppearance": {
+      "type": "object",
+      "default": {
+        "fontStyle": "",
+        "fontWeight": ""
+      }
+    },
+    "contentFontSize": {
+      "type": "string",
+      "default": ""
+    },
+    "contentFontFamily": {
+      "type": "string",
+      "default": ""
+    },
+    "contentFontAppearance": {
+      "type": "object",
+      "default": {
+        "fontStyle": "",
+        "fontWeight": ""
+      }
+    },
+    "tabButtonsPadding": {
+      "type": "object",
+      "default": {}
+    },
+    "tabListLabel": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

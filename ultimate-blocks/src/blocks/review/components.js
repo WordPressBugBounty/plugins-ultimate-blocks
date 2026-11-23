@@ -6,6 +6,7 @@ import {
 	InnerBlocks,
 } from "@wordpress/block-editor";
 import { Button, Dashicon } from "@wordpress/components";
+import { Icon, plusCircle, trash } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 
 import { removeIcon } from "./icon";
@@ -175,6 +176,106 @@ export function Stars(props) {
 	);
 }
 
+/**
+ * Highest value a rating can have in the chosen format.
+ *
+ * @param {string} valueType  star, percent or point
+ * @param {number} starCount  number of stars
+ * @param {number} pointScale top of the point scale, 5 or 10
+ * @return {number} highest value
+ */
+export function getRatingMax(valueType, starCount, pointScale) {
+	if (valueType === "percent") {
+		return 100;
+	}
+
+	return valueType === "point" ? pointScale || 10 : starCount;
+}
+
+/**
+ * Smallest step between two ratings in the chosen format.
+ *
+ * @param {string} valueType star, percent or point
+ * @return {number} step
+ */
+export function getRatingStep(valueType) {
+	if (valueType === "percent") {
+		return 1;
+	}
+
+	return valueType === "point" ? 0.5 : 0.1;
+}
+
+/**
+ * Carry the ratings over to another scale, so 4 of 5 stars becomes 80% or
+ * 8 of 10 points.
+ *
+ * @param {Array}  parts  rated features
+ * @param {number} oldMax highest value of the current scale
+ * @param {number} newMax highest value of the new scale
+ * @param {number} step   step of the new scale
+ * @return {Array} features with converted values
+ */
+export function rescaleParts(parts, oldMax, newMax, step) {
+	return parts.map((part) => ({
+		...part,
+		//toFixed drops the float noise of steps like 0.1
+		value: parseFloat(
+			(Math.round(((part.value / oldMax) * newMax) / step) * step).toFixed(2),
+		),
+	}));
+}
+
+/**
+ * The offer price written for people, like $136. Mirrors
+ * ub_review_format_price() in block.php.
+ *
+ * @param {number} price    offer price
+ * @param {string} currency ISO currency code
+ * @return {string} price
+ */
+export function formatPrice(price, currency) {
+	const symbols = {
+		USD: "$",
+		EUR: "€",
+		GBP: "£",
+		JPY: "¥",
+		INR: "₹",
+		AUD: "A$",
+		CAD: "C$",
+	};
+	const amount = Number.isInteger(Number(price))
+		? Number(price).toLocaleString("en-US")
+		: Number(price).toLocaleString("en-US", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			});
+
+	return symbols[currency] ? `${symbols[currency]}${amount}` : `${amount} ${currency}`;
+}
+
+//feature names whose Enter is already stopped
+const enterStopped = new WeakSet();
+
+/**
+ * Stops Enter in a feature name. Without onSplit WordPress takes Enter in a
+ * RichText as "add a block after this one" and puts a paragraph under the
+ * review; a feature name has never done anything on Enter since WP 6.4.
+ *
+ * @param {HTMLElement|null} node feature name editable.
+ */
+const stopFeatureEnter = (node) => {
+	if (!node || enterStopped.has(node)) {
+		return;
+	}
+	enterStopped.add(node);
+	node.addEventListener("beforeinput", (event) => {
+		if (event.inputType === "insertParagraph") {
+			event.preventDefault();
+		}
+	});
+};
+
 export function ReviewBody(props) {
 	const {
 		isSelected,
@@ -195,6 +296,11 @@ export function ReviewBody(props) {
 		summaryDescription,
 		valueType,
 		starCount,
+		pointScale,
+		reviewLayout,
+		showPriceBadge,
+		offerPrice,
+		offerCurrency,
 		callToActionText,
 		callToActionURL,
 		ctaAlignment,
@@ -294,9 +400,122 @@ export function ReviewBody(props) {
 	};
 
 	const has_button_block = block.innerBlocks.length > 0;
+
+	const isCardLayout = reviewLayout === "card";
+	const ratingMax = getRatingMax(valueType, starCount, pointScale);
+
+	//the card writes every rating as a bar, a click on it sets the value at
+	//that spot of the scale
+	const setValueFromBar = (bar, mouseX, i, j) => {
+		const step = getRatingStep(valueType);
+		const ratio = Math.min(1, Math.max(0, (mouseX - bar.x) / bar.width));
+		const newValue = parseFloat(
+			(Math.round((ratio * ratingMax) / step) * step).toFixed(2),
+		);
+		const newArray = [
+			...parts.slice(0, i),
+			{ label: j.label, value: newValue },
+			...parts.slice(i + 1),
+		];
+		setAttributes({ parts: newArray });
+		setActiveStarIndex(i);
+		setAverage(
+			newArray.map((i) => i.value).reduce((total, v) => total + v) /
+				newArray.length,
+		);
+	};
+
+	const renderCardEntry = (j, i) => (
+		<div className="ub_review_score_entry" key={i}>
+			<RichText
+				tagName="span"
+				className="ub_review_score_label"
+				placeholder={__("Feature name")}
+				value={j.label}
+				onChange={(text) =>
+					setAttributes({
+						parts: [
+							...parts.slice(0, i),
+							{ label: text, value: j.value },
+							...parts.slice(i + 1),
+						],
+					})
+				}
+				unstableOnFocus={() => {
+					setEditable("");
+					setActiveStarIndex(i);
+				}}
+			/>
+			<span
+				className="ub_review_score_bar"
+				style={{ backgroundColor: percentBarColor || "#e8e8e8" }}
+				onClick={(e) =>
+					setValueFromBar(e.currentTarget.getBoundingClientRect(), e.clientX, i, j)
+				}
+			>
+				<span
+					className="ub_review_score_fill"
+					style={{
+						width: `${Math.min(100, Math.max(0, (j.value / ratingMax) * 100))}%`,
+						backgroundColor: activePercentBarColor || "#3e8e41",
+					}}
+				>
+					<span className="ub_review_score_value">
+						{valueType === "percent" ? `${j.value}%` : j.value}
+					</span>
+				</span>
+			</span>
+			{parts.length > 1 && (
+				<span
+					className="ub_review_remove_entry"
+					role="button"
+					tabIndex={0}
+					title={__("Remove this feature")}
+					aria-label={__("Remove this feature")}
+					onClick={() => {
+						setEditable("");
+						const newParts = parts
+							.slice(0, i)
+							.concat(parts.slice(i + 1, parts.length));
+						setAttributes({ parts: newParts });
+						setAverage(
+							newParts.map((i) => i.value).reduce((total, v) => total + v) /
+								newParts.length,
+						);
+						if (i <= activeStarIndex) {
+							setActiveStarIndex(activeStarIndex - 1);
+						}
+					}}
+				>
+					<Icon icon={trash} size={18} />
+				</span>
+			)}
+		</div>
+	);
+
+	const addEntryButton = (
+		//An SVG, not a dashicon: the dashicons font is not loaded in the
+		//iframed editor canvas, which left this button empty and invisible.
+		<div
+			title={__("Insert new review entry")}
+			aria-label={__("Insert new review entry")}
+			role="button"
+			tabIndex={0}
+			onClick={() => {
+				setAttributes({
+					parts: [...parts, { label: "", value: 0 }],
+				});
+				setAverage(average / (parts.length + 1));
+			}}
+			className="ub_review_add_entry"
+		>
+			<Icon icon={plusCircle} size={24} />
+		</div>
+	);
+
 	return (
 		<div
-			className="ub_review_block"
+			className={`ub_review_block${isCardLayout ? " ub_review_layout_card" : ""}`}
 			style={generateStyles(styles)}
 			ref={wrapperRef}
 		>
@@ -308,7 +527,13 @@ export function ReviewBody(props) {
 				onChange={(text) => setAttributes({ itemName: text })}
 				unstableOnFocus={() => setEditable("reviewTitle")}
 			/>
+			{isCardLayout && showPriceBadge && offerPrice > 0 && (
+				<span className="ub_review_price_badge">
+					{formatPrice(offerPrice, offerCurrency)}
+				</span>
+			)}
 			<RichText
+				className="ub_review_author_name"
 				placeholder={__("Review Author name")}
 				value={authorName}
 				style={{ textAlign: authorAlign }}
@@ -381,7 +606,13 @@ export function ReviewBody(props) {
 					)}
 				</div>
 			)}
-			{parts.map((j, i) => (
+			{isCardLayout && (
+				<div className="ub_review_card_bars">
+					{parts.map(renderCardEntry)}
+					{addEntryButton}
+				</div>
+			)}
+			{!isCardLayout && parts.map((j, i) => (
 				<div
 					className={`ub_review_${
 						valueType === "percent" ? "percentage_" : ""
@@ -404,7 +635,10 @@ export function ReviewBody(props) {
 							setEditable("");
 							setActiveStarIndex(i);
 						}}
-						onSplit={(label) => label}
+						//the onSplit prop of RichText is deprecated since WP 6.4 (console: "wp.blockEditor.RichText onSplit prop is deprecated"), and WordPress has not called it since then;
+						//Enter adds nothing to a feature name, as it already did since then
+						disableLineBreaks
+						ref={stopFeatureEnter}
 						onReplace={(label) => {
 							setAttributes({
 								parts: [
@@ -457,8 +691,12 @@ export function ReviewBody(props) {
 						}}
 					>
 						{parts.length > 1 && (
-							<div
-								className="dashicons dashicons-trash"
+							<span
+								className="ub_review_remove_entry"
+								role="button"
+								tabIndex={0}
+								title={__("Remove this feature")}
+								aria-label={__("Remove this feature")}
 								onClick={() => {
 									setEditable("");
 									const newParts = parts
@@ -476,7 +714,9 @@ export function ReviewBody(props) {
 										setActiveStarIndex(activeStarIndex - 1);
 									}
 								}}
-							/>
+							>
+								<Icon icon={trash} size={20} />
+							</span>
 						)}
 						{valueType === "star" ? (
 							<Stars
@@ -503,6 +743,40 @@ export function ReviewBody(props) {
 								selectedStarColor={selectedStarColor}
 								starOutlineColor={starOutlineColor}
 							/>
+						) : valueType === "point" ? (
+							<span className="ub_review_points">
+								<input
+									type="number"
+									className="ub_review_points_value"
+									aria-label={__("Points", "ultimate-blocks")}
+									min={0}
+									max={pointScale}
+									step={0.5}
+									value={j.value}
+									onFocus={() => {
+										setEditable("");
+										setActiveStarIndex(i);
+									}}
+									onChange={(e) => {
+										const newValue = Math.min(
+											pointScale,
+											Math.max(0, parseFloat(e.target.value) || 0),
+										);
+										const newArray = [
+											...parts.slice(0, i),
+											{ label: j.label, value: newValue },
+											...parts.slice(i + 1),
+										];
+										setAttributes({ parts: newArray });
+										setAverage(
+											newArray
+												.map((i) => i.value)
+												.reduce((total, v) => total + v) / newArray.length,
+										);
+									}}
+								/>
+								<span className="ub_review_points_scale">/{pointScale}</span>
+							</span>
 						) : (
 							<div className="ub_review_percentage">
 								<svg
@@ -553,16 +827,7 @@ export function ReviewBody(props) {
 					</div>
 				</div>
 			))}
-			<div
-				title={__("Insert new review entry")}
-				onClick={() => {
-					setAttributes({
-						parts: [...parts, { label: "", value: 0 }],
-					});
-					setAverage(average / (parts.length + 1));
-				}}
-				className="ub_review_add_entry dashicons dashicons-plus-alt"
-			/>
+			{!isCardLayout && addEntryButton}
 			<div className="ub_review_summary">
 				{useSummary && (
 					<RichText
@@ -587,6 +852,9 @@ export function ReviewBody(props) {
 						<span className="ub_review_rating">
 							{Math.round(average * 10) / 10}
 							{valueType === "percent" ? "%" : ""}
+							{valueType === "point" && (
+								<span className="ub_review_points_scale">/{pointScale}</span>
+							)}
 						</span>
 						{valueType === "star" && (
 							<Stars

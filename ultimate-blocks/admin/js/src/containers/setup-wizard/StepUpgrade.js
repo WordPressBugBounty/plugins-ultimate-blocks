@@ -24,23 +24,27 @@ export default function StepUpgrade() {
 							<img src={p.logo} alt={p.name} />
 						</div>
 						<strong>{p.name}</strong>
-						<span>Unlimited Sites</span>
+						<span>{p.note || 'Unlimited Sites'}</span>
 						<p>{p.tagline}</p>
 					</div>
 				))}
+			</div>
 
-				<div className="ub-wiz-upgrade-price-card">
+			<div className="ub-wiz-upgrade-price-card">
+				<div className="ub-wiz-upgrade-price-card__main">
 					<div className="ub-wiz-upgrade-price-card__label">
 						Special Discounted Price
 					</div>
 					<div className="ub-wiz-upgrade-price-card__price">
-						$299
+						$499
 					</div>
+				</div>
+				<div className="ub-wiz-upgrade-price-card__compare">
 					<div className="ub-wiz-upgrade-price-card__regular">
-						Regular Price: $896
+						Regular Price: <s>$896</s>
 					</div>
 					<div className="ub-wiz-upgrade-price-card__saving">
-						(You Save 67%)
+						You Save 44%
 					</div>
 				</div>
 			</div>

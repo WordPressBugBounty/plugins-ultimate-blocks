@@ -22,7 +22,7 @@
  */
 class Ultimate_Blocks_Constants {
 
-	const PLUGIN_VERSION = '3.6.2';
+	const PLUGIN_VERSION = '3.7.0';
 
 	const PLUGIN_NAME = 'ultimate-blocks';
 
@@ -45,12 +45,17 @@ class Ultimate_Blocks_Constants {
 	}
 
 	/**
-	 * Get Plugin URL
+	 * Get Plugin Path
+	 *
+	 * Built from this file's location, not the plugin name, so the plugin still
+	 * loads when its folder is not called ultimate-blocks (for example a zip
+	 * without a top level folder, which WordPress installs under the uploaded
+	 * file's name).
 	 *
 	 * @return string
 	 */
 	public static function plugin_path() {
-		return WP_PLUGIN_DIR . '/' . self::plugin_name() . '/';
+		return plugin_dir_path( __DIR__ );
 	}
 
 	/**

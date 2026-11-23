@@ -1,0 +1,234 @@
+// The after image sets the size, the before image lies on top of it and is
+// cut at the slider position with a clip path. The block writes the position,
+// sizes and colors as inline styles on each part, these are the defaults.
+// The handle styles are block styles.
+.ub-image-comparison {
+	position: relative;
+	overflow: hidden;
+	box-sizing: border-box;
+
+	.ub-image-comparison__frame {
+		position: relative;
+		touch-action: pan-y;
+		user-select: none;
+		-webkit-user-select: none;
+	}
+
+	&.is-vertical .ub-image-comparison__frame {
+		touch-action: pan-x;
+	}
+
+	&[data-move="drag"] .ub-image-comparison__frame {
+		cursor: ew-resize;
+	}
+
+	&.is-vertical[data-move="drag"] .ub-image-comparison__frame {
+		cursor: ns-resize;
+	}
+
+	&[data-move="click"] .ub-image-comparison__frame {
+		cursor: pointer;
+	}
+
+	.ub-image-comparison__image {
+		display: block;
+		width: 100%;
+		max-width: none;
+		height: auto;
+		margin: 0;
+		pointer-events: none;
+	}
+
+	.ub-image-comparison__before {
+		position: absolute;
+		inset: 0;
+		clip-path: inset(0 50% 0 0);
+
+		.ub-image-comparison__image {
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&.is-vertical .ub-image-comparison__before {
+		clip-path: inset(0 0 50% 0);
+	}
+
+	// darkens both images on hover, under the labels and the handle
+	&.has-overlay .ub-image-comparison__frame::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: rgb(0 0 0 / 0);
+		transition: background 0.3s;
+		pointer-events: none;
+	}
+
+	&.has-overlay:hover .ub-image-comparison__frame::after {
+		background: rgb(0 0 0 / 0.3);
+	}
+
+	.ub-image-comparison__label {
+		position: absolute;
+		z-index: 1;
+		padding: 0.35em 0.75em;
+		border-radius: 4px;
+		background: rgb(0 0 0 / 0.55);
+		color: #fff;
+		font-size: 0.8125em;
+		font-weight: 600;
+		line-height: 1.4;
+		pointer-events: none;
+		transition: opacity 0.3s;
+	}
+
+	// horizontal: before on the left, after on the right, the position is vertical
+	&.is-horizontal {
+		.ub-image-comparison__label.is-before {
+			left: 1em;
+		}
+
+		.ub-image-comparison__label.is-after {
+			right: 1em;
+		}
+
+		&.has-labels-start .ub-image-comparison__label {
+			top: 1em;
+		}
+
+		&.has-labels-center .ub-image-comparison__label {
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+		&.has-labels-end .ub-image-comparison__label {
+			bottom: 1em;
+		}
+	}
+
+	// vertical: before on top, after at the bottom, the position is horizontal
+	&.is-vertical {
+		.ub-image-comparison__label.is-before {
+			top: 1em;
+		}
+
+		.ub-image-comparison__label.is-after {
+			bottom: 1em;
+		}
+
+		&.has-labels-start .ub-image-comparison__label {
+			left: 1em;
+		}
+
+		&.has-labels-center .ub-image-comparison__label {
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		&.has-labels-end .ub-image-comparison__label {
+			right: 1em;
+		}
+	}
+
+	&.has-labels-on-hover .ub-image-comparison__label {
+		opacity: 0;
+	}
+
+	&.has-labels-on-hover:hover .ub-image-comparison__label,
+	&.has-labels-on-hover:focus-within .ub-image-comparison__label {
+		opacity: 1;
+	}
+
+	.ub-image-comparison__divider {
+		position: absolute;
+		z-index: 2;
+		top: 0;
+		bottom: 0;
+		left: 50%;
+		width: 3px;
+		background: #fff;
+		transform: translateX(-50%);
+		pointer-events: none;
+	}
+
+	&.is-vertical .ub-image-comparison__divider {
+		top: 50%;
+		right: 0;
+		bottom: auto;
+		left: 0;
+		width: auto;
+		height: 3px;
+		transform: translateY(-50%);
+	}
+
+	.ub-image-comparison__handle {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border: 3px solid #fff;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.9);
+		box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+		color: #1e1e1e;
+		transform: translate(-50%, -50%);
+		box-sizing: border-box;
+		pointer-events: auto;
+		cursor: inherit;
+
+		svg {
+			width: 60%;
+			height: 60%;
+			fill: currentColor;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+			outline-offset: 2px;
+		}
+	}
+
+	&.is-vertical .ub-image-comparison__handle svg {
+		transform: rotate(90deg);
+	}
+
+	&.is-style-square .ub-image-comparison__handle {
+		border-radius: 4px;
+	}
+
+	// only the line shows, the handle stays as a thin hit area, sized inline
+	&.is-style-line .ub-image-comparison__handle {
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+
+		svg {
+			display: none;
+		}
+	}
+
+	&.is-animating {
+		.ub-image-comparison__before {
+			transition: clip-path 0.3s ease;
+		}
+
+		.ub-image-comparison__divider {
+			transition:
+				left 0.3s ease,
+				top 0.3s ease;
+		}
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ub-image-comparison.is-animating {
+		.ub-image-comparison__before,
+		.ub-image-comparison__divider {
+			transition: none;
+		}
+	}
+}

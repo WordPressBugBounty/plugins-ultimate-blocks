@@ -45,5 +45,8 @@ import "./blocks/icon-inner/block";
 import "./blocks/icon/block";
 import "./blocks/counter/block";
 import "./blocks/image/block";
+import "./blocks/author-bio/block";
+import "./blocks/image-comparison/block";
+import "./blocks/pro-block-upsell/block";
 
 import "./extensions";

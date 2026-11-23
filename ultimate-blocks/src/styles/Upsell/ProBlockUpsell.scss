@@ -1,0 +1,54 @@
+// pro only blocks in the free inserter, see blocks/pro-block-upsell
+@import "../base/__colors.scss";
+
+%ub-pro-badge {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 1px 5px;
+	border-radius: 3px;
+	background: $plugin-red;
+	color: $white;
+	font-size: 9px;
+	font-weight: 600;
+	line-height: 1.5;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	vertical-align: middle;
+}
+
+.block-editor-block-types-list__item[class*="editor-block-list-item-ub-pro-upsell-"]
+	.block-editor-block-types-list__item-title::after {
+	@extend %ub-pro-badge;
+	content: "Pro";
+}
+
+.ub-pro-block-upsell {
+	.ub-pro-block-upsell__badge {
+		@extend %ub-pro-badge;
+	}
+
+	.ub-pro-block-upsell__icon {
+		display: inline-flex;
+		margin-right: 8px;
+	}
+
+	.components-placeholder__fieldset {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.ub-pro-block-upsell__screenshot {
+		display: block;
+		max-width: 100%;
+		max-height: 320px;
+		border: 1px solid $gray-200;
+		border-radius: 4px;
+	}
+
+	.ub-pro-block-upsell__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+}

@@ -1,0 +1,287 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ub/author-bio",
+	"title": "Author Bio",
+	"category": "ultimateblocks",
+	"description": "Show who wrote the post with an avatar, name, role, bio, social links and a link to all their posts.",
+	"keywords": [
+		"author",
+		"bio",
+		"about",
+		"profile",
+		"byline"
+	],
+	"textdomain": "ultimate-blocks",
+	"usesContext": [
+		"postId",
+		"postType"
+	],
+	"attributes": {
+		"source": {
+			"type": "string",
+			"default": "author"
+		},
+		"customName": {
+			"type": "string",
+			"default": ""
+		},
+		"customRole": {
+			"type": "string",
+			"default": ""
+		},
+		"customBio": {
+			"type": "string",
+			"default": ""
+		},
+		"customAvatarId": {
+			"type": "number",
+			"default": 0
+		},
+		"customAvatarUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"customUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"customSocials": {
+			"type": "object",
+			"default": {}
+		},
+		"showHeading": {
+			"type": "boolean",
+			"default": true
+		},
+		"headingText": {
+			"type": "string",
+			"default": "About the Author"
+		},
+		"headingLevel": {
+			"type": "string",
+			"default": "h3"
+		},
+		"showAvatar": {
+			"type": "boolean",
+			"default": true
+		},
+		"avatarSize": {
+			"type": "number",
+			"default": 96
+		},
+		"avatarShape": {
+			"type": "string",
+			"default": "circle"
+		},
+		"avatarInitials": {
+			"type": "boolean",
+			"default": true
+		},
+		"showRole": {
+			"type": "boolean",
+			"default": true
+		},
+		"showBio": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSocials": {
+			"type": "boolean",
+			"default": true
+		},
+		"socialSize": {
+			"type": "number",
+			"default": 20
+		},
+		"showPostCount": {
+			"type": "boolean",
+			"default": true
+		},
+		"showPostsLink": {
+			"type": "boolean",
+			"default": true
+		},
+		"postsLinkText": {
+			"type": "string",
+			"default": "View all posts"
+		},
+		"showLatestPosts": {
+			"type": "boolean",
+			"default": false
+		},
+		"latestPostsTitle": {
+			"type": "string",
+			"default": "Latest Posts"
+		},
+		"latestPostsCount": {
+			"type": "number",
+			"default": 3
+		},
+		"showLatestPostsDate": {
+			"type": "boolean",
+			"default": true
+		},
+		"nameLink": {
+			"type": "string",
+			"default": "archive"
+		},
+		"linkNewTab": {
+			"type": "boolean",
+			"default": false
+		},
+		"linkNoFollow": {
+			"type": "boolean",
+			"default": false
+		},
+		"headingColor": {
+			"type": "string",
+			"default": ""
+		},
+		"nameColor": {
+			"type": "string",
+			"default": ""
+		},
+		"roleColor": {
+			"type": "string",
+			"default": ""
+		},
+		"socialColor": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonTextColor": {
+			"type": "string",
+			"default": ""
+		},
+		"backgroundColor": {
+			"type": "string",
+			"default": ""
+		},
+		"backgroundGradient": {
+			"type": "string",
+			"default": ""
+		},
+		"bioColor": {
+			"type": "string",
+			"default": ""
+		},
+		"latestPostsColor": {
+			"type": "string",
+			"default": ""
+		},
+		"socialHoverColor": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonBackgroundColor": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonBackgroundGradient": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonHoverTextColor": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonHoverBackgroundColor": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonHoverBackgroundGradient": {
+			"type": "string",
+			"default": ""
+		},
+		"headingFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"nameFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"roleFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"bioFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"latestPostsFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"headingFontAppearance": {
+			"type": "object",
+			"default": {}
+		},
+		"nameFontAppearance": {
+			"type": "object",
+			"default": {}
+		},
+		"buttonFontAppearance": {
+			"type": "object",
+			"default": {}
+		},
+		"padding": {
+			"type": "object",
+			"default": {}
+		},
+		"margin": {
+			"type": "object",
+			"default": {}
+		},
+		"gap": {
+			"type": "object",
+			"default": {}
+		},
+		"buttonPadding": {
+			"type": "object",
+			"default": {}
+		},
+		"border": {
+			"type": "object",
+			"default": {}
+		},
+		"borderRadius": {
+			"type": "object",
+			"default": {}
+		},
+		"buttonBorderRadius": {
+			"type": "object",
+			"default": {}
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		]
+	},
+	"styles": [
+		{
+			"name": "side",
+			"label": "Side",
+			"isDefault": true
+		},
+		{
+			"name": "centered",
+			"label": "Centered"
+		},
+		{
+			"name": "card",
+			"label": "Card"
+		}
+	],
+	"editorStyle": "ultimate_blocks-cgb-block-editor-css",
+	"style": "ultimate_blocks-cgb-style-css"
+}

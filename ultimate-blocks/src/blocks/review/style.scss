@@ -169,3 +169,220 @@
 }
 
 @import "responsive";
+
+/*** Point ratings ***/
+//the score with the top of the scale beside it, 8/10
+.ub_review_points {
+	margin-left: auto;
+	white-space: nowrap;
+	font-size: 1.15em;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.ub_review_points_scale {
+	margin-left: 2px;
+	font-size: 0.7em;
+	font-weight: 400;
+	opacity: 0.6;
+}
+
+.ub_review_rating .ub_review_points_scale {
+	font-size: 0.5em;
+}
+
+//in the editor the score is typed in place
+input.ub_review_points_value {
+	//as wide as the number, so the scale sits right beside it
+	width: 3em;
+	field-sizing: content;
+	min-width: 1.5ch;
+	padding: 0 2px;
+	-moz-appearance: textfield;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	background: transparent;
+	font: inherit;
+	text-align: right;
+
+	&:hover,
+	&:focus {
+		border-color: #949494;
+	}
+
+	&::-webkit-inner-spin-button,
+	&::-webkit-outer-spin-button {
+		margin: 0;
+		-webkit-appearance: none;
+	}
+}
+
+/*** Product card layout ***/
+//the same markup as the classic review, laid out on a grid: the wrappers of
+//the description and the summary step aside (display: contents) so the image,
+//the average score and the call to action can take their own places
+.ub_review_block.ub_review_layout_card {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr);
+	grid-template-areas:
+		"title title price"
+		"author author author"
+		"image score bars"
+		"desc desc desc";
+	column-gap: 28px;
+	align-items: center;
+
+	> *,
+	.ub_review_summary > *,
+	.ub_review_overall_value > * {
+		grid-column: 1 / -1;
+	}
+
+	.ub_review_description_container,
+	.ub_review_summary,
+	.ub_review_overall_value {
+		display: contents;
+	}
+
+	.ub_review_item_name {
+		grid-area: title;
+		margin: 0;
+	}
+
+	.ub_review_price_badge {
+		grid-area: price;
+		justify-self: end;
+		padding: 4px 12px;
+		border-radius: 4px;
+		background-color: #555555;
+		color: #ffffff;
+		font-size: 20px;
+		font-weight: 700;
+		line-height: 1.4;
+		white-space: nowrap;
+	}
+
+	.ub_review_author_name {
+		grid-area: author;
+		margin: 4px 0 0;
+	}
+
+	.ub_review_image,
+	.ub_review_image_container,
+	.ub_review_upload_button {
+		grid-area: image;
+		margin: 20px 0;
+		float: none;
+	}
+
+	img.ub_review_image,
+	.ub_review_image_container img {
+		padding: 8px;
+		border: 1px solid #e6e6e6;
+		border-radius: 8px;
+		background-color: #ffffff;
+	}
+
+	.ub_review_description {
+		grid-area: desc;
+	}
+
+	.ub_review_average {
+		grid-area: score;
+		align-items: center;
+		text-align: center;
+	}
+
+	.ub_review_rating {
+		text-align: center;
+		font-size: 48px;
+		font-weight: 700;
+		line-height: 1.1;
+	}
+
+	.ub_review_average_stars {
+		margin: 0;
+		height: auto;
+		line-height: 1;
+	}
+
+	.ub_review_card_bars {
+		grid-area: bars;
+		margin: 20px 0;
+	}
+
+	.ub_review_summary_title {
+		margin-top: 16px;
+		padding-top: 16px;
+		border-top: 1px solid #e9e9e9;
+	}
+
+	//the call to action takes the whole width of the card
+	.ub_review_cta_panel {
+		margin-top: 20px;
+	}
+
+	.ub_review_cta_main {
+		display: block;
+
+		.ub-button-container,
+		.ub-button-container > a,
+		.ub-button-block-main {
+			width: 100%;
+		}
+
+		.ub-button-content-holder {
+			justify-content: center;
+		}
+	}
+}
+
+//one rated feature: its name, then a bar with the score written inside
+.ub_review_score_entry {
+	display: grid;
+	grid-template-columns: minmax(0, 40%) minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 12px;
+	padding: 4px 0;
+}
+
+.ub_review_score_label {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-align: right;
+	text-transform: uppercase;
+}
+
+.ub_review_score_bar {
+	display: block;
+	height: 22px;
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.ub_review_score_fill {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	box-sizing: border-box;
+	height: 100%;
+	min-width: 2.6em;
+	padding-right: 6px;
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+//phones: image and score side by side, the bars below them
+@media (max-width: 699px) {
+	.ub_review_block.ub_review_layout_card {
+		grid-template-columns: auto minmax(0, 1fr);
+		grid-template-areas:
+			"title price"
+			"author author"
+			"image score"
+			"bars bars"
+			"desc desc";
+	}
+}

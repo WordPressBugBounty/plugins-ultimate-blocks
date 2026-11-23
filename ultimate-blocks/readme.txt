@@ -3,7 +3,7 @@ Contributors: dotcamp, ultimateblocks, imtiazrayhan, istiakrayhan, erdembircan, 
 Tags: blocks, gutenberg blocks, gutenberg, block editor, free
 Requires at least: 5.8
 Tested up to: 7.1
-Stable tag: 3.6.2
+Stable tag: 3.7.0
 Requires PHP: 7.2
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -149,6 +149,37 @@ That's it. You're done!
 3. Tabbed Content Block.
 
 == Changelog ==
+
+= 3.7.0 =
+
+* NEW: Author Bio Block - Shows the post author or a custom person with a photo, job title, bio and social links in Side, Centered and Card layouts, with an optional list of the author's latest posts.
+* NEW: Image Comparison Block - Compares a before and an after image with a handle that moves on drag, hover or click, horizontally or vertically.
+* NEW: Review Block - Added a Product Card layout with a price badge and a full width call-to-action button.
+* NEW: Review Block - Ratings can now be shown as points out of 5 or 10.
+* NEW: Social Share Block - Added a "Preferred source on Google" button that lets readers add the site as a preferred source.
+* NEW: Tabs Block - Added typography settings for tab titles and content, tab padding, and an accessible label for the tab list.
+* NEW: Icon Block - Added 18 more icons, including Threads, WhatsApp and X.
+* NEW: Block Inserter - Pro blocks now show in the inserter of the free plugin with a PRO badge, a preview and an upgrade link.
+* UPDATE: Tabs Block - Colors are now grouped into Normal and Active tabs.
+* UPDATE: Accordions Block - Clearer settings, with an Initial state option, a Toggle Icon choice and grouped dimension settings.
+* UPDATE: Setup Wizard - Added Summarize with AI to the Pro blocks, Productberg to the bundle, and the updated bundle price.
+* FIX: Settings Page - Pro block names no longer show the "PRO" label twice.
+* FIX: Review Block - The add and remove feature buttons no longer disappear in the editor.
+* FIX: Accordions Block - The title link color now shows in the editor.
+* FIX: Video Block - YouTube videos now loop, and Vimeo videos now begin at their start time.
+* FIX: Styled List Block - Pressing Enter at the end of an item now starts an empty item instead of copying its text, and split items no longer share their styles.
+* FIX: Custom CSS - The CSS editor no longer logs an error in the browser console, and now marks mistakes in the CSS.
+* FIX: Block Editor - Replaced block settings controls that WordPress has deprecated or is removing, such as HeightControl, Tip and ButtonGroup, which clears their warnings from the browser console.
+* FIX: Block Editor - Block editor styles now load into the editor iframe the way WordPress expects, without console warnings.
+* FIX: Fixed a PHP notice during plugin updates.
+* PRO: NEW: Stacked Cards Block - Cards that stack on top of each other as the page scrolls, or a deck of cards to go through with a swipe, the arrows, the keyboard or autoplay.
+* PRO: NEW: Image Accordion Block - Image panels that open on click or hover, with any blocks over each panel and Framed and Photo styles.
+* PRO: NEW: Image Hotspots Block - Popups can open on hover or click, start open, animate, take a custom size, and show as a bottom sheet on phones.
+* PRO: NEW: Image Hotspots Block - Added dot, number, icon, text and image markers, marker size, pulse and staggered entrance, an option to keep one popup open at a time, and separate tablet and mobile marker positions.
+* PRO: NEW: Review Block - Added "Best For" and "Specs" sections.
+* PRO: NEW: Summarize with AI Block - Added a border radius option, an icons only on mobile option, and Card, Inline bar and Accent strip designs.
+* PRO: FIX: Tabs Block - Fixed the block crashing when a tab title is made bold or italic, or when a tab icon is chosen.
+* PRO: FIX: Accordions Block - The Visibility Control and Animation settings no longer show twice.
 
 = 3.6.2 =
 

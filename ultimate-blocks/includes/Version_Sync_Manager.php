@@ -108,6 +108,9 @@ class Version_Sync_Manager {
 					return $final_status;
 				}
 
+				// stays null when the plugin info has neither a slug nor a text domain; it was
+				// never set then, and the check below warned "Undefined variable $slug"
+				$slug = null;
 				if ( isset( $plugin_info['slug'] ) && $plugin_info['slug'] !== null ) {
 					$slug = $plugin_info['slug'];
 				} elseif ( isset( $plugin_info['TextDomain'] ) ) {

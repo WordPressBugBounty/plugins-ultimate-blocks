@@ -1911,6 +1911,18 @@ $defaultValues = array(
 				'type'    => 'number',
 				'default' => 5
 			),
+			'pointScale'              => array(
+				'type'    => 'number',
+				'default' => 10
+			),
+			'reviewLayout'            => array(
+				'type'    => 'string',
+				'default' => 'classic'
+			),
+			'showPriceBadge'          => array(
+				'type'    => 'boolean',
+				'default' => true
+			),
 			'useSummary'              => array(
 				'type'    => 'boolean',
 				'default' => true
@@ -2275,6 +2287,10 @@ $defaultValues = array(
 			'tumblrCaption'      => array(
 				'type'    => 'string',
 				'default' => 'share'
+			),
+			'googleCaption'      => array(
+				'type'    => 'string',
+				'default' => 'prefer'
 			),
 			'iconSize'           => array(
 				'type'    => 'string',
@@ -2688,6 +2704,44 @@ $defaultValues = array(
 		'tabContentsBorderRadius' => array(
 			'type'    => 'array',
 			'default' => array()
+		),
+		'tabTitleFontSize' => array(
+			'type'    => 'string',
+			'default' => ''
+		),
+		'tabTitleFontFamily' => array(
+			'type'    => 'string',
+			'default' => ''
+		),
+		'tabTitleFontAppearance' => array(
+			'type'    => 'object',
+			'default' => array(
+				'fontStyle'  => '',
+				'fontWeight' => ''
+			)
+		),
+		'contentFontSize' => array(
+			'type'    => 'string',
+			'default' => ''
+		),
+		'contentFontFamily' => array(
+			'type'    => 'string',
+			'default' => ''
+		),
+		'contentFontAppearance' => array(
+			'type'    => 'object',
+			'default' => array(
+				'fontStyle'  => '',
+				'fontWeight' => ''
+			)
+		),
+		'tabButtonsPadding' => array(
+			'type'    => 'object',
+			'default' => array()
+		),
+		'tabListLabel' => array(
+			'type'    => 'string',
+			'default' => ''
 		),
             'contentColor' => array(
                 'type' => 'string',

@@ -1,4 +1,47 @@
 <?php
+/**
+ * Fill in two player settings that older versions saved in a form the players
+ * ignore: a YouTube loop needs playlist=<video id> in the URL, and a Vimeo start
+ * time is the #t= fragment. The editor now writes both itself, so this only
+ * changes blocks saved before that.
+ *
+ * @param string $embed_code saved embed HTML.
+ * @param array  $attributes block attributes.
+ * @return string embed HTML
+ */
+function ub_advanced_video_repair_embed( $embed_code, $attributes ) {
+	if ( ! preg_match( '/\ssrc="([^"]+)"/', $embed_code, $match ) ) {
+		return $embed_code;
+	}
+
+	$src    = $match[1];
+	$source = isset( $attributes['videoSource'] ) ? $attributes['videoSource'] : '';
+
+	if ( 'youtube' === $source && ! empty( $attributes['loop'] ) && false === strpos( $src, 'playlist=' )
+		&& preg_match( '#/embed/([A-Za-z0-9_-]{11})#', $src, $video_id ) ) {
+		$parts = explode( '#', $src, 2 );
+		$src   = $parts[0] . ( false === strpos( $parts[0], '?' ) ? '?' : '&' ) . 'playlist=' . $video_id[1]
+			. ( isset( $parts[1] ) ? '#' . $parts[1] : '' );
+	}
+
+	if ( 'vimeo' === $source && ! empty( $attributes['startTime'] ) && false === strpos( $src, '#t=' ) ) {
+		$seconds   = (int) $attributes['startTime'];
+		$time_code = '';
+		foreach ( array( 'h' => 3600, 'm' => 60 ) as $unit => $unit_seconds ) {
+			if ( $seconds >= $unit_seconds ) {
+				$time_code .= intdiv( $seconds, $unit_seconds ) . $unit;
+				$seconds   %= $unit_seconds;
+			}
+		}
+		if ( $seconds > 0 || '' === $time_code ) {
+			$time_code .= $seconds . 's';
+		}
+		$src .= '#t=' . $time_code;
+	}
+
+	return $src === $match[1] ? $embed_code : str_replace( $match[0], ' src="' . $src . '"', $embed_code );
+}
+
 function ub_render_advanced_video_block($attributes, $_, $block){
     require_once dirname(dirname(__DIR__)) . '/common.php';
     extract($attributes);
@@ -104,7 +147,7 @@ function ub_render_advanced_video_block($attributes, $_, $block){
 		),
 		($autofit && in_array($videoSource, ['youtube', 'vimeo', 'dailymotion']) ? (' ub-advanced-video-autofit-' . esc_attr($videoSource)) : ''), //3
 		($thumbnail !== '' && !in_array($videoSource, ['local', 'unknown', 'videopress']) ? ' hidden' : ''), //4
-		wp_kses($videoEmbedCode, ub_get_video_embed_kses_tags()), //5
+		wp_kses(ub_advanced_video_repair_embed($videoEmbedCode, $attributes), ub_get_video_embed_kses_tags()), //5
 		($autofit && $videoSource === 'vimeo' ? '<script src="https://player.vimeo.com/api/player.js"></script>' : ''), //6
 		Ultimate_Blocks\includes\generate_css_string($video_embed_styles) //7
 	);

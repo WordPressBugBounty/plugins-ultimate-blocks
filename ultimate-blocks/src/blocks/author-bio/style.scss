@@ -1,0 +1,320 @@
+// The block writes colors, sizes and the button settings as css variables.
+// Where a theme default should stay until a value is picked (the button), the
+// rule only applies when its variable is in the style attribute.
+.ub-author-bio {
+	--ub-author-avatar-size: 96px;
+	--ub-author-social-size: 20px;
+	box-sizing: border-box;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	.ub-author-bio__heading {
+		margin: 0 0 1em;
+		color: var(--ub-author-heading-color, inherit);
+		font-size: var(--ub-author-heading-size, 0.8125em);
+		font-style: var(--ub-author-heading-style, normal);
+		font-weight: var(--ub-author-heading-weight, 600);
+		letter-spacing: 0.08em;
+		line-height: 1.4;
+		text-transform: uppercase;
+	}
+
+	.ub-author-bio__inner {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--ub-author-gap, 1.5em);
+	}
+
+	.ub-author-bio__avatar {
+		position: relative;
+		display: flex;
+		flex: none;
+		align-items: center;
+		justify-content: center;
+		width: var(--ub-author-avatar-size);
+		height: var(--ub-author-avatar-size);
+		overflow: hidden;
+		border-radius: 50%;
+		//a light tint of the text color on a solid base, so nothing shows through
+		background-color: var(--wp--preset--color--base, #fff);
+		background-image: linear-gradient(
+			color-mix(in srgb, currentColor 10%, transparent),
+			color-mix(in srgb, currentColor 10%, transparent)
+		);
+
+		&.is-rounded {
+			border-radius: 16%;
+		}
+
+		&.is-square {
+			border-radius: 0;
+		}
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			max-width: none;
+			margin: 0;
+			object-fit: cover;
+		}
+	}
+
+	.ub-author-bio__initials {
+		font-size: calc(var(--ub-author-avatar-size) * 0.36);
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.ub-author-bio__content {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.ub-author-bio__name {
+		margin: 0;
+		color: var(--ub-author-name-color, inherit);
+		font-size: var(--ub-author-name-size, 1.25em);
+		font-style: var(--ub-author-name-style, normal);
+		font-weight: var(--ub-author-name-weight, 700);
+		line-height: 1.3;
+
+		a {
+			color: inherit;
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.ub-author-bio__meta {
+		margin: 0.25em 0 0;
+		color: var(
+			--ub-author-role-color,
+			color-mix(in srgb, currentColor 70%, transparent)
+		);
+		font-size: var(--ub-author-role-size, 0.875em);
+		line-height: 1.5;
+	}
+
+	.ub-author-bio__separator {
+		margin: 0 0.5em;
+	}
+
+	.ub-author-bio__bio {
+		margin-top: 0.75em;
+		color: var(--ub-author-bio-color, inherit);
+		font-size: var(--ub-author-bio-size, inherit);
+
+		p {
+			margin: 0 0 0.75em;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.ub-author-bio__socials {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75em;
+		margin: 1em 0 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.ub-author-bio__social {
+		display: inline-flex;
+		color: var(--ub-author-social-color, inherit);
+		transition:
+			color 0.2s,
+			opacity 0.2s;
+
+		&:hover,
+		&:focus {
+			opacity: 0.7;
+		}
+
+		svg {
+			width: var(--ub-author-social-size);
+			height: var(--ub-author-social-size);
+			fill: currentColor;
+		}
+	}
+
+	&[style*="--ub-author-social-hover-color"] .ub-author-bio__social:hover,
+	&[style*="--ub-author-social-hover-color"] .ub-author-bio__social:focus {
+		color: var(--ub-author-social-hover-color);
+		opacity: 1;
+	}
+
+	.ub-author-bio__latest {
+		margin-top: 1.25em;
+		padding-top: 1em;
+		border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+		font-size: var(--ub-author-posts-size, 0.9375em);
+	}
+
+	.ub-author-bio__latest-title {
+		margin: 0 0 0.5em;
+		font-size: 0.875em;
+		font-weight: 600;
+	}
+
+	.ub-author-bio__latest-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 0.25em 1em;
+			margin: 0;
+			padding: 0.375em 0;
+		}
+
+		a {
+			color: var(--ub-author-posts-color, inherit);
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.ub-author-bio__latest-date {
+		flex: none;
+		color: color-mix(in srgb, currentColor 60%, transparent);
+		font-size: 0.875em;
+	}
+
+	.ub-author-bio__posts-link {
+		display: inline-block;
+		margin-top: 1.25em;
+		text-decoration: none;
+		transition:
+			color 0.2s,
+			background 0.2s;
+	}
+
+	&[style*="--ub-author-button-color:"] .ub-author-bio__posts-link {
+		color: var(--ub-author-button-color);
+	}
+
+	&[style*="--ub-author-button-background"] .ub-author-bio__posts-link {
+		background: var(--ub-author-button-background);
+	}
+
+	&[style*="--ub-author-button-hover-color"] .ub-author-bio__posts-link:hover,
+	&[style*="--ub-author-button-hover-color"] .ub-author-bio__posts-link:focus {
+		color: var(--ub-author-button-hover-color);
+	}
+
+	&[style*="--ub-author-button-hover-background"] .ub-author-bio__posts-link:hover,
+	&[style*="--ub-author-button-hover-background"] .ub-author-bio__posts-link:focus {
+		background: var(--ub-author-button-hover-background);
+	}
+
+	&[style*="--ub-author-button-size"] .ub-author-bio__posts-link {
+		font-size: var(--ub-author-button-size);
+	}
+
+	&[style*="--ub-author-button-weight"] .ub-author-bio__posts-link {
+		font-weight: var(--ub-author-button-weight);
+	}
+
+	&[style*="--ub-author-button-style"] .ub-author-bio__posts-link {
+		font-style: var(--ub-author-button-style);
+	}
+
+	&[style*="--ub-author-button-radius"] .ub-author-bio__posts-link {
+		border-radius: var(--ub-author-button-radius);
+	}
+
+	@each $side in top, right, bottom, left {
+		&[style*="--ub-author-button-padding-#{$side}"] .ub-author-bio__posts-link {
+			padding-#{$side}: var(--ub-author-button-padding-#{$side});
+		}
+	}
+
+	&.is-style-centered,
+	&.is-style-card {
+		text-align: center;
+
+		.ub-author-bio__inner {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.ub-author-bio__content {
+			width: 100%;
+		}
+
+		.ub-author-bio__socials {
+			justify-content: center;
+		}
+
+		.ub-author-bio__latest-list li {
+			flex-direction: column;
+			align-items: center;
+		}
+	}
+
+	//the photo sits half way out of the top of the card, the heading goes
+	//under it, so the inner wrapper steps aside for one column of children
+	&.is-style-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: calc(var(--ub-author-avatar-size) / 2 + 1em);
+		padding: 0 2em 2em;
+		border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+		border-radius: 12px;
+
+		.ub-author-bio__inner {
+			display: contents;
+		}
+
+		.ub-author-bio__avatar {
+			order: 0;
+			margin-top: calc(var(--ub-author-avatar-size) / -2);
+			margin-bottom: 1em;
+			box-shadow: 0 0 0 4px var(--wp--preset--color--base, #fff);
+		}
+
+		.ub-author-bio__heading {
+			order: 1;
+			margin-bottom: 0.5em;
+		}
+
+		.ub-author-bio__content {
+			order: 2;
+		}
+	}
+}
+
+@media (max-width: 699px) {
+	.ub-author-bio:not(.is-style-centered):not(.is-style-card) .ub-author-bio__inner {
+		flex-direction: column;
+		gap: var(--ub-author-gap, 1em);
+	}
+}

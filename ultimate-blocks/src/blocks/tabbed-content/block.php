@@ -54,6 +54,25 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
 	if (isset($attributes['contentBackground'])) {
 		$tab_contents_styles['background-color'] = esc_attr($attributes['contentBackground']);
 	}
+	$tab_contents_styles['font-size']   = isset( $attributes['contentFontSize'] ) ? $attributes['contentFontSize'] : '';
+	$tab_contents_styles['font-family'] = isset( $attributes['contentFontFamily'] ) ? $attributes['contentFontFamily'] : '';
+	$tab_contents_styles['font-style']  = isset( $attributes['contentFontAppearance']['fontStyle'] ) ? $attributes['contentFontAppearance']['fontStyle'] : '';
+	$tab_contents_styles['font-weight'] = isset( $attributes['contentFontAppearance']['fontWeight'] ) ? $attributes['contentFontAppearance']['fontWeight'] : '';
+
+	// Typography and padding of the tab titles, used by the tab buttons and by
+	// the accordion toggles that replace them on smaller screens. Unset values
+	// are dropped, so the stylesheet keeps its own.
+	$tab_title_padding = Ultimate_Blocks\includes\get_spacing_css( isset( $attributes['tabButtonsPadding'] ) ? $attributes['tabButtonsPadding'] : array() );
+	$tab_title_styles  = array(
+		'font-size'      => isset( $attributes['tabTitleFontSize'] ) ? $attributes['tabTitleFontSize'] : '',
+		'font-family'    => isset( $attributes['tabTitleFontFamily'] ) ? $attributes['tabTitleFontFamily'] : '',
+		'font-style'     => isset( $attributes['tabTitleFontAppearance']['fontStyle'] ) ? $attributes['tabTitleFontAppearance']['fontStyle'] : '',
+		'font-weight'    => isset( $attributes['tabTitleFontAppearance']['fontWeight'] ) ? $attributes['tabTitleFontAppearance']['fontWeight'] : '',
+		'padding-top'    => isset( $tab_title_padding['top'] ) ? $tab_title_padding['top'] : '',
+		'padding-right'  => isset( $tab_title_padding['right'] ) ? $tab_title_padding['right'] : '',
+		'padding-bottom' => isset( $tab_title_padding['bottom'] ) ? $tab_title_padding['bottom'] : '',
+		'padding-left'   => isset( $tab_title_padding['left'] ) ? $tab_title_padding['left'] : '',
+	);
 
 	foreach ($contents as $key => $content) {
         if($useAnchors){
@@ -73,7 +92,7 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
 			'--ub-tabbed-accordion-background-color' => $attributes['normalColor'] ?: 'transparent',
 			'--ub-tabbed-accordion-color' => $attributes['normalTitleColor'] ?: 'inherit',
 			'--ub-tabbed-active-accordion-color' => $attributes['titleColor'] ?: 'inherit'
-		);
+		) + $tab_title_styles;
         if($tabletTabDisplay === 'accordion' || $mobileTabDisplay === 'accordion'){
             $content = '<div style="' . Ultimate_Blocks\includes\generate_css_string($tab_accordion_content_styles) . '" class="' . $blockName . '-accordion-toggle'.
             ($accordionIsActive ? ' active' : '') .
@@ -105,7 +124,7 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
 			'border-bottom-right-radius' => !empty( $block_attrs['tabButtonsBorderRadius']['bottomRight'] ) ?  esc_attr($block_attrs['tabButtonsBorderRadius']['bottomRight']) . ';': "",
 			'text-align' => isset($attributes['tabsTitleAlignment'][$key]) ? $attributes['tabsTitleAlignment'][$key] : 'left',
 			'margin-right' => $tabVertical ? '' : $tab_buttons_gap,
-		);
+		) + $tab_title_styles;
 
 		$tabs .= sprintf(
 			'<div role="tab" id="ub-tabbed-content-%1$s-tab-%2$s" aria-controls="ub-tabbed-content-%1$s-panel-%2$s" aria-selected="%3$s" class="%4$s-tab-title-%5$swrap%6$s%7$s%8$s" style="%9$s" tabindex="-1">
@@ -157,7 +176,7 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
 	return sprintf(
 		'<div class="wp-block-ub-tabbed-content %1$s%2$s %3$s-holder%4$s%5$s%6$s%7$s%8$s"%9$s%10$s style="%24$s">
 			<div class="%3$s-tab-holder%11$s%12$s%13$s">
-				<div role="tablist" class="%3$s-tabs-title%14$s%15$s%16$s" style="%23$s">%17$s</div>
+				<div role="tablist"%25$s class="%3$s-tabs-title%14$s%15$s%16$s" style="%23$s">%17$s</div>
 			</div>
 			<div class="%3$s-tabs-content%18$s%19$s%20$s" style="%22$s">%21$s</div>
 		</div>',
@@ -184,7 +203,8 @@ function ub_render_tabbed_content_block($attributes, $contents, $block){
 		implode($tabContents), // 21
 		Ultimate_Blocks\includes\generate_css_string($tab_contents_styles), // 22
 		Ultimate_Blocks\includes\generate_css_string($tab_buttons_wrapper_styles), //23
-		Ultimate_Blocks\includes\generate_css_string($styles) //24
+		Ultimate_Blocks\includes\generate_css_string($styles), //24
+		! empty( $attributes['tabListLabel'] ) ? ' aria-label="' . esc_attr( $attributes['tabListLabel'] ) . '"' : '' // 25
 	);
 }
 

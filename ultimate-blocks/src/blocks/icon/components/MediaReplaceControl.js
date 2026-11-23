@@ -5,7 +5,6 @@ import { __ } from "@wordpress/i18n";
 import {
 	MenuGroup,
 	MenuItem,
-	DropdownMenu,
 	ToolbarDropdownMenu,
 } from "@wordpress/components";
 import { code } from "@wordpress/icons";
@@ -13,8 +12,11 @@ import { blockIcon } from "../icons/block-icon";
 
 function IconReplaceControl({ onReset, onLibraryOpen, onCustomInserterOpen }) {
 	return (
-		<DropdownMenu
+		//only toolbar items may sit in the block toolbar, a plain DropdownMenu is deprecated since
+		//WP 5.6 (console: "Using custom components as toolbar controls is deprecated")
+		<ToolbarDropdownMenu
 			icon=""
+			label={__("Replace", "ultimate-blocks")}
 			popoverProps={{
 				className: "outermost-ultimate-blocks__replace-popover is-alternate",
 			}}
@@ -55,7 +57,7 @@ function IconReplaceControl({ onReset, onLibraryOpen, onCustomInserterOpen }) {
 					</MenuGroup>
 				</>
 			)}
-		</DropdownMenu>
+		</ToolbarDropdownMenu>
 	);
 }
 export default IconReplaceControl;

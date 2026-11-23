@@ -113,3 +113,18 @@ function tumblr_icon( array $props ) {
 
 	return '<svg xmlns="http://www.w3.org/2000/svg" style="fill:' . $color . '" fill="' . $color . '" width="' . $width . '" height="' . $height . '" viewBox="0 0 320 512"><path d="M309.8 480.3c-13.6 14.5-50 31.7-97.4 31.7-120.8 0-147-88.8-147-140.6v-144H17.9c-5.5 0-10-4.5-10-10v-68c0-7.2 4.5-13.6 11.3-16 62-21.8 81.5-76 84.3-117.1.8-11 6.5-16.3 16.1-16.3h70.9c5.5 0 10 4.5 10 10v115.2h83c5.5 0 10 4.4 10 9.9v81.7c0 5.5-4.5 10-10 10h-83.4V360c0 34.2 23.7 53.6 68 35.8 4.8-1.9 9-3.2 12.7-2.2 3.5.9 5.8 3.4 7.4 7.9l22 64.3c1.8 5 3.3 10.6-.4 14.5z" /></svg>';
 }
+
+/**
+ * Get the Google "G" svg icon, used by the preferred sources link.
+ *
+ * @param array $props pass options.
+ * @return string
+ */
+function google_icon( array $props ) {
+    extract($props);
+    if($color === ''){
+        $color = '#ffffff';
+    }
+
+	return '<svg xmlns="http://www.w3.org/2000/svg" style="fill:' . $color . '" fill="' . $color . '" width="' . $width . '" height="' . $height . '" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" /></svg>';
+}

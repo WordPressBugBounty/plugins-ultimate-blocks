@@ -21,6 +21,7 @@ export const BLOCK_CATEGORIES = [
 			{ name: 'ub/styled-list', label: 'Styled List' },
 			{ name: 'ub/advanced-heading', label: 'Heading' },
 			{ name: 'ub/divider', label: 'Divider' },
+			{ name: 'ub/author-bio', label: 'Author Bio' },
 		],
 	},
 	{
@@ -43,6 +44,7 @@ export const BLOCK_CATEGORIES = [
 		blocks: [
 			{ name: 'ub/image-slider', label: 'Image Slider' },
 			{ name: 'ub/image', label: 'Image' },
+			{ name: 'ub/image-comparison', label: 'Image Comparison' },
 			{ name: 'ub/advanced-video', label: 'Video' },
 		],
 	},
@@ -71,6 +73,7 @@ export const PRO_BLOCKS = [
 	{ name: 'ub-pro/coupon', label: 'Coupon' },
 	{ name: 'ub-pro/timeline', label: 'Timeline' },
 	{ name: 'ub-pro/image-hotspots', label: 'Image Hotspots' },
+	{ name: 'ub-pro/ai-summarize', label: 'Summarize with AI' },
 ];
 
 export const RECOMMENDED_PLUGINS = [
@@ -157,6 +160,14 @@ export const BUNDLE_PLUGINS = [
 		tagline: 'Slide anything. Add image, video & text to sliders.',
 		color: '#0369A1',
 		logo: 'https://ultimateblocks.com/wp-content/uploads/2025/11/Sliderberg.png',
+	},
+	{
+		name: 'Productberg',
+		tagline: 'WooCommerce product displays, in blocks.',
+		color: '#E0592A',
+		logo: 'https://ultimateblocks.com/wp-content/uploads/2026/08/Productberg-256px.png',
+		// still in development, so it comes with the suite once it ships
+		note: 'Included free when released',
 	},
 ];
 

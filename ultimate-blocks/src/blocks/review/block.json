@@ -94,6 +94,18 @@
 			"type": "number",
 			"default": 5
 		},
+		"pointScale": {
+			"type": "number",
+			"default": 10
+		},
+		"reviewLayout": {
+			"type": "string",
+			"default": "classic"
+		},
+		"showPriceBadge": {
+			"type": "boolean",
+			"default": true
+		},
 		"useSummary": {
 			"type": "boolean",
 			"default": true

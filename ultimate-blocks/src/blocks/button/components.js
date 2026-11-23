@@ -27,7 +27,6 @@ import {
 import {
 	PanelBody,
 	Button,
-	ButtonGroup,
 	ToggleControl,
 	RangeControl,
 	Dropdown,
@@ -301,54 +300,52 @@ export const inspectorControls = (props) => {
 			<InspectorControls>
 				<PanelBody title={__("Size", "ultimate-blocks")} initialOpen={true}>
 					<div className="ub-button-group">
-						<ButtonGroup aria-label={__("Button Size", "ultimate-blocks")}>
-							{Object.keys(BUTTON_SIZES).map((b) => (
-								<Button
-									isLarge
-									isPrimary={buttons[activeButtonIndex].size === b}
-									aria-pressed={buttons[activeButtonIndex].size === b}
-									onClick={() =>
-										setAttributes({
-											buttons: [
-												...buttons.slice(0, activeButtonIndex),
-												Object.assign({}, buttons[activeButtonIndex], {
-													size: b,
-												}),
-												...buttons.slice(activeButtonIndex + 1),
-											],
-										})
-									}
-								>
-									{BUTTON_SIZES[b]}
-								</Button>
-							))}
-						</ButtonGroup>
+						{/* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */}
+						<CustomToggleGroupControl
+							isBlock
+							hideLabelFromVision
+							label={__("Button Size", "ultimate-blocks")}
+							value={buttons[activeButtonIndex].size}
+							onChange={(b) =>
+								setAttributes({
+									buttons: [
+										...buttons.slice(0, activeButtonIndex),
+										Object.assign({}, buttons[activeButtonIndex], { size: b }),
+										...buttons.slice(activeButtonIndex + 1),
+									],
+								})
+							}
+							options={Object.keys(BUTTON_SIZES).map((b) => ({
+								value: b,
+								label: BUTTON_SIZES[b],
+							}))}
+						/>
 					</div>
 				</PanelBody>
 				<PanelBody title={__("Width", "ultimate-blocks")} initialOpen={true}>
 					<div className="ub-button-group">
-						<ButtonGroup aria-label={__("Button Width", "ultimate-blocks")}>
-							{Object.keys(BUTTON_WIDTHS).map((b) => (
-								<Button
-									isLarge
-									isPrimary={buttons[activeButtonIndex].buttonWidth === b}
-									aria-pressed={buttons[activeButtonIndex].buttonWidth === b}
-									onClick={() =>
-										setAttributes({
-											buttons: [
-												...buttons.slice(0, activeButtonIndex),
-												Object.assign({}, buttons[activeButtonIndex], {
-													buttonWidth: b,
-												}),
-												...buttons.slice(activeButtonIndex + 1),
-											],
-										})
-									}
-								>
-									{BUTTON_WIDTHS[b]}
-								</Button>
-							))}
-						</ButtonGroup>
+						{/* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */}
+						<CustomToggleGroupControl
+							isBlock
+							hideLabelFromVision
+							label={__("Button Width", "ultimate-blocks")}
+							value={buttons[activeButtonIndex].buttonWidth}
+							onChange={(b) =>
+								setAttributes({
+									buttons: [
+										...buttons.slice(0, activeButtonIndex),
+										Object.assign({}, buttons[activeButtonIndex], {
+											buttonWidth: b,
+										}),
+										...buttons.slice(activeButtonIndex + 1),
+									],
+								})
+							}
+							options={Object.keys(BUTTON_WIDTHS).map((b) => ({
+								value: b,
+								label: BUTTON_WIDTHS[b],
+							}))}
+						/>
 					</div>
 				</PanelBody>
 				<PanelBody title={__("Border", "ultimate-blocks")} initialOpen={false}>
@@ -388,34 +385,25 @@ export const inspectorControls = (props) => {
 								min={1}
 								max={100}
 							/>
-							<ButtonGroup
-								aria-label={__("Button Radius Unit", "ultimate-blocks")}
-							>
-								{["px", "%"].map((b) => (
-									<Button
-										isLarge
-										isPrimary={
-											buttons[activeButtonIndex].buttonRadiusUnit === b
-										}
-										aria-pressed={
-											buttons[activeButtonIndex].buttonRadiusUnit === b
-										}
-										onClick={() =>
-											setAttributes({
-												buttons: [
-													...buttons.slice(0, activeButtonIndex),
-													Object.assign({}, buttons[activeButtonIndex], {
-														buttonRadiusUnit: b,
-													}),
-													...buttons.slice(activeButtonIndex + 1),
-												],
-											})
-										}
-									>
-										{b}
-									</Button>
-								))}
-							</ButtonGroup>
+							{/* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */}
+							<CustomToggleGroupControl
+								isBlock
+								hideLabelFromVision
+								label={__("Button Radius Unit", "ultimate-blocks")}
+								value={buttons[activeButtonIndex].buttonRadiusUnit}
+								onChange={(b) =>
+									setAttributes({
+										buttons: [
+											...buttons.slice(0, activeButtonIndex),
+											Object.assign({}, buttons[activeButtonIndex], {
+												buttonRadiusUnit: b,
+											}),
+											...buttons.slice(activeButtonIndex + 1),
+										],
+									})
+								}
+								options={["px", "%"].map((b) => ({ value: b, label: b }))}
+							/>
 						</div>
 					</PanelBody>
 				)}
@@ -424,8 +412,9 @@ export const inspectorControls = (props) => {
 					<div className="ub-button-grid">
 						<p>{__("Selected icon", "ultimate-blocks")}</p>
 						<div className="ub-button-grid-selector">
+							{/* popoverProps.placement replaces the position prop of Dropdown, deprecated since WP 6.2 (console: "`position` prop in wp.components.Dropdown is deprecated"); "bottom right" is "bottom-start" */}
 							<Dropdown
-								position="bottom right"
+								popoverProps={{ placement: "bottom-start" }}
 								renderToggle={({ isOpen, onToggle }) => (
 									<Button
 										className="ub-button-icon-select"
@@ -1621,41 +1610,30 @@ export function EditorComponent(props) {
 															})
 														}
 													/>
-													<ButtonGroup
-														aria-label={__(
-															"Button Size Unit",
-															"ultimate-blocks",
-														)}
-													>
-														{["px", "em"].map((b) => (
-															<Button
-																isLarge
-																isPrimary={
-																	b === buttons[activeButtonIndex].iconUnit
-																}
-																aria-pressed={
-																	b === buttons[activeButtonIndex].iconUnit
-																}
-																onClick={() =>
-																	setAttributes({
-																		buttons: [
-																			...buttons.slice(0, activeButtonIndex),
-																			Object.assign(
-																				{},
-																				buttons[activeButtonIndex],
-																				{
-																					iconUnit: b,
-																				},
-																			),
-																			...buttons.slice(activeButtonIndex + 1),
-																		],
-																	})
-																}
-															>
-																{b}
-															</Button>
-														))}
-													</ButtonGroup>
+													{/* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */}
+													<CustomToggleGroupControl
+														isBlock
+														hideLabelFromVision
+														label={__("Button Size Unit", "ultimate-blocks")}
+														value={buttons[activeButtonIndex].iconUnit}
+														onChange={(b) =>
+															setAttributes({
+																buttons: [
+																	...buttons.slice(0, activeButtonIndex),
+																	Object.assign(
+																		{},
+																		buttons[activeButtonIndex],
+																		{ iconUnit: b },
+																	),
+																	...buttons.slice(activeButtonIndex + 1),
+																],
+															})
+														}
+														options={["px", "em"].map((b) => ({
+															value: b,
+															label: b,
+														}))}
+													/>
 												</div>
 											)}
 										</>

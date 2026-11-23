@@ -12,9 +12,12 @@
 		padding: 0;
 	}
 
-	.dashicons-trash {
-		color: #aaa;
+	.ub_review_remove_entry {
+		display: inline-flex;
 		float: right;
+		cursor: pointer;
+		color: #aaa;
+		fill: currentColor;
 
 		&:hover {
 			color: #222;
@@ -72,5 +75,17 @@
 #ub_review_item_page_input {
 	input {
 		width: 200px;
+	}
+}
+
+.ub_review_add_entry {
+	display: flex;
+	justify-content: center;
+	cursor: pointer;
+	color: #555;
+	fill: currentColor;
+
+	&:hover {
+		color: #111;
 	}
 }

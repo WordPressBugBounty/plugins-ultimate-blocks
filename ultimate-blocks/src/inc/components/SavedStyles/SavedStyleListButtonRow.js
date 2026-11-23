@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup } from '@wordpress/components';
+import { CustomToggleGroupControl } from '../../../blocks/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { __ } from '@wordpress/i18n';
 import { connectWithStore } from '@Stores/StoreHelpers';
@@ -20,28 +20,26 @@ function SavedStyleListButtonRow( {
 } ) {
 	return (
 		<div className={ 'ub-pro-saved-styles-listing-button-row' }>
-			<ButtonGroup className={ 'listing-preview-button-group' }>
-				<Button
-					className={ 'ub-pro-saved-styles-listing-preview-button' }
-					isSmall={ true }
-					isPrimary={ isShowPreviewsEnabled }
-					aria-pressed={ isShowPreviewsEnabled }
-					onClick={ () => setShowPreviewStatus( true ) }
-					title={ __( 'show previews', 'ultimate-blocks' ) }
-				>
-					<FontAwesomeIcon icon={ 'eye' } />
-				</Button>
-				<Button
-					className={ 'ub-pro-saved-styles-listing-preview-button' }
-					isSmall={ true }
-					isPrimary={ ! isShowPreviewsEnabled }
-					aria-pressed={ ! isShowPreviewsEnabled }
-					onClick={ () => setShowPreviewStatus( false ) }
-					title={ __( 'show listing', 'ultimate-blocks' ) }
-				>
-					<FontAwesomeIcon icon={ 'list-ul' } />
-				</Button>
-			</ButtonGroup>
+			{ /* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */ }
+			<CustomToggleGroupControl
+				className={ 'listing-preview-button-group' }
+				hideLabelFromVision
+				label={ __( 'Saved styles view', 'ultimate-blocks' ) }
+				value={ isShowPreviewsEnabled ? 'previews' : 'listing' }
+				onChange={ ( value ) => setShowPreviewStatus( value === 'previews' ) }
+				options={ [
+					{
+						value: 'previews',
+						icon: <FontAwesomeIcon icon={ 'eye' } />,
+						label: __( 'show previews', 'ultimate-blocks' ),
+					},
+					{
+						value: 'listing',
+						icon: <FontAwesomeIcon icon={ 'list-ul' } />,
+						label: __( 'show listing', 'ultimate-blocks' ),
+					},
+				] }
+			/>
 		</div>
 	);
 }

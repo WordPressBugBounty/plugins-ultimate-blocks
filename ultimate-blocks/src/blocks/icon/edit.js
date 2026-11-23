@@ -8,12 +8,11 @@ import { Modal } from "@wordpress/components";
 /**
  * Custom Imports
  */
-import { ultimateIcons } from "./icons";
+import { IconsLibrary, ultimateIcons } from "@ultimate-blocks/icon-library";
 import { getClasses, getStyles } from "./get-styles";
 import CustomInspectorControls from "./inspector";
 import CustomBlockControls from "./block-controls";
 import Placeholder from "./components/Placeholder";
-import IconsLibrary from "./components/icon-library";
 import CustomInserterModal from "./components/CustomSvgInserter";
 import { useBlockProps } from "@wordpress/block-editor";
 

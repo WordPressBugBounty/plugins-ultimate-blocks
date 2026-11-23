@@ -16,6 +16,10 @@ import {
  * @param {string} attributeKey - Attribute key
  * @param {boolean} [isBlock=false] - Toggle group control prop
  * @param {boolean} [isAdaptiveWidth=false] - Toggle group control prop
+ * @param {string|number} [value] - Value, for a control that is not one attribute
+ * @param {Function} [onChange] - Change handler that goes with value; without it the control sets attributeKey
+ * @param {boolean} [hideLabelFromVision=false] - Keep the label for screen readers only
+ * @param {string} [className] - Extra class for the control
  */
 function CustomToggleGroupControl({
 	label,
@@ -23,6 +27,10 @@ function CustomToggleGroupControl({
 	attributeKey,
 	isBlock = false,
 	isAdaptiveWidth = false,
+	value: controlledValue,
+	onChange: controlledOnChange,
+	hideLabelFromVision = false,
+	className,
 }) {
 	const { clientId } = useBlockEditContext();
 	const { updateBlockAttributes } = useDispatch("core/block-editor");
@@ -40,8 +48,16 @@ function CustomToggleGroupControl({
 			isAdaptiveWidth={isAdaptiveWidth}
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
-			value={attributes[attributeKey]}
+			className={className}
+			hideLabelFromVision={hideLabelFromVision}
+			//a control that does not map to one attribute (component state, a store, an item of
+			//an array attribute) passes value and onChange; the others name their attribute
+			value={controlledOnChange ? controlledValue : attributes?.[attributeKey]}
 			onChange={(newValue) => {
+				if (controlledOnChange) {
+					controlledOnChange(newValue);
+					return;
+				}
 				setAttributes({
 					[attributeKey]: newValue,
 				});

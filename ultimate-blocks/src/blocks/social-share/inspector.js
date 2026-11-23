@@ -40,6 +40,7 @@ export default function Inspector(props) {
 		pinterestCaption,
 		redditCaption,
 		tumblrCaption,
+		googleCaption,
 	} = attributes;
 
 	const UPDATED_JUSTIFICATION = AVAILABLE_JUSTIFICATIONS.filter(
@@ -195,6 +196,38 @@ export default function Inspector(props) {
 							}}
 						/>
 					</PanelRow>
+					<PanelRow>
+						<label htmlFor="google-icon-form-toggle">
+							<b>{__("Google Preferred Source", "ultimate-blocks")}</b>
+						</label>
+						<FormToggle
+							id="google-icon-form-toggle"
+							label={__("Visible")}
+							aria-describedby="google-icon-form-toggle-help"
+							checked={iconOrder.indexOf("google") > -1}
+							onChange={() => {
+								const iconLoc = iconOrder.indexOf("google");
+								setAttributes({
+									iconOrder:
+										iconLoc > -1
+											? [
+													...iconOrder.slice(0, iconLoc),
+													...iconOrder.slice(iconLoc + 1),
+												]
+											: [...iconOrder, "google"],
+								});
+							}}
+						/>
+					</PanelRow>
+					<p
+						id="google-icon-form-toggle-help"
+						className="components-base-control__help"
+					>
+						{__(
+							"Not a share link: readers add this site as a preferred source in Google Top Stories. Google lists only sites on their own domain or subdomain.",
+							"ultimate-blocks",
+						)}
+					</p>
 				</PanelBody>
 				<PanelBody title={__("Captions")} initialOpen={false}>
 					<ToggleControl
@@ -257,6 +290,13 @@ export default function Inspector(props) {
 									label={__("Tumblr caption")}
 									value={tumblrCaption}
 									onChange={(tumblrCaption) => setAttributes({ tumblrCaption })}
+								/>
+							)}
+							{iconOrder.indexOf("google") > -1 && (
+								<TextControl
+									label={__("Google preferred source caption", "ultimate-blocks")}
+									value={googleCaption}
+									onChange={(googleCaption) => setAttributes({ googleCaption })}
 								/>
 							)}
 						</>

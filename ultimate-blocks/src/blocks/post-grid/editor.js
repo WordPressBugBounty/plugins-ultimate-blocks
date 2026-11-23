@@ -1,7 +1,11 @@
 import { isEmpty } from "lodash";
 import FeaturedImage from "./image";
 import moment from "moment";
-import { generateStyles, getSpacingCss } from "../utils/styling-helpers";
+import {
+	generateStyles,
+	getSpacingCss,
+	getSpacingPresetCssVar,
+} from "../utils/styling-helpers";
 // Setup the block
 import { __ } from "@wordpress/i18n";
 import { decodeEntities } from "@wordpress/html-entities";
@@ -145,8 +149,9 @@ export default function PostGridBlock(props) {
 		"padding-left": contentPaddingObj?.left,
 	};
 	const gridStyles = {
-		"row-gap": rowGap,
-		"column-gap": columnGap,
+		//a theme spacing preset is saved as var:preset|spacing|x, CSS needs its variable
+		"row-gap": getSpacingPresetCssVar(rowGap),
+		"column-gap": getSpacingPresetCssVar(columnGap),
 	};
 
 	return (

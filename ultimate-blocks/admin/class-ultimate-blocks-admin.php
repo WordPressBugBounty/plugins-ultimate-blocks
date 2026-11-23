@@ -194,7 +194,9 @@ class Ultimate_Blocks_Admin {
 				'wp-editor',
 				'wp-hooks',
 				'wp-api',
-				'lodash'
+				'lodash',
+				// the Icon block imports its icon packs from this script
+				'ultimate-blocks-icon-library',
 			),
 			$this->version,
 			true

@@ -2,7 +2,7 @@ import { __ } from "@wordpress/i18n";
 import { isEmpty } from "lodash";
 import { loadPromise, models } from "@wordpress/api";
 import { createBlock } from "@wordpress/blocks";
-import { useSelect, useDispatch } from "@wordpress/data";
+import { select, useSelect, useDispatch } from "@wordpress/data";
 import { store as editorStore } from "@wordpress/editor";
 import GenericStyleControl, {
 	createStyleClipboard,
@@ -23,6 +23,7 @@ import {
 	RangeControl,
 	ToggleControl,
 	ToolbarGroup,
+	ToolbarButton,
 	RadioControl,
 	TextareaControl,
 	Notice,
@@ -572,8 +573,9 @@ function EditorComponent(props) {
 								>
 									<p>{__("Selected icon")}</p>
 
+									{/* popoverProps.placement replaces the position prop of Dropdown, deprecated since WP 6.2 (console: "`position` prop in wp.components.Dropdown is deprecated"); "bottom right" is "bottom-start" */}
 									<Dropdown
-										position="bottom right"
+										popoverProps={{ placement: "bottom-start" }}
 										renderToggle={({ isOpen, onToggle }) => (
 											<Button
 												label={__("Select icon for list")}
@@ -1039,6 +1041,27 @@ export function StyledListItem(props) {
 		rootFontSize,
 	]);
 
+	//Enter splits an item through "splitting" in block.json, and the new item copies
+	//every attribute but the text, blockID too; two items with one blockID share their
+	//styles, so the copy takes an id of its own
+	useEffect(() => {
+		if (!blockID || getParentBlock(rootBlockClientId, "core/block")) {
+			return;
+		}
+		const editor = select("core/block-editor");
+		const hasTwin = editor
+			.getClientIdsWithDescendants()
+			.some(
+				(id) =>
+					id !== block.clientId &&
+					editor.getBlockName(id) === "ub/styled-list-item" &&
+					editor.getBlockAttributes(id)?.blockID === blockID,
+			);
+		if (hasTwin) {
+			setAttributes({ blockID: block.clientId });
+		}
+	}, [block?.clientId]);
+
 	const styleClipboard = createStyleClipboard(
 		"ub_styled_list_item_copied_style",
 		[
@@ -1335,44 +1358,50 @@ export function StyledListItem(props) {
 				/>
 			</BlockControls>
 			<BlockControls>
-				<Button
-					icon="editor-outdent"
-					disabled={
-						getBlockParentsByBlockName(block.clientId, ["ub/styled-list-item"])
-							.length === 0
-					}
-					onClick={outdentItem}
-				/>
-				<Button
-					icon="editor-indent"
-					disabled={currentBlockIndex === 0}
-					onClick={() => {
-						if (
-							getBlock(getPreviousBlockClientId(block.clientId)).innerBlocks
-								.length === 0
-						) {
-							insertBlock(
-								createBlock("ub/styled-list", {}, []),
-								0,
-								getPreviousBlockClientId(block.clientId),
-							);
+				{/* only toolbar items may sit in the block toolbar, a plain Button is deprecated since WP 5.6 (console: "Using custom components as toolbar controls is deprecated") */}
+				<ToolbarGroup>
+					<ToolbarButton
+						icon="editor-outdent"
+						label={__("Outdent", "ultimate-blocks")}
+						disabled={
+							getBlockParentsByBlockName(block.clientId, [
+								"ub/styled-list-item",
+							]).length === 0
 						}
+						onClick={outdentItem}
+					/>
+					<ToolbarButton
+						icon="editor-indent"
+						label={__("Indent", "ultimate-blocks")}
+						disabled={currentBlockIndex === 0}
+						onClick={() => {
+							if (
+								getBlock(getPreviousBlockClientId(block.clientId)).innerBlocks
+									.length === 0
+							) {
+								insertBlock(
+									createBlock("ub/styled-list", {}, []),
+									0,
+									getPreviousBlockClientId(block.clientId),
+								);
+							}
 
-						setTimeout(() => {
-							moveBlocksToPosition(
-								[block.clientId],
+							setTimeout(() => {
+								moveBlocksToPosition(
+									[block.clientId],
 
-								listRootClientId, //get block id of parent list block
+									listRootClientId, //get block id of parent list block
 
-								getBlock(getPreviousBlockClientId(block.clientId))
-									.innerBlocks[0].clientId, //get block id of newly-created list subblock
+									getBlock(getPreviousBlockClientId(block.clientId))
+										.innerBlocks[0].clientId, //get block id of newly-created list subblock
 
-								getBlock(getPreviousBlockClientId(block.clientId))
-									.innerBlocks[0].innerBlocks.length, //ensure indented item moves to bottom of destination list
-							);
-						}, 20);
-					}}
-				/>
+									getBlock(getPreviousBlockClientId(block.clientId))
+										.innerBlocks[0].innerBlocks.length, //ensure indented item moves to bottom of destination list
+								);
+							}, 20);
+						}}
+					/>
+				</ToolbarGroup>
 			</BlockControls>
 			<li
 				className="ub_styled_list_item"
@@ -1437,15 +1466,8 @@ export function StyledListItem(props) {
 						keepPlaceholderOnFocus={true}
 						onChange={(itemText) => setAttributes({ itemText })}
 						identifier="itemText"
-						onSplit={(itemFragment) => {
-							const { blockID, itemText, ...filteredAttributes } = attributes;
-
-							return createBlock("ub/styled-list-item", {
-								...filteredAttributes,
-								blockID: "",
-								itemText: itemFragment,
-							});
-						}}
+						//the onSplit prop of RichText is deprecated since WP 6.4 (console: "wp.blockEditor.RichText onSplit prop is deprecated"), and WordPress has not called it since then;
+						//Enter splits the item through "splitting" in block.json
 						onReplace={(replacements) => {
 							let replacementBlocks = [...replacements];
 							replacementBlocks[replacementBlocks.length - 1].innerBlocks =

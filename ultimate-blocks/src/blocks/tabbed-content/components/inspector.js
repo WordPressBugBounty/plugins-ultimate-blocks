@@ -7,7 +7,12 @@ import SavedStylesInspector from "$Inc/components/SavedStyles/SavedStylesInspect
 import {
 	BorderControl,
 	ColorSettings,
+	CustomFontSizePicker,
+	CustomToggleGroupControl,
+	FontAppearanceControl,
+	FontFamilyControl,
 	SpacingControl,
+	TabsPanelControl,
 	UBSelectControl,
 } from "../../components";
 const { __ } = wp.i18n;
@@ -15,12 +20,9 @@ const { Component } = wp.element;
 const { InspectorControls } = wp.blockEditor || wp.editor;
 const {
 	PanelBody,
-	PanelRow,
 	ToggleControl,
 	RadioControl,
 	TextControl,
-	ButtonGroup,
-	Button,
 	__experimentalToolsPanelItem: ToolsPanelItem,
 } = wp.components;
 
@@ -52,7 +54,15 @@ class Inspector extends Component {
 			useAnchors,
 			tabStyle,
 			showBorder,
+			tabListLabel,
 		} = attributes;
+
+		//underlined tabs have no background, unless they turn into an accordion
+		//on smaller screens
+		const showTabBackground = !(
+			tabStyle === "underline" &&
+			![tabletTabDisplay, mobileTabDisplay].includes("accordion")
+		);
 
 		return (
 			<>
@@ -90,7 +100,20 @@ class Inspector extends Component {
 							/>
 						)}
 
-						{ProGeneralControls && <ProGeneralControls />}
+						{/* called, not rendered as <ProGeneralControls />: pro defines it anew on every
+						render, so as an element React would remount it each time */}
+						{ProGeneralControls && ProGeneralControls()}
+						<TextControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={__("Tabs label", "ultimate-blocks")}
+							help={__(
+								"Screen readers announce it before the tabs, for example \"Pricing plans\".",
+								"ultimate-blocks",
+							)}
+							value={tabListLabel}
+							onChange={(value) => setAttributes({ tabListLabel: value })}
+						/>
 					</PanelBody>
 
 					<PanelBody title={__("Tab Anchors")} initialOpen={false}>
@@ -205,141 +228,103 @@ class Inspector extends Component {
 						}}
 					/>
 					<PanelBody title={__("Tab Layout")} initialOpen={false}>
-						<PanelRow>
-							<label>{__("Mode")}</label>
-							<ButtonGroup style={{ paddingBottom: "10px" }}>
-								<Button
-									icon="desktop"
-									showTooltip={true}
-									label={__("Desktop")}
-									isPressed={displayMode === "desktop"}
-									onClick={() =>
-										this.setState({
-											displayMode: "desktop",
-										})
+						{/* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */}
+						{/* the controls of this panel sit in one column with an even gap */}
+						<div style={{ display: "grid", gap: "16px" }}>
+							<CustomToggleGroupControl
+								isBlock
+								label={__("Mode")}
+								value={displayMode}
+								onChange={(value) => this.setState({ displayMode: value })}
+								options={[
+									{
+										value: "desktop",
+										icon: "desktop",
+										label: __("Desktop"),
+									},
+									{
+										value: "tablet",
+										icon: "tablet",
+										label: __("Tablet"),
+									},
+									{
+										value: "mobile",
+										icon: "smartphone",
+										label: __("Mobile"),
+									},
+								]}
+							/>
+							{displayMode === "desktop" && (
+								<CustomToggleGroupControl
+									isBlock
+									label={__("Tab Display")}
+									value={tabVertical ? "vertical" : "horizontal"}
+									onChange={(value) =>
+										setAttributes({ tabVertical: value === "vertical" })
 									}
+									options={[
+										{
+											value: "horizontal",
+											icon: horizontalTabIcon,
+											label: __("Horizontal"),
+										},
+										{
+											value: "vertical",
+											icon: verticalTabIcon,
+											label: __("Vertical"),
+										},
+									]}
 								/>
-								<Button
-									icon="tablet"
-									showTooltip={true}
-									label={__("Tablet")}
-									isPressed={displayMode === "tablet"}
-									onClick={() => this.setState({ displayMode: "tablet" })}
+							)}
+							{displayMode === "tablet" && (
+								<CustomToggleGroupControl
+									isBlock
+									label={__("Tablet Tab Display")}
+									attributeKey="tabletTabDisplay"
+									options={[
+									{
+										value: "horizontaltab",
+										icon: horizontalTabIcon,
+										label: __("Horizontal"),
+									},
+									{
+										value: "verticaltab",
+										icon: verticalTabIcon,
+										label: __("Vertical"),
+									},
+									{
+										value: "accordion",
+										icon: accordionIcon,
+										label: __("Accordion"),
+									},
+								]}
 								/>
-								<Button
-									icon="smartphone"
-									showTooltip={true}
-									label={__("Mobile")}
-									isPressed={displayMode === "mobile"}
-									onClick={() => this.setState({ displayMode: "mobile" })}
+							)}
+							{displayMode === "mobile" && (
+								<CustomToggleGroupControl
+									isBlock
+									label={__("Mobile Tab Display")}
+									attributeKey="mobileTabDisplay"
+									options={[
+									{
+										value: "horizontaltab",
+										icon: horizontalTabIcon,
+										label: __("Horizontal"),
+									},
+									{
+										value: "verticaltab",
+										icon: verticalTabIcon,
+										label: __("Vertical"),
+									},
+									{
+										value: "accordion",
+										icon: accordionIcon,
+										label: __("Accordion"),
+									},
+								]}
 								/>
-							</ButtonGroup>
-						</PanelRow>
-						{displayMode === "desktop" && (
-							<PanelRow>
-								<label>{__("Tab Display")}</label>
-								<ButtonGroup>
-									<Button
-										icon={horizontalTabIcon}
-										showTooltip={true}
-										label={__("Horizontal")}
-										isPressed={!tabVertical}
-										onClick={() =>
-											setAttributes({
-												tabVertical: false,
-											})
-										}
-									/>
-									<Button
-										icon={verticalTabIcon}
-										showTooltip={true}
-										label={__("Vertical")}
-										isPressed={tabVertical}
-										onClick={() => setAttributes({ tabVertical: true })}
-									/>
-								</ButtonGroup>
-							</PanelRow>
-						)}
-						{displayMode === "tablet" && (
-							<PanelRow>
-								<label>{__("Tablet Tab Display")}</label>
-								<ButtonGroup>
-									<Button
-										icon={horizontalTabIcon}
-										showTooltip={true}
-										label={__("Horizontal")}
-										isPressed={tabletTabDisplay === "horizontaltab"}
-										onClick={() =>
-											setAttributes({
-												tabletTabDisplay: "horizontaltab",
-											})
-										}
-									/>
-									<Button
-										icon={verticalTabIcon}
-										showTooltip={true}
-										label={__("Vertical")}
-										isPressed={tabletTabDisplay === "verticaltab"}
-										onClick={() =>
-											setAttributes({
-												tabletTabDisplay: "verticaltab",
-											})
-										}
-									/>
-									<Button
-										icon={accordionIcon}
-										showTooltip={true}
-										label={__("Accordion")}
-										isPressed={tabletTabDisplay === "accordion"}
-										onClick={() =>
-											setAttributes({
-												tabletTabDisplay: "accordion",
-											})
-										}
-									/>
-								</ButtonGroup>
-							</PanelRow>
-						)}
-						{displayMode === "mobile" && (
-							<PanelRow>
-								<label>{__("Mobile Tab Display")}</label>
-								<ButtonGroup>
-									<Button
-										icon={horizontalTabIcon}
-										showTooltip={true}
-										label={__("Horizontal")}
-										isPressed={mobileTabDisplay === "horizontaltab"}
-										onClick={() =>
-											setAttributes({
-												mobileTabDisplay: "horizontaltab",
-											})
-										}
-									/>
-									<Button
-										icon={verticalTabIcon}
-										showTooltip={true}
-										label={__("Vertical")}
-										isPressed={mobileTabDisplay === "verticaltab"}
-										onClick={() =>
-											setAttributes({
-												mobileTabDisplay: "verticaltab",
-											})
-										}
-									/>
-									<Button
-										icon={accordionIcon}
-										showTooltip={true}
-										label={__("Accordion")}
-										isPressed={mobileTabDisplay === "accordion"}
-										onClick={() =>
-											setAttributes({
-												mobileTabDisplay: "accordion",
-											})
-										}
-									/>
-								</ButtonGroup>
-							</PanelRow>
-						)}
+							)}
+						</div>
 					</PanelBody>
 					<PanelBody
 						title={__("Dimension Settings", "ultimate-blocks")}
@@ -370,35 +355,86 @@ class Inspector extends Component {
 								label={__("Tab Spacing", "ultimate-blocks")}
 							/>
 						)}
+						<SpacingControl
+							showByDefault
+							attrKey="tabButtonsPadding"
+							label={__("Tab Padding", "ultimate-blocks")}
+						/>
 					</PanelBody>
 				</InspectorControls>
+				<InspectorControls group="typography">
+					<CustomFontSizePicker
+						attrKey="tabTitleFontSize"
+						label={__("Tab Title Font Size", "ultimate-blocks")}
+					/>
+					<FontFamilyControl
+						attrKey="tabTitleFontFamily"
+						label={__("Tab Title Font Family", "ultimate-blocks")}
+					/>
+					<FontAppearanceControl
+						attrKey="tabTitleFontAppearance"
+						label={__("Tab Title Appearance", "ultimate-blocks")}
+					/>
+					<CustomFontSizePicker
+						attrKey="contentFontSize"
+						label={__("Content Font Size", "ultimate-blocks")}
+					/>
+					<FontFamilyControl
+						attrKey="contentFontFamily"
+						label={__("Content Font Family", "ultimate-blocks")}
+					/>
+					<FontAppearanceControl
+						attrKey="contentFontAppearance"
+						label={__("Content Appearance", "ultimate-blocks")}
+					/>
+				</InspectorControls>
 				<InspectorControls group="color">
-					{!(
-						tabStyle === "underline" &&
-						![tabletTabDisplay, mobileTabDisplay].includes("accordion")
-					) && (
-						<>
-							<ColorSettings
-								attrKey="normalColor"
-								label={__("Tab Color", "ultimate-blocks")}
-							/>
-							<ColorSettings
-								attrKey="theme"
-								label={__("Active Tab Color", "ultimate-blocks")}
-							/>
-						</>
-					)}
-					<ColorSettings
-						attrKey="normalTitleColor"
-						label={__("Tab Title Color", "ultimate-blocks")}
+					<TabsPanelControl
+						tabs={[
+							{
+								name: "normalState",
+								title: __("Normal", "ultimate-blocks"),
+								component: (
+									<>
+										{showTabBackground && (
+											<ColorSettings
+												attrKey="normalColor"
+												label={__("Tab Background", "ultimate-blocks")}
+											/>
+										)}
+										<ColorSettings
+											attrKey="normalTitleColor"
+											label={__("Tab Text", "ultimate-blocks")}
+										/>
+									</>
+								),
+							},
+							{
+								name: "activeState",
+								title: __("Active", "ultimate-blocks"),
+								component: (
+									<>
+										{showTabBackground && (
+											<ColorSettings
+												attrKey="theme"
+												label={__("Tab Background", "ultimate-blocks")}
+											/>
+										)}
+										<ColorSettings
+											attrKey="titleColor"
+											label={__("Tab Text", "ultimate-blocks")}
+										/>
+									</>
+								),
+							},
+						]}
 					/>
-					<ColorSettings
-						attrKey="titleColor"
-						label={__("Active Tab Title Color", "ultimate-blocks")}
-					/>
+					<p className="ub-color-group-label">
+						{__("Content", "ultimate-blocks")}
+					</p>
 					<ColorSettings
 						attrKey="contentColor"
-						label={__("Content Color", "ultimate-blocks")}
+						label={__("Content Text", "ultimate-blocks")}
 					/>
 					<ColorSettings
 						attrKey="contentBackground"
@@ -440,9 +476,10 @@ class Inspector extends Component {
 						)}
 					/>
 				</InspectorControls>
-				{ProInspectorControls && (
-					<ProInspectorControls showControls={showControls} />
-				)}
+				{/* called, not rendered as an element: pro defines ProInspectorControls anew on
+				every render, and remounting its InspectorControls each time looped forever
+				("Maximum update depth exceeded") once the tab icon controls showed */}
+				{ProInspectorControls && ProInspectorControls({ showControls })}
 			</>
 		);
 	}

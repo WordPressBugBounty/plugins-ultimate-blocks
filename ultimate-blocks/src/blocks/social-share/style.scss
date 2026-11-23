@@ -44,7 +44,7 @@
 			margin: 12px;
 			padding-right: 5px;
 		}
-		$sites: facebook, twitter, linkedin, pinterest, reddit, tumblr;
+		$sites: facebook, twitter, linkedin, pinterest, reddit, tumblr, google;
 
 		@each $site in $sites {
 			.ub-social-share-#{$site}-container {
@@ -71,6 +71,7 @@ $site-colors: (
 	pinterest: #e60023,
 	reddit: #ff4500,
 	tumblr: #001935,
+	google: #4285f4,
 );
 
 @each $site, $color in $site-colors {

@@ -1,7 +1,7 @@
 import icon from "./icon";
 import { isEmpty } from "lodash";
 import save from "./save";
-import { ReviewBody } from "./components";
+import { ReviewBody, getRatingMax, getRatingStep, rescaleParts } from "./components";
 import {
 	version_1_1_2,
 	version_1_1_4,
@@ -11,7 +11,11 @@ import {
 import { removeFromArray, getParentBlock } from "../../common";
 import { useEffect, useState } from "react";
 import registerPluginBlock from "$Inc/registerPluginBlock";
-import { CustomFontSizePicker, SpacingControl } from "../components";
+import {
+	CustomFontSizePicker,
+	CustomToggleGroupControl,
+	SpacingControl,
+} from "../components";
 import { __ } from "@wordpress/i18n";
 import {
 	BlockControls,
@@ -25,7 +29,6 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 	Button,
-	ButtonGroup,
 	FormToggle,
 	PanelBody,
 	PanelRow,
@@ -35,6 +38,8 @@ import {
 	TextControl,
 	DatePicker,
 	ToggleControl,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Notice,
 } from "@wordpress/components";
 
@@ -431,6 +436,9 @@ function ReviewMain(props) {
 			items,
 			parts,
 			starCount,
+			pointScale,
+			reviewLayout,
+			showPriceBadge,
 			useSummary,
 			summaryTitle,
 			summaryDescription,
@@ -464,6 +472,7 @@ function ReviewMain(props) {
 			identifier,
 			identifierType,
 			offerType,
+			offerPrice,
 			offerCurrency,
 			offerStatus,
 			offerCount,
@@ -511,6 +520,7 @@ function ReviewMain(props) {
 		proColorControls,
 		proWrapperStyles,
 		prosCons,
+		reviewExtras,
 		reviewWrapperRef,
 		prosConsColorProvides,
 		ProInspectorContextProvider,
@@ -1501,31 +1511,103 @@ function ReviewMain(props) {
 				{isSelected && (
 					<>
 						<InspectorControls group="settings">
+							<PanelBody title={__("Layout", "ultimate-blocks")}>
+								<ToggleGroupControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									isBlock
+									label={__("Layout", "ultimate-blocks")}
+									hideLabelFromVision
+									value={reviewLayout}
+									onChange={(newLayout) =>
+										setAttributes({ reviewLayout: newLayout })
+									}
+								>
+									<ToggleGroupControlOption
+										value="classic"
+										label={__("Classic", "ultimate-blocks")}
+									/>
+									<ToggleGroupControlOption
+										value="card"
+										label={__("Product Card", "ultimate-blocks")}
+									/>
+								</ToggleGroupControl>
+								{reviewLayout === "card" && (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										label={__("Show price", "ultimate-blocks")}
+										help={
+											offerPrice > 0
+												? __(
+														"Shows the offer price from Review Schema beside the title.",
+														"ultimate-blocks",
+													)
+												: __(
+														"Set an offer price under Review Schema to show it beside the title.",
+														"ultimate-blocks",
+													)
+										}
+										checked={showPriceBadge}
+										onChange={() =>
+											setAttributes({ showPriceBadge: !showPriceBadge })
+										}
+									/>
+								)}
+							</PanelBody>
 							<PanelBody title={__("Rating Format")}>
 								<RadioControl
 									selected={valueType}
-									options={["star", "percent"].map((a) => ({
-										label: __(a),
-										value: a,
-									}))}
+									options={[
+										{ label: __("Stars", "ultimate-blocks"), value: "star" },
+										{ label: __("Percentage", "ultimate-blocks"), value: "percent" },
+										{ label: __("Points", "ultimate-blocks"), value: "point" },
+									]}
 									onChange={(newValueType) => {
-										const factor = 100 / starCount;
 										setAttributes({
 											valueType: newValueType,
-											parts: parts.map((p) => ({
-												label: p.label,
-												value:
-													valueType === "star"
-														? p.value * factor
-														: p.value / factor,
-											})),
+											parts: rescaleParts(
+												parts,
+												getRatingMax(valueType, starCount, pointScale),
+												getRatingMax(newValueType, starCount, pointScale),
+												//finer than the input step, so little is lost
+												newValueType === "percent" ? 1 : 0.1,
+											),
 											activePercentBarColor:
-												valueType === "star" && !activePercentBarColor
+												newValueType === "percent" && !activePercentBarColor
 													? "#e11b4c"
 													: activePercentBarColor,
 										});
 									}}
 								/>
+								{valueType === "point" && (
+									<ToggleGroupControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										isBlock
+										label={__("Scale", "ultimate-blocks")}
+										value={pointScale}
+										onChange={(newScale) =>
+											setAttributes({
+												pointScale: newScale,
+												parts: rescaleParts(
+													parts,
+													pointScale,
+													newScale,
+													0.1,
+												),
+											})
+										}
+									>
+										<ToggleGroupControlOption
+											value={5}
+											label={__("Out of 5", "ultimate-blocks")}
+										/>
+										<ToggleGroupControlOption
+											value={10}
+											label={__("Out of 10", "ultimate-blocks")}
+										/>
+									</ToggleGroupControl>
+								)}
 								{editedStar > -1 && (
 									<RangeControl
 										label={__(
@@ -1548,9 +1630,9 @@ function ReviewMain(props) {
 												],
 											});
 										}}
-										min={valueType === "star" ? 0 : 1}
-										max={valueType === "star" ? starCount : 100}
-										step={valueType === "star" ? 0.1 : 1}
+										min={valueType === "percent" ? 1 : 0}
+										max={getRatingMax(valueType, starCount, pointScale)}
+										step={getRatingStep(valueType)}
 									/>
 								)}
 								<p>
@@ -1576,22 +1658,17 @@ function ReviewMain(props) {
 								</PanelRow>
 								{enableCTA && (
 									<>
-										<PanelRow>
-											<label>{__("Alignment")}</label>
-											<ButtonGroup>
-												{["left", "center", "right"].map((a) => (
-													<Button
-														icon={`align-${a}`}
-														isPrimary={ctaAlignment === a}
-														onClick={() =>
-															setAttributes({
-																ctaAlignment: a,
-															})
-														}
-													/>
-												))}
-											</ButtonGroup>
-										</PanelRow>
+										{/* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */}
+										<CustomToggleGroupControl
+											isBlock
+											label={__("Alignment")}
+											attributeKey="ctaAlignment"
+											options={["left", "center", "right"].map((a) => ({
+												value: a,
+												icon: `align-${a}`,
+												label: a,
+											}))}
+										/>
 									</>
 								)}
 							</PanelBody>
@@ -2176,6 +2253,11 @@ function ReviewMain(props) {
 					valueType={valueType}
 					parts={parts}
 					starCount={starCount}
+					pointScale={pointScale}
+					reviewLayout={reviewLayout}
+					showPriceBadge={showPriceBadge}
+					offerPrice={offerPrice}
+					offerCurrency={offerCurrency}
 					useSummary={useSummary}
 					summaryTitle={summaryTitle}
 					summaryDescription={summaryDescription}
@@ -2210,6 +2292,7 @@ function ReviewMain(props) {
 					wrapperRef={reviewWrapperRef}
 				>
 					{prosCons && prosCons}
+					{reviewExtras && reviewExtras}
 				</ReviewBody>
 			</WrapperContextTag>
 		</div>

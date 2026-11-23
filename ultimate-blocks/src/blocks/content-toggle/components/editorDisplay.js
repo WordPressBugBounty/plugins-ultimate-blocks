@@ -10,7 +10,6 @@ import {
 	objectsMatch,
 	getParentBlock,
 } from "../../../common";
-import icons from "../icons/icons";
 import SavedStylesInspector from "$Inc/components/SavedStyles/SavedStylesInspector";
 
 const objectsNewChange = (obj1, obj2) => {
@@ -27,6 +26,7 @@ const objectsNewChange = (obj1, obj2) => {
 };
 
 import { __ } from "@wordpress/i18n";
+import { chevronDown, plus } from "@wordpress/icons";
 import { createBlock } from "@wordpress/blocks";
 
 import {
@@ -40,16 +40,27 @@ import {
 } from "@wordpress/block-editor";
 import {
 	PanelBody,
-	PanelRow,
-	FormToggle,
 	SelectControl,
+	ToggleControl,
 	Button,
-	ButtonGroup,
-	Dropdown,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
 } from "@wordpress/components";
 
-import { SpacingControl, BorderControl } from "../../components";
+import { SpacingControlWithToolsPanel, BorderControl } from "../../components";
 import { generateStyles, getSpacingCss } from "../../utils/styling-helpers";
+import { TITLE_TAG_OPTIONS } from "./constants";
+
+const INITIAL_STATE_HELP = {
+	open: __("Every panel is open when the page loads.", "ultimate-blocks"),
+	closed: __("Every panel is closed when the page loads.", "ultimate-blocks"),
+	one: __("Only the panel you pick is open when the page loads.", "ultimate-blocks"),
+	individual: __(
+		"Select a panel to set whether it starts open or closed.",
+		"ultimate-blocks",
+	),
+};
 export function OldPanelContent(props) {
 	const {
 		attributes,
@@ -373,23 +384,6 @@ export function PanelContent(props) {
 			updateBlockAttributes(panel.clientId, { toggleColor: value }),
 		);
 	};
-	const onCollapseChange = () => {
-		setAttributes({ collapsed: !collapsed });
-		panels.forEach((panel) =>
-			updateBlockAttributes(panel.clientId, {
-				collapsed: !panel.attributes.collapsed,
-			}),
-		);
-		if (!collapsed) {
-			setAttributes({ preventCollapse: false });
-			panels.forEach((panel) =>
-				updateBlockAttributes(panel.clientId, {
-					preventCollapse: false,
-				}),
-			);
-		}
-	};
-
 	const onPreventCollapseChange = () => {
 		setAttributes({ preventCollapse: !preventCollapse });
 		panels.forEach((panel) =>
@@ -604,10 +598,93 @@ export function PanelContent(props) {
 		};
 	});
 
-	const defaultOpenOptions = [
-		{ value: "none", label: __("None", "ultimate-blocks") },
-		...availablePanels,
+	//the same settings are kept on the block and on every panel
+	const setOnAllPanels = (newAttributes) => {
+		setAttributes(newAttributes);
+		panels.forEach((panel) =>
+			updateBlockAttributes(panel.clientId, newAttributes),
+		);
+	};
+
+	const defaultOpenPanelId =
+		panels.find((panel) => panel?.attributes?.defaultOpen)?.clientId ??
+		panels[0]?.clientId;
+
+	const setDefaultOpenPanel = (openId) => {
+		panels.forEach((panel) =>
+			updateBlockAttributes(panel.clientId, {
+				defaultOpen: panel.clientId === openId,
+			}),
+		);
+	};
+
+	//the old toggles, read as one choice
+	let initialState = "open";
+	if (individualCollapse) {
+		initialState = "individual";
+	} else if (
+		collapsed &&
+		panels.some((panel) => panel?.attributes?.defaultOpen)
+	) {
+		initialState = "one";
+	} else if (collapsed) {
+		initialState = "closed";
+	}
+
+	const initialStateOptions = [
+		{ value: "open", label: __("All panels open", "ultimate-blocks") },
+		{ value: "closed", label: __("All panels closed", "ultimate-blocks") },
+		{ value: "one", label: __("One panel open", "ultimate-blocks") },
+		{ value: "individual", label: __("Set on each panel", "ultimate-blocks") },
 	];
+
+	const onInitialStateChange = (value) => {
+		//the panels read this one from the accordion itself
+		setAttributes({ individualCollapse: value === "individual" });
+
+		if (value === "individual") {
+			//each panel keeps the state the first one had, then gets its own
+			//toggle in the panel settings
+			setOnAllPanels({
+				showOnlyOne: false,
+				collapsed: panels[0]?.attributes?.collapsed ?? collapsed,
+			});
+			setDefaultOpenPanel(null);
+			return;
+		}
+
+		setOnAllPanels({
+			collapsed: value !== "open",
+			//only open panels can be kept from closing
+			...(value !== "open" && { preventCollapse: false }),
+		});
+		setDefaultOpenPanel(value === "one" ? defaultOpenPanelId : null);
+	};
+
+	const onShowOnlyOneChange = () => {
+		setOnAllPanels({ showOnlyOne: !showOnlyOne });
+
+		if (showOnlyOne) {
+			//value before setAttributes still in use
+			setOnAllPanels({ collapsed: false, preventCollapse: false });
+		} else {
+			//only the first panel starts open, a panel picked earlier would
+			//open as well
+			panels.forEach((panel, i) =>
+				updateBlockAttributes(panel.clientId, {
+					collapsed: i !== 0,
+					defaultOpen: false,
+				}),
+			);
+		}
+	};
+
+	const onCollapsedOnMobileChange = () => {
+		setOnAllPanels({
+			collapsedOnMobile: !collapsedOnMobile,
+			...(!collapsedOnMobile && { showOnlyOne: false }),
+		});
+	};
 	const paddingObj = getSpacingCss(padding);
 	const marginObj = getSpacingCss(margin);
 	const styles = {
@@ -643,207 +720,110 @@ export function PanelContent(props) {
 			{isSelected && (
 				<>
 					<InspectorControls group="settings">
-						<PanelBody title={__("Panel Title")} initialOpen={false}>
-							<div
-								style={{
-									display: "grid",
-									gridTemplateColumns: "5fr 1fr",
-									padding: "0 16px",
+						<PanelBody title={__("Title", "ultimate-blocks")} initialOpen={false}>
+							<SelectControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								label={__("Title tag", "ultimate-blocks")}
+								help={__(
+									"The HTML tag of every panel title. Headings show up in the page outline.",
+									"ultimate-blocks",
+								)}
+								options={TITLE_TAG_OPTIONS}
+								value={titleTag}
+								onChange={(titleTag) => {
+									setAttributes({ titleTag });
+									panels.forEach((panel) =>
+										updateBlockAttributes(panel.clientId, { titleTag }),
+									);
 								}}
-							>
-								<p>{__("Select Heading Tag", "ultimate-blocks")}</p>
-								<SelectControl
-									options={[
-										{ value: "h1", label: __("H1", "ultimate-blocks") },
-										{ value: "h2", label: __("H2", "ultimate-blocks") },
-										{ value: "h3", label: __("H3", "ultimate-blocks") },
-										{ value: "h4", label: __("H4", "ultimate-blocks") },
-										{ value: "h5", label: __("H5", "ultimate-blocks") },
-										{ value: "h6", label: __("H6", "ultimate-blocks") },
-										{ value: "p", label: __("P", "ultimate-blocks") },
-									]}
-									value={titleTag}
-									onChange={(titleTag) => {
-										setAttributes({ titleTag });
-										panels.forEach((panel) =>
-											updateBlockAttributes(panel.clientId, { titleTag }),
-										);
-									}}
-								/>
-							</div>
+							/>
 						</PanelBody>
-						<PanelBody title={__("Toggle State")} initialOpen={false}>
-							<PanelRow>
-								<label htmlFor="ub-content-toggle-set-individually">
-									{__("Set toggle status for each panel individually")}
-								</label>
-								<FormToggle
-									id="ub-content-toggle-set-individually"
-									label={__("Set toggle status for each panel individually")}
-									checked={individualCollapse}
-									onChange={() => {
-										setAttributes({
-											individualCollapse: !individualCollapse,
-											...(!individualCollapse && {
-												showOnlyOne: false,
-												collapsed: panels[0].attributes.collapsed,
-											}),
-											...(individualCollapse && { preventCollapse: false }),
-										});
-
-										panels.forEach((panel) =>
-											updateBlockAttributes(panel.clientId, {
-												...(!individualCollapse && {
-													showOnlyOne: false,
-													collapsed: panels[0].attributes.collapsed,
-												}),
-												...(individualCollapse && { preventCollapse: false }),
-											}),
-										);
-									}}
-								/>
-							</PanelRow>
-							{!individualCollapse && (
-								<PanelRow>
-									<label htmlFor="ub-content-toggle-amount">
-										{__("Show only one panel at a time")}
-									</label>
-									<FormToggle
-										id="ub-content-toggle-amount"
-										label={__("Show only one panel at a time")}
+						<PanelBody
+							title={__("Open / Close behavior", "ultimate-blocks")}
+							initialOpen={false}
+						>
+							<div className="ub-content-toggle-behavior-controls">
+								{!individualCollapse && (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										label={__("Only one panel open at a time", "ultimate-blocks")}
+										help={__(
+											"Opening a panel closes the others. The first panel starts open.",
+											"ultimate-blocks",
+										)}
 										checked={showOnlyOne}
-										onChange={() => {
-											setAttributes({ showOnlyOne: !showOnlyOne });
-											panels.forEach((panel) =>
-												updateBlockAttributes(panel.clientId, {
-													showOnlyOne: !showOnlyOne,
-												}),
-											);
-											if (showOnlyOne) {
-												//value before setAttributes still in use
-												setAttributes({
-													collapsed: false,
-													preventCollapse: false,
-												});
-												panels.forEach((panel) =>
-													updateBlockAttributes(panel.clientId, {
-														collapsed: false,
-														preventCollapse: false,
-													}),
-												);
-											} else {
-												panels.forEach((panel, i) =>
-													updateBlockAttributes(panel.clientId, {
-														collapsed: i !== 0,
-													}),
-												);
-											}
-										}}
+										onChange={onShowOnlyOneChange}
 									/>
-								</PanelRow>
-							)}
-							{!showOnlyOne && !individualCollapse && !preventCollapse && (
-								<>
-									<PanelRow>
-										<label htmlFor="ub-content-toggle-state">
-											{__("Collapsed")}
-										</label>
-										<FormToggle
-											id="ub-content-toggle-state"
-											label={__("Collapsed")}
-											checked={collapsed}
-											onChange={onCollapseChange}
-										/>
-									</PanelRow>
-									{collapsed && (
-										<SelectControl
-											label={__("Default Open", "ultimate-blocks")}
-											options={defaultOpenOptions}
-											value={
-												panels.find((panel) => panel?.attributes?.defaultOpen)
-													?.clientId ?? "none"
-											}
-											onChange={(newId) => {
-												panels.forEach((panel) => {
-													if (panel.clientId === newId) {
-														updateBlockAttributes(panel.clientId, {
-															defaultOpen: true,
-														});
-													} else {
-														updateBlockAttributes(panel.clientId, {
-															defaultOpen: false,
-														});
-													}
-												});
-											}}
-										/>
-									)}
-									<PanelRow>
-										<label htmlFor="ub-content-toggle-mobile-state">
-											{__("Collapsed on mobile")}
-										</label>
-										<FormToggle
-											id="ub-content-toggle-mobile-state"
-											label={__("Collapsed on mobile")}
-											checked={collapsedOnMobile}
-											onChange={() => {
-												setAttributes({
-													collapsedOnMobile: !collapsedOnMobile,
-												});
-												panels.forEach((panel) => {
-													updateBlockAttributes(panel.clientId, {
-														collapsedOnMobile: !collapsedOnMobile,
-													});
-													if (!collapsedOnMobile) {
-														setAttributes({ showOnlyOne: false });
-														panels.forEach((panel) => {
-															updateBlockAttributes(panel.clientId, {
-																showOnlyOne: false,
-															});
-														});
-													}
-												});
-											}}
-										/>
-									</PanelRow>
-								</>
-							)}
-							{!collapsed &&
-								!collapsedOnMobile &&
-								!showOnlyOne &&
-								!individualCollapse && (
-									<PanelRow>
-										<label htmlFor="ub-content-toggle-state">
-											{__("Prevent collapse")}
-										</label>
-										<FormToggle
-											id="ub-content-toggle-state"
-											label={__("Prevent collapse")}
+								)}
+								{!showOnlyOne && (
+									<SelectControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										label={__("Initial state", "ultimate-blocks")}
+										help={INITIAL_STATE_HELP[initialState]}
+										options={initialStateOptions}
+										value={initialState}
+										onChange={onInitialStateChange}
+									/>
+								)}
+								{!showOnlyOne && initialState === "one" && (
+									<SelectControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										label={__("Panel that starts open", "ultimate-blocks")}
+										options={availablePanels}
+										value={defaultOpenPanelId}
+										onChange={setDefaultOpenPanel}
+									/>
+								)}
+								{!showOnlyOne && !individualCollapse && !preventCollapse && (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										label={__("Collapsed on mobile", "ultimate-blocks")}
+										help={__(
+											"On phones every panel starts closed, whatever the initial state says.",
+											"ultimate-blocks",
+										)}
+										checked={collapsedOnMobile}
+										onChange={onCollapsedOnMobileChange}
+									/>
+								)}
+								{!collapsed &&
+									!collapsedOnMobile &&
+									!showOnlyOne &&
+									!individualCollapse && (
+										<ToggleControl
+											__nextHasNoMarginBottom
+											label={__("Prevent collapse", "ultimate-blocks")}
+											help={__(
+												"Panels stay open and visitors can't close them.",
+												"ultimate-blocks",
+											)}
 											checked={preventCollapse}
 											onChange={onPreventCollapseChange}
 										/>
-									</PanelRow>
-								)}
+									)}
+							</div>
 						</PanelBody>
 						<PanelBody title={__("FAQ Schema")} initialOpen={false}>
-							<PanelRow>
-								<label htmlFor="ub-content-toggle-faq-schema">
-									{__("Enable FAQ Schema")}
-								</label>
-								<FormToggle
-									id="ub-content-toggle-faq-schema"
-									label={__("Enable FAQ Schema")}
-									checked={hasFAQSchema}
-									onChange={() => {
-										setAttributes({ hasFAQSchema: !hasFAQSchema });
-										panels.forEach((panel) =>
-											updateBlockAttributes(panel.clientId, {
-												hasFAQSchema: !panel.attributes.hasFAQSchema,
-											}),
-										);
-									}}
-								/>
-							</PanelRow>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={__("Enable FAQ Schema")}
+								help={__(
+									"Adds FAQ structured data so search engines can read the panels as questions and answers.",
+									"ultimate-blocks",
+								)}
+								checked={hasFAQSchema}
+								onChange={() => {
+									setAttributes({ hasFAQSchema: !hasFAQSchema });
+									panels.forEach((panel) =>
+										updateBlockAttributes(panel.clientId, {
+											hasFAQSchema: !panel.attributes.hasFAQSchema,
+										}),
+									);
+								}}
+							/>
 						</PanelBody>
 					</InspectorControls>
 					<InspectorControls group="styles">
@@ -900,22 +880,22 @@ export function PanelContent(props) {
 									{
 										colorValue: theme,
 										onColorChange: onThemeChange,
-										label: __("Title Container Color"),
+										label: __("Title Background", "ultimate-blocks"),
 									},
 									{
 										colorValue: titleColor,
 										onColorChange: onTitleColorChange,
-										label: __("Title Color"),
+										label: __("Title Text", "ultimate-blocks"),
 									},
 									{
 										colorValue: titleLinkColor,
 										onColorChange: onLinkColorChange,
-										label: __("Title link Color"),
+										label: __("Title Link", "ultimate-blocks"),
 									},
 									{
 										colorValue: toggleColor,
 										onColorChange: onToggleColorChange,
-										label: __("Toggle Icon Color"),
+										label: __("Toggle Icon", "ultimate-blocks"),
 									},
 									...finalProColorSettings.map((setting) => ({
 										colorValue: setting.value,
@@ -937,109 +917,68 @@ export function PanelContent(props) {
 							/>
 						</InspectorControls>
 						<PanelBody
-							title={__("Toggle Status Icon", "ultimate-blocks")}
+							title={__("Toggle Icon", "ultimate-blocks")}
 							initialOpen={false}
 						>
-							{toggleIcon !== "none" && (
-								<PanelRow>
-									<label htmlFor="ub-content-toggle-status-location">
-										{__("Location", "ultimate-blocks")}
-									</label>
-									<ButtonGroup
-										id="ub-content-toggle-status-location"
-										aria-label={__("toggle icon position", "ultimate-blocks")}
+							<div className="ub-content-toggle-behavior-controls">
+								<ToggleGroupControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									isBlock
+									label={__("Icon", "ultimate-blocks")}
+									value={toggleIcon}
+									onChange={(value) => setOnAllPanels({ toggleIcon: value })}
+								>
+									<ToggleGroupControlOption
+										value="none"
+										label={__("None", "ultimate-blocks")}
+									/>
+									<ToggleGroupControlOptionIcon
+										value="chevron"
+										icon={chevronDown}
+										label={__("Chevron", "ultimate-blocks")}
+									/>
+									<ToggleGroupControlOptionIcon
+										value="plus"
+										icon={plus}
+										label={__("Plus", "ultimate-blocks")}
+									/>
+								</ToggleGroupControl>
+								{toggleIcon !== "none" && (
+									<ToggleGroupControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										isBlock
+										label={__("Position", "ultimate-blocks")}
+										value={toggleLocation}
+										onChange={(value) =>
+											setOnAllPanels({ toggleLocation: value })
+										}
 									>
-										{Object.keys(toggleIconPositions).map((p) => {
-											if (
-												Object.prototype.hasOwnProperty.call(
-													toggleIconPositions,
-													p,
-												)
-											) {
-												return (
-													<Button
-														isLarge
-														aria-pressed={toggleLocation === p}
-														isPrimary={toggleLocation === p}
-														onClick={() => {
-															setAttributes({ toggleLocation: p });
-															panels.forEach((panel) =>
-																updateBlockAttributes(panel.clientId, {
-																	toggleLocation: p,
-																}),
-															);
-														}}
-													>
-														{toggleIconPositions[p]}
-													</Button>
-												);
-											}
-										})}
-									</ButtonGroup>
-								</PanelRow>
-							)}
-							<PanelRow>
-								<label htmlFor="ub-content-toggle-status-icon">
-									{__("Icon", "ultimate-blocks")}
-								</label>
-								<Dropdown
-									position="bottom right"
-									renderToggle={({ onToggle, isOpen }) => (
-										<Button isLarge onClick={onToggle} area-expanded={isOpen}>
-											{icons[toggleIcon] === "none" ? (
-												<span>{__("None")}</span>
-											) : (
-												<span className={icons[toggleIcon]} />
-											)}
-										</Button>
-									)}
-									renderContent={() => (
-										<div className="wp-block-ub-content-toggle-customize-icons-wrap">
-											{Object.keys(icons).map((i) => {
-												if (Object.prototype.hasOwnProperty.call(icons, i)) {
-													return (
-														<Button
-															isPrimary={toggleIcon === i}
-															isLarge
-															onClick={() => {
-																setAttributes({ toggleIcon: i });
-																panels.forEach((panel) =>
-																	updateBlockAttributes(panel.clientId, {
-																		toggleIcon: i,
-																	}),
-																);
-															}}
-														>
-															{icons[i] === "none" ? (
-																"None"
-															) : (
-																<span className={icons[i]} />
-															)}
-														</Button>
-													);
-												}
-											})}
-										</div>
-									)}
-								/>
-							</PanelRow>
+										{Object.keys(toggleIconPositions).map((p) => (
+											<ToggleGroupControlOption
+												key={p}
+												value={p}
+												label={toggleIconPositions[p]}
+											/>
+										))}
+									</ToggleGroupControl>
+								)}
+							</div>
 						</PanelBody>
-						<PanelBody
-							title={__("Dimension Settings", "ultimate-blocks")}
-							initialOpen={false}
-						>
-							<SpacingControl
-								showByDefault
-								attrKey="padding"
-								label={__("Padding", "ultimate-blocks")}
-							/>
-							<SpacingControl
-								minimumCustomValue={-Infinity}
-								showByDefault
-								attrKey="margin"
-								label={__("Margin", "ultimate-blocks")}
-							/>
-						</PanelBody>
+					</InspectorControls>
+					<InspectorControls group="dimensions">
+						<SpacingControlWithToolsPanel
+							showByDefault
+							attrKey="padding"
+							label={__("Padding", "ultimate-blocks")}
+						/>
+						<SpacingControlWithToolsPanel
+							minimumCustomValue={-Infinity}
+							showByDefault
+							attrKey="margin"
+							label={__("Margin", "ultimate-blocks")}
+						/>
 					</InspectorControls>
 					{SearchInspectorControl && SearchInspectorControl}
 				</>

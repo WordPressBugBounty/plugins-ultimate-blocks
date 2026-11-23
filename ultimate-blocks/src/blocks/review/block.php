@@ -64,6 +64,67 @@ function ub_review_schema_identifier($identifierType, $identifier){
     return '"' . ub_filterJsonldString($identifierType) . '": "' . ub_filterJsonldString($identifier) . '",';
 }
 
+/**
+ * A point rating, written as the score over the top of the scale (8/10).
+ *
+ * @param float $value score of the feature.
+ * @param int   $scale top of the scale, 5 or 10.
+ * @return string html
+ */
+function ub_review_points_display( $value, $scale ) {
+    return sprintf(
+        '<span class="ub_review_points"><span class="ub_review_points_value">%1$s</span><span class="ub_review_points_scale">/%2$s</span></span>',
+        esc_html( (float) $value ),
+        esc_html( $scale )
+    );
+}
+
+/**
+ * A rating as a bar with its score written inside, used by the product card
+ * layout whatever the rating format is.
+ *
+ * @param string $label        feature name.
+ * @param float  $value        score of the feature.
+ * @param float  $max          top of the scale.
+ * @param string $display      score as it is shown, like 4.1, 80% or 8.
+ * @param string $active_color color of the filled part.
+ * @param string $track_color  color of the empty part.
+ * @return string html
+ */
+function ub_review_score_bar( $label, $value, $max, $display, $active_color, $track_color ) {
+    $fill = $max > 0 ? max( 0, min( 100, ( (float) $value / $max ) * 100 ) ) : 0;
+
+    return sprintf(
+        '<div class="ub_review_score_entry"><span class="ub_review_score_label">%1$s</span><span class="ub_review_score_bar" style="%2$s"><span class="ub_review_score_fill" style="%3$s"><span class="ub_review_score_value">%4$s</span></span></span></div>',
+        wp_kses_post( $label ),
+        esc_attr( Ultimate_Blocks\includes\generate_css_string( array( 'background-color' => $track_color ) ) ),
+        esc_attr( Ultimate_Blocks\includes\generate_css_string( array( 'width' => round( $fill, 2 ) . '%', 'background-color' => $active_color ) ) ),
+        esc_html( $display )
+    );
+}
+
+/**
+ * The offer price written for people, like $136, for the product card.
+ *
+ * @param float  $price    offer price.
+ * @param string $currency ISO currency code.
+ * @return string price
+ */
+function ub_review_format_price( $price, $currency ) {
+    $symbols = array(
+        'USD' => '$',
+        'EUR' => '€',
+        'GBP' => '£',
+        'JPY' => '¥',
+        'INR' => '₹',
+        'AUD' => 'A$',
+        'CAD' => 'C$',
+    );
+    $amount = (float) $price == (int) $price ? number_format( (float) $price ) : number_format( (float) $price, 2 );
+
+    return isset( $symbols[ $currency ] ) ? $symbols[ $currency ] . $amount : $amount . ' ' . $currency;
+}
+
 function ub_render_review_block($attributes, $block_content, $block_instance){
     require_once dirname(dirname(__DIR__)) . '/common.php';
 
@@ -83,11 +144,35 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
 
     $ratings = '';
 
+    $point_scale = isset( $pointScale ) ? (int) $pointScale : 10;
+
+    $is_card_layout = isset( $reviewLayout ) && 'card' === $reviewLayout;
+    $rating_max     = 'percent' === $valueType ? 100 : ( 'point' === $valueType ? $point_scale : $starCount );
+
     foreach($parsedItems as $key => $item){
+        if ( $is_card_layout ) {
+            $ratings .= ub_review_score_bar(
+                $item['label'],
+                $item['value'],
+                $rating_max,
+                'percent' === $valueType ? $item['value'] . '%' : (float) $item['value'],
+                $activePercentBarColor ?: '#3e8e41',
+                $percentBarColor ?: '#e8e8e8'
+            );
+            continue;
+        }
+
+        if ( 'point' === $valueType ) {
+            $rating_display = ub_review_points_display( $item['value'], $point_scale );
+        } elseif ( 'star' === $valueType ) {
+            $rating_display = ub_generateStarDisplay($item['value'], $starCount, $blockID . '-' . $key,
+                                $inactiveStarColor, $activeStarColor, $starOutlineColor, "ub_review_stars", "ub_review_star_filter-");
+        } else {
+            $rating_display = ub_generatePercentageBar($item['value'], $blockID . '-' . $key, $activePercentBarColor, $percentBarColor ?: '#d9d9d9');
+        }
+
         $ratings .= '<div class="ub_review_' . ($valueType === 'percent' ? 'percentage_' : '') . 'entry"><span>' . wp_kses_post($item['label']) . '</span>' .
-        ($valueType === 'star' ? ub_generateStarDisplay($item['value'], $starCount, $blockID . '-' . $key,
-                                $inactiveStarColor, $activeStarColor, $starOutlineColor, "ub_review_stars", "ub_review_star_filter-")
-                                : ub_generatePercentageBar($item['value'], $blockID . '-' . $key, $activePercentBarColor, $percentBarColor ?: '#d9d9d9')  ) . '</div>';
+        $rating_display . '</div>';
     }
     $button_block = !empty($block_instance->parsed_block['innerBlocks']) ? $block_instance->parsed_block['innerBlocks'][0] : array();
     $buttons = isset($button_block['attrs']['buttons']) ? $button_block['attrs']['buttons'] : array();
@@ -195,7 +280,11 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
     $itemExtras = '';
 
     $rating_value = ((int)$average % 1 === 0 ? $average : number_format($average, 1, '.', ''));
-    $best_rating = ($valueType === 'star' ? $starCount : '100');
+    if ( 'point' === $valueType ) {
+        $best_rating = $point_scale;
+    } else {
+        $best_rating = ($valueType === 'star' ? $starCount : '100');
+    }
     $reviewDetails =
         ($useSummary ? '"reviewBody": "' . ub_filterJsonldString($summaryDescription) . '",' : '') .
         '"description": "' . ub_filterJsonldString($description) . '",
@@ -372,6 +461,18 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
 		wp_kses_post($itemName)
 	);
 
+	// The product card shows the offer price of the schema beside the title.
+	if ( $is_card_layout && ! empty( $showPriceBadge ) && (float) $offerPrice > 0 ) {
+		$item_name .= sprintf(
+			'<span class="ub_review_price_badge">%1$s</span>',
+			esc_html( ub_review_format_price( $offerPrice, $offerCurrency ) )
+		);
+	}
+
+	if ( $is_card_layout ) {
+		$ratings = '<div class="ub_review_card_bars">' . $ratings . '</div>';
+	}
+
 	$author_name = sprintf(
 		'<p class="ub_review_author_name" style="%1$s">%2$s</p>',
 		Ultimate_Blocks\includes\generate_css_string($author_name_styles),
@@ -412,7 +513,7 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
 	$average_rating = sprintf(
 		'<div class="ub_review_average"><span class="ub_review_rating">%1$s%2$s</span>%3$s</div>',
 		$average,
-		($valueType === 'percent' ? '%' : ''),
+		($valueType === 'percent' ? '%' : ('point' === $valueType ? '<span class="ub_review_points_scale">/' . esc_html( $point_scale ) . '</span>' : '')),
 		($valueType === 'star' ? ub_generateStarDisplay($average, $starCount, $blockID . '-average', $inactiveStarColor, $activeStarColor, $starOutlineColor, "ub_review_average_stars", "ub_review_star_filter-") : '')
 	);
 
@@ -435,6 +536,9 @@ function ub_render_review_block($attributes, $block_content, $block_instance){
 	);
 
     $classes = array( 'ub_review_block', 'wp-block-ub-review' );
+	if ( $is_card_layout ) {
+		$classes[] = 'ub_review_layout_card';
+	}
 	if(isset($className)) {
 		$classes[] = $className;
 	}

@@ -34,6 +34,15 @@ class Ai_Summarize_Pro_Block extends Pro_Block_Upsell {
 	}
 
 	/**
+	 * Block title as the inserter shows it.
+	 *
+	 * @return string
+	 */
+	public function block_title() {
+		return esc_html__( 'Summarize with AI', 'ultimate-blocks' );
+	}
+
+	/**
 	 * Block icon html.
 	 * @return null | string;
 	 */

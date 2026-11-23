@@ -7,6 +7,23 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 const DevelopmentComponentIgnorePlugin = require('./src/__development/webpack/plugin/DevelopmentComponentIgnorePlugin');
 
+/**
+ * The icon library is a script of its own, exposed as
+ * window.ultimateBlocks.iconLibrary under the "ultimate-blocks-icon-library"
+ * handle. An import of "@ultimate-blocks/icon-library" becomes that global, the
+ * way an import of "@wordpress/blocks" becomes wp.blocks.
+ */
+const ICON_LIBRARY_REQUEST = '@ultimate-blocks/icon-library';
+const ICON_LIBRARY_GLOBAL = ['ultimateBlocks', 'iconLibrary'];
+const ICON_LIBRARY_HANDLE = 'ultimate-blocks-icon-library';
+
+// The plugin ships inside @wordpress/scripts, so its class is taken from the
+// instance the default config already holds.
+const defaultDependencyExtraction = defaultConfig.plugins.find(
+	(p) => p.constructor.name === 'DependencyExtractionWebpackPlugin'
+);
+const DependencyExtractionWebpackPlugin = defaultDependencyExtraction.constructor;
+
 // ignore list to mark given components as development specific
 const developmentComponentIgnoreList = [
 	'ActivateBlockOnStartup',
@@ -32,6 +49,16 @@ const customConfig = {
 			'src',
 			'setup-wizard.js'
 		),
+		'icon-library': {
+			import: path.resolve(
+				process.cwd(),
+				'src',
+				'blocks',
+				'icon',
+				'library.js'
+			),
+			library: { name: ICON_LIBRARY_GLOBAL, type: 'window' },
+		},
 	},
 	resolve: {
 		...defaultConfig.resolve,
@@ -71,10 +98,35 @@ const customConfig = {
 		},
 		extensions: [...defaultConfig.resolve.extensions, '.js'],
 	},
+	module: {
+		...defaultConfig.module,
+		rules: [
+			...defaultConfig.module.rules,
+			// The Custom CSS code editor (ace) checks CSS in a web worker it loads by
+			// URL. Imported from the editor, the worker file is copied into
+			// dist/ace/ as it is and the import gives its URL.
+			{
+				test: /ace-builds[\\/]src-noconflict[\\/]worker-[\w-]+\.js$/,
+				type: 'asset/resource',
+				generator: { filename: 'ace/[name][ext]' },
+			},
+		],
+	},
 	plugins: [
 		...defaultConfig.plugins.filter(
-			(p) => !(p instanceof CleanWebpackPlugin)
+			(p) =>
+				!(
+					p instanceof CleanWebpackPlugin ||
+					p instanceof DependencyExtractionWebpackPlugin
+				)
 		),
+		new DependencyExtractionWebpackPlugin({
+			...defaultDependencyExtraction?.options,
+			requestToExternal: (request) =>
+				request === ICON_LIBRARY_REQUEST ? ICON_LIBRARY_GLOBAL : undefined,
+			requestToHandle: (request) =>
+				request === ICON_LIBRARY_REQUEST ? ICON_LIBRARY_HANDLE : undefined,
+		}),
 		new IgnoreEmitPlugin(['blocks.build.asset.php', /\.map$/]),
 		new DefinePlugin({
 			UB_ENV: JSON.stringify(defaultConfig.mode),

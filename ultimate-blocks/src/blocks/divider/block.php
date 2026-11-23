@@ -25,9 +25,10 @@ function ub_render_divider_block($attributes, $_ ,$block){
 		$divider_wrapper_style['margin-bottom'] = isset($borderHeight) ? $borderHeight . 'px' : '';
 	} else {
 		$divider_style['width'] = 'fit-content';
-		$divider_style['height'] = isset($lineHeight) ? $lineHeight : '';
+		// a theme spacing preset is saved as var:preset|spacing|x, CSS needs its variable
+		$divider_style['height'] = isset($lineHeight) ? Ultimate_Blocks\includes\spacing_preset_css_var($lineHeight) : '';
 	}
-	$divider_width = isset($attributes['isWidthControlChanged']) && $attributes['isWidthControlChanged'] && isset($attributes['dividerWidth']) ? $attributes['dividerWidth'] : $attributes['width'] . '%';
+	$divider_width = isset($attributes['isWidthControlChanged']) && $attributes['isWidthControlChanged'] && isset($attributes['dividerWidth']) ? Ultimate_Blocks\includes\spacing_preset_css_var($attributes['dividerWidth']) : $attributes['width'] . '%';
 
 	if ($orientation === 'horizontal') {
 		$divider_wrapper_style['width'] = $divider_width;
@@ -36,7 +37,7 @@ function ub_render_divider_block($attributes, $_ ,$block){
 		$divider_wrapper_style['margin-bottom'] = isset($borderHeight) ? $borderHeight . 'px': '';
 	} else {
 		$divider_wrapper_style['width'] = $borderSize . "px";
-		$divider_wrapper_style['height'] = isset($lineHeight) ? $lineHeight	: '';
+		$divider_wrapper_style['height'] = isset($lineHeight) ? Ultimate_Blocks\includes\spacing_preset_css_var($lineHeight)	: '';
 	}
 
 	$divider_style_string = sprintf(

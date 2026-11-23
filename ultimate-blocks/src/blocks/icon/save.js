@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { ultimateIcons } from "./icons";
+import { ultimateIcons } from "@ultimate-blocks/icon-library";
 import { getStyles } from "./get-styles";
 import { useBlockProps } from "@wordpress/block-editor";
 

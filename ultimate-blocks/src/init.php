@@ -194,6 +194,35 @@ function ultimate_blocks_cgb_block_assets() {
 add_action( 'enqueue_block_assets', 'ultimate_blocks_cgb_block_assets' );
 
 /**
+ * Register the icon library of the Icon block as a script of its own.
+ *
+ * It holds the icon packs and is exposed as window.ultimateBlocks.iconLibrary.
+ * The editor scripts of this plugin and of Ultimate Blocks Pro list the handle
+ * as a dependency, so the library loads once, before them.
+ *
+ * @return void
+ */
+function ultimate_blocks_register_icon_library() {
+	$asset_path = ULTIMATE_BLOCKS_PATH . 'dist/icon-library.build.asset.php';
+	$asset      = file_exists( $asset_path )
+		? require $asset_path
+		: array(
+			'dependencies' => array( 'wp-element', 'wp-components', 'wp-i18n', 'wp-primitives', 'lodash' ),
+			'version'      => ULTIMATE_BLOCKS_VERSION,
+		);
+
+	wp_register_script(
+		'ultimate-blocks-icon-library',
+		trailingslashit( ULTIMATE_BLOCKS_URL ) . 'dist/icon-library.build.js',
+		$asset['dependencies'],
+		$asset['version'],
+		true
+	);
+}
+
+add_action( 'init', 'ultimate_blocks_register_icon_library' );
+
+/**
  * Enqueue assets which are important to be initialized before any version of plugin assets are.
  * @return void
  */
@@ -220,7 +249,7 @@ function ultimate_blocks_cgb_editor_assets() {
 			'ultimate_blocks-cgb-block-js', // Handle.
 			plugins_url( '/dist/blocks.build.js', dirname( __FILE__ ) ),
 			// Block.build.js: We register the block here. Built with Webpack.
-			array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api', 'lodash'), // Dependencies, defined above.
+			array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api', 'lodash', 'ultimate-blocks-icon-library' ), // Dependencies, defined above.
 			Ultimate_Blocks_Constants::plugin_version(), true  // Version: latest version number.
 	);
 
@@ -237,13 +266,29 @@ function ultimate_blocks_cgb_editor_assets() {
 			true
 	);
 
+} // End function ultimate_blocks_cgb_editor_assets().
+
+/**
+ * Register the editor stylesheet of the blocks.
+ *
+ * The blocks name it as their editorStyle in block.json. WordPress gathers the
+ * styles of the editor iframe before enqueue_block_editor_assets runs, so while the
+ * handle was registered there it was missing from the iframe, and the editor copied
+ * it in with a console warning ("ultimate_blocks-cgb-block-editor-css-css was added
+ * to the iframe incorrectly").
+ *
+ * @return void
+ */
+function ultimate_blocks_register_editor_style() {
 	wp_register_style(
 			'ultimate_blocks-cgb-block-editor-css', // Handle.
 			plugins_url( 'dist/blocks.editor.build.css', dirname( __FILE__ ) ), // Block editor CSS.
 			array( 'wp-edit-blocks' ), // Dependency to include the CSS after it.
 			Ultimate_Blocks_Constants::plugin_version() // Version: latest version number
 	);
-} // End function ultimate_blocks_cgb_editor_assets().
+}
+
+add_action( 'init', 'ultimate_blocks_register_editor_style' );
 
 // Hook: Editor assets.
 add_action( 'enqueue_block_editor_assets', 'ultimate_blocks_priority_editor_assets', 1 );
@@ -355,6 +400,12 @@ require_once plugin_dir_path( __FILE__ ) . 'blocks/counter/block.php';
 
 // Image
 require_once plugin_dir_path( __FILE__ ) . 'blocks/image/block.php';
+
+// Author Bio
+require_once plugin_dir_path( __FILE__ ) . 'blocks/author-bio/block.php';
+
+// Image Comparison
+require_once plugin_dir_path( __FILE__ ) . 'blocks/image-comparison/block.php';
 
 /**
  * Innerblocks.

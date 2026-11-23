@@ -361,9 +361,10 @@ function ub_render_post_grid_block( $attributes, $content, $block ){
 
         /* Output the post markup */
 
+		// a theme spacing preset is saved as var:preset|spacing|x, CSS needs its variable
 		$grid_styles = [
-			"row-gap" 		=> !empty($attributes['rowGap']) ? $attributes['rowGap'] : "32px",
-			"column-gap"	=> !empty($attributes['columnGap']) ? $attributes['columnGap'] : "32px",
+			"row-gap" 		=> !empty($attributes['rowGap']) ? Ultimate_Blocks\includes\spacing_preset_css_var($attributes['rowGap']) : "32px",
+			"column-gap"	=> !empty($attributes['columnGap']) ? Ultimate_Blocks\includes\spacing_preset_css_var($attributes['columnGap']) : "32px",
 		];
 
 		$padding			= Ultimate_Blocks\includes\get_spacing_css(!empty($attributes['padding']) ? $attributes['padding'] : array() );

@@ -1,0 +1,135 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ub/image-comparison",
+	"title": "Image Comparison",
+	"category": "ultimateblocks",
+	"description": "Compare two images with a slider, like a before and after.",
+	"keywords": [
+		"image comparison",
+		"before after",
+		"compare",
+		"slider"
+	],
+	"textdomain": "ultimate-blocks",
+	"attributes": {
+		"beforeImage": {
+			"type": "object",
+			"default": {}
+		},
+		"afterImage": {
+			"type": "object",
+			"default": {}
+		},
+		"orientation": {
+			"type": "string",
+			"default": "horizontal"
+		},
+		"startPosition": {
+			"type": "number",
+			"default": 50
+		},
+		"moveOn": {
+			"type": "string",
+			"default": "drag"
+		},
+		"handleSize": {
+			"type": "number",
+			"default": 44
+		},
+		"lineWidth": {
+			"type": "number",
+			"default": 3
+		},
+		"showLabels": {
+			"type": "boolean",
+			"default": true
+		},
+		"beforeLabel": {
+			"type": "string",
+			"default": "Before"
+		},
+		"afterLabel": {
+			"type": "string",
+			"default": "After"
+		},
+		"labelPosition": {
+			"type": "string",
+			"default": "center"
+		},
+		"labelsOnHover": {
+			"type": "boolean",
+			"default": false
+		},
+		"overlayOnHover": {
+			"type": "boolean",
+			"default": false
+		},
+		"handleColor": {
+			"type": "string",
+			"default": ""
+		},
+		"handleIconColor": {
+			"type": "string",
+			"default": ""
+		},
+		"lineColor": {
+			"type": "string",
+			"default": ""
+		},
+		"labelColor": {
+			"type": "string",
+			"default": ""
+		},
+		"labelBackground": {
+			"type": "string",
+			"default": ""
+		},
+		"labelFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"labelFontAppearance": {
+			"type": "object",
+			"default": {}
+		},
+		"margin": {
+			"type": "object",
+			"default": {}
+		},
+		"border": {
+			"type": "object",
+			"default": {}
+		},
+		"borderRadius": {
+			"type": "object",
+			"default": {}
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		]
+	},
+	"styles": [
+		{
+			"name": "circle",
+			"label": "Circle",
+			"isDefault": true
+		},
+		{
+			"name": "square",
+			"label": "Square"
+		},
+		{
+			"name": "line",
+			"label": "Line"
+		}
+	],
+	"editorStyle": "ultimate_blocks-cgb-block-editor-css",
+	"style": "ultimate_blocks-cgb-style-css",
+	"viewScript": "ub-image-comparison-frontend-script"
+}

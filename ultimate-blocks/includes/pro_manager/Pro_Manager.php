@@ -17,6 +17,8 @@ use Ultimate_Blocks\includes\pro_manager\blocks\coupon\Coupon_Pro_Block;
 use Ultimate_Blocks\includes\pro_manager\blocks\timeline\Timeline_Pro_Block;
 use Ultimate_Blocks\includes\pro_manager\blocks\image_hotspots\Image_Hotspots_Pro_Block;
 use Ultimate_Blocks\includes\pro_manager\blocks\ai_summarize\Ai_Summarize_Pro_Block;
+use Ultimate_Blocks\includes\pro_manager\blocks\stacked_cards\Stacked_Cards_Pro_Block;
+use Ultimate_Blocks\includes\pro_manager\blocks\image_accordion\Image_Accordion_Pro_Block;
 use Ultimate_Blocks\includes\pro_manager\extensions\Button_Extension;
 use Ultimate_Blocks\includes\pro_manager\extensions\Buttons_Extension;
 use Ultimate_Blocks\includes\pro_manager\extensions\Single_Button_Extension;
@@ -60,6 +62,8 @@ class Pro_Manager {
 		Timeline_Pro_Block::class,
 		Image_Hotspots_Pro_Block::class,
 		Ai_Summarize_Pro_Block::class,
+		Stacked_Cards_Pro_Block::class,
+		Image_Accordion_Pro_Block::class,
 	);
 
 	/**
@@ -80,6 +84,8 @@ class Pro_Manager {
 		Editor_Data_Manager::get_instance()->add_editor_data(
 			array(
 				'proStatus' => wp_json_encode( $this->is_pro() ),
+				// pro only blocks show in the free inserter as locked cards, with pro they turn into the real block.
+				'proBlockUpsells' => $this->prepare_pro_block_upsell_data(),
 				'assets'    => array(
 					'logoUrl' => trailingslashit( ULTIMATE_BLOCKS_URL ) . '/admin/images/logos/menu-icon-colored.svg',
 					'proUrl'  => 'https://ultimateblocks.com/pricing/',
@@ -161,6 +167,7 @@ class Pro_Manager {
 
 				$upsell_data[ $block_upsell_instance->block_name() ] = array(
 					'label'      => $block_upsell_instance->block_label(),
+				'title'      => $block_upsell_instance->block_title(),
 					'desc'       => $block_upsell_instance->block_description(),
 					'icon'       => $block_icon,
 					'screenshot' => $block_upsell_instance->block_upsell_screenshot(),

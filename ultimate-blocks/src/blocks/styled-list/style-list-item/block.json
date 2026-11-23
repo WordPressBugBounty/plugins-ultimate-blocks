@@ -17,7 +17,8 @@
 		},
 		"itemText": {
 			"type": "string",
-			"default": ""
+			"default": "",
+			"role": "content"
 		},
 		"selectedIcon": {
 			"type": "string",

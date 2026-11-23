@@ -32,6 +32,29 @@ import {
 import GenericStyleControl, {
 	createStyleClipboard,
 } from "$Inc/components/GenericStyleControl";
+
+/**
+ * Typography and padding of a tab title, shared by the tab buttons. Every
+ * value is left out until the author sets it, so the stylesheet keeps its own.
+ *
+ * @param {Object} attributes block attributes
+ * @return {Object} style object
+ */
+function getTabTitleStyles(attributes) {
+	const padding = getSpacingCss(attributes?.tabButtonsPadding || {});
+
+	return {
+		fontSize: attributes?.tabTitleFontSize,
+		fontFamily: attributes?.tabTitleFontFamily,
+		fontStyle: attributes?.tabTitleFontAppearance?.fontStyle,
+		fontWeight: attributes?.tabTitleFontAppearance?.fontWeight,
+		paddingTop: padding?.top,
+		paddingRight: padding?.right,
+		paddingBottom: padding?.bottom,
+		paddingLeft: padding?.left,
+	};
+}
+
 export class OldTabHolder extends Component {
 	constructor(props) {
 		super(props);
@@ -489,6 +512,7 @@ export const TabHolder = (props) => {
 							: getSpacingPresetCssVar(
 									propz.attributes.tabButtonsGap?.all,
 								),
+						...getTabTitleStyles(propz.attributes),
 					})}
 					onClick={(e) => {
 						toggleTitle("tab-title", i);
@@ -663,6 +687,10 @@ export const TabHolder = (props) => {
 		borderBottomRightRadius: attributes.tabContentsBorderRadius?.bottomRight,
 		color: contentColor,
 		backgroundColor: contentBackground,
+		fontSize: attributes.contentFontSize,
+		fontFamily: attributes.contentFontFamily,
+		fontStyle: attributes.contentFontAppearance?.fontStyle,
+		fontWeight: attributes.contentFontAppearance?.fontWeight,
 	});
 
 	return [

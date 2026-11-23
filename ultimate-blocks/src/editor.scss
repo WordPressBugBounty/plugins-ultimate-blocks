@@ -5,12 +5,15 @@
 
 // Upsell related styles
 @import "./styles/Upsell/UpsellEditor.scss";
+@import "./styles/Upsell/ProBlockUpsell.scss";
 
 // Saved styles related styles
 @import "./styles/SavedStyles/SavedStylesEditor.sass";
 
 .ub-show-custom-label {
-	.components-base-control__label {
+	.components-base-control__label,
+	// the font appearance control prints its own label as a plain <label> now
+	.components-font-appearance-control > label {
 		visibility: hidden;
 	}
 	> .components-base-control__field {
@@ -22,15 +25,29 @@
 }
 
 /**
- * Inside a ToolsPanel WordPress zeroes the range control's bottom margin, but
- * inside a PanelBody it does not, and those extra 16px push the side indicator
- * of the spacing control below its slider.
+ * Inside a ToolsPanel WordPress zeroes the bottom margin of the controls in a
+ * spacing control's row, but inside a PanelBody it does not. Those 16px under
+ * the slider pushed the side indicator below it, and the 16px under the number
+ * field made the row taller, so the slider and the preset toggle sat lower than
+ * the field. This applies to every spacing control in the block sidebar, our
+ * SpacingControl and the ones blocks render on their own (Button, Accordions).
  */
-.ub-spacing-control {
+.block-editor-block-inspector .spacing-sizes-control {
 	.spacing-sizes-control__wrapper,
 	.preset-input-control__wrapper {
-		.components-range-control {
+		.components-range-control,
+		.preset-input-control__unit-control {
 			margin-bottom: 0;
 		}
 	}
+}
+
+/**
+ * Accordions sidebar: the controls of a panel sit in one column with an even
+ * gap, since they come and go depending on the other settings.
+ */
+.ub-content-toggle-behavior-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }

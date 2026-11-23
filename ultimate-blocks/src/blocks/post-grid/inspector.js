@@ -4,11 +4,12 @@ import {
 	BorderControl,
 	ColorSettings,
 	ColorSettingsWithGradient,
+	SpacingControl,
 	SpacingControlWithToolsPanel,
 	TabsPanelControl,
 } from "../components";
 import { __ } from "@wordpress/i18n";
-import { InspectorControls, HeightControl } from "@wordpress/block-editor";
+import { InspectorControls } from "@wordpress/block-editor";
 import {
 	PanelBody,
 	SelectControl,
@@ -279,15 +280,16 @@ export default function Inspector(props) {
 						checked={isEqualHeight}
 						onChange={() => setAttributes({ isEqualHeight: !isEqualHeight })}
 					/>
-					<HeightControl
+					{/* replaces wp.blockEditor.HeightControl, deprecated since WP 7.0 and removed in 7.2 (console: "wp.blockEditor.HeightControl is deprecated") */}
+					<SpacingControl
 						label={__("Row Gap", "ultimate-blocks-pro")}
-						value={rowGap}
-						onChange={(newValue) => setAttributes({ rowGap: newValue })}
+						attrKey="rowGap"
+						singleValue
 					/>
-					<HeightControl
+					<SpacingControl
 						label={__("Column Gap", "ultimate-blocks-pro")}
-						value={columnGap}
-						onChange={(newValue) => setAttributes({ columnGap: newValue })}
+						attrKey="columnGap"
+						singleValue
 					/>
 				</PanelBody>
 				<PanelBody title={__("Query", "ultimate-blocks")} initialOpen={false}>
@@ -302,7 +304,8 @@ export default function Inspector(props) {
 							const authorIds = getAuthorIds(authorNames);
 							setAttributes({ authorArray: authorIds });
 						}}
-						__experimentalShowHowTo={false}
+						// help="" replaces __experimentalShowHowTo={false}, deprecated since WP 7.1 (console: "`__experimentalShowHowTo` prop in wp.components.FormTokenField is deprecated"); an empty help hides the how-to text
+						help=""
 					/>
 
 					<FormTokenField
@@ -314,7 +317,8 @@ export default function Inspector(props) {
 							const tagIds = getTagIds(tagNames);
 							setAttributes({ tagArray: tagIds });
 						}}
-						__experimentalShowHowTo={false}
+						// help="" hides the how-to text, see the Authors field above
+						help=""
 					/>
 
 					<br />
@@ -352,7 +356,8 @@ export default function Inspector(props) {
 							const categoryObjects = getCategoryObjects(categoryNames);
 							setAttributes({ categoryArray: categoryObjects });
 						}}
-						__experimentalShowHowTo={false}
+						// help="" hides the how-to text, see the Authors field above
+						help=""
 					/>
 
 					<FormTokenField
@@ -370,7 +375,8 @@ export default function Inspector(props) {
 							const categoryObjects = getCategoryObjects(categoryNames);
 							setAttributes({ excludedCategories: categoryObjects });
 						}}
-						__experimentalShowHowTo={false}
+						// help="" hides the how-to text, see the Authors field above
+						help=""
 					/>
 
 					<RangeControl

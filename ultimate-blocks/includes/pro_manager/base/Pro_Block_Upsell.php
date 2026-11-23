@@ -25,6 +25,15 @@ abstract class Pro_Block_Upsell {
 	public abstract function block_label();
 
 	/**
+	 * Block title as the inserter shows it.
+	 *
+	 * @return string
+	 */
+	public function block_title() {
+		return ucwords( $this->block_label() );
+	}
+
+	/**
 	 * Block icon html.
 	 * @return null | string;
 	 */

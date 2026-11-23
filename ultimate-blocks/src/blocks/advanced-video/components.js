@@ -46,9 +46,12 @@ function editEmbedArgs(source, embedCode, mode, arg, isTimeCode = false) {
 
 	const sizeRegex = /width="\d+" height="\d+"/;
 
-	// Check if arg is a URL parameter (not an iframe attribute like width/height)
+	// Check if arg is a URL parameter (not an iframe attribute like width/height).
+	// A Vimeo time code and YouTube's playlist (needed for a loop) belong in the
+	// URL too; treated as sizes they were dropped or became iframe attributes.
 	const isUrlParameter =
-		/^(autoplay|mute|loop|controls|start|end|muted|rel|modestbranding)/.test(
+		isTimeCode ||
+		/^(autoplay|mute|loop|controls|start|end|muted|rel|modestbranding|playlist)/.test(
 			arg,
 		);
 
@@ -177,6 +180,10 @@ function editEmbedArgs(source, embedCode, mode, arg, isTimeCode = false) {
 						vimeoTimeCode[1],
 						vimeoTimeCode[1].replace(/#t=.+/, ""),
 					);
+				} else if (!embedArgs) {
+					// Not in the URL. Older versions added YouTube's playlist to the
+					// iframe tag itself, so clean that up instead of failing here.
+					newEmbedCode = newEmbedCode.replace(`<iframe ${arg}`, "<iframe");
 				} else {
 					if (embedArgs[1].includes(arg)) {
 						if (arg.length < embedArgs[1].length) {

@@ -3,7 +3,7 @@
  */
 import { __ } from "@wordpress/i18n";
 import { PanelBody, RangeControl } from "@wordpress/components";
-import { InspectorControls, HeightControl } from "@wordpress/block-editor";
+import { InspectorControls } from "@wordpress/block-editor";
 /**
  * Custom Imports
  */
@@ -55,10 +55,11 @@ function CustomInspectorControls(props) {
 		<>
 			<InspectorControls>
 				<PanelBody>
-					<HeightControl
-						value={size}
+					{/* replaces wp.blockEditor.HeightControl, deprecated since WP 7.0 and removed in 7.2 (console: "wp.blockEditor.HeightControl is deprecated") */}
+					<SpacingControl
 						label={__("Icon Size", "ultimate-blocks")}
-						onChange={(newSize) => setAttributes({ size: newSize })}
+						attrKey="size"
+						singleValue
 					/>
 					<RangeControl
 						max={180}

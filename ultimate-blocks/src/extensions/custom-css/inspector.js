@@ -1,6 +1,10 @@
 import { __ } from "@wordpress/i18n";
 import { useEffect } from "@wordpress/element";
-import { PanelBody, Tip } from "@wordpress/components";
+import {
+	PanelBody,
+	// wp.components.Tip is deprecated since WP 7.2 and is removed in 7.4 (console: "wp.components.Tip is deprecated"). Notice (status info, not dismissible) shows the same hint.
+	Notice,
+} from "@wordpress/components";
 import { InspectorControls } from "@wordpress/block-editor";
 import { CodeEditor } from "../components";
 
@@ -42,7 +46,7 @@ function Inspector(props) {
 					value={ubCustomCSS}
 				/>
 				<div style={{ marginTop: 20 }}>
-					<Tip>
+					<Notice status="info" isDismissible={false}>
 						<span>{__(`Use `, "ultimate-blocks")}</span>
 						<pre
 							style={{
@@ -57,7 +61,7 @@ function Inspector(props) {
 						<span>
 							{__(" to insert the current block selection.", "ultimate-blocks")}
 						</span>
-					</Tip>
+					</Notice>
 					<p style={{ marginTop: 20 }}>Example: </p>
 					<pre
 						style={{
@@ -75,12 +79,12 @@ function Inspector(props) {
 						}`,
 						}}
 					></pre>
-					<Tip>
+					<Notice status="info" isDismissible={false}>
 						{__(
 							`You can also use other CSS syntax here, such as media queries.`,
 							"ultimate-blocks",
 						)}
-					</Tip>
+					</Notice>
 				</div>
 			</PanelBody>
 		</InspectorControls>

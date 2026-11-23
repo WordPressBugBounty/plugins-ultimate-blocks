@@ -46,13 +46,14 @@ function ub_render_social_share_block( $attributes, $_, $block ) {
 		'linkedin' => ub_get_linkedin_icon( $attributes, $icon_size, $iconShape, $useCaptions ? $linkedInCaption : '', $addOutline && $useCaptions ),
 		'pinterest' => ub_get_pinterest_icon( $attributes, $icon_size, $iconShape, $useCaptions ? $pinterestCaption : '', $addOutline && $useCaptions ),
 		'reddit' => ub_get_reddit_icon( $attributes, $icon_size, $iconShape, $useCaptions ? $redditCaption : '', $addOutline && $useCaptions ),
-		'tumblr' => ub_get_tumblr_icon( $attributes, $icon_size, $iconShape, $useCaptions ? $tumblrCaption : '', $addOutline && $useCaptions)
+		'tumblr' => ub_get_tumblr_icon( $attributes, $icon_size, $iconShape, $useCaptions ? $tumblrCaption : '', $addOutline && $useCaptions),
+		'google' => ub_get_google_preferred_source_icon( $attributes, $icon_size, $iconShape, $useCaptions ? $googleCaption : '', $addOutline && $useCaptions ),
 	);
 
 	$icons = '';
 
 	foreach($iconOrder as $icon){
-		$icons .= $iconDetails[$icon];
+		$icons .= isset( $iconDetails[ $icon ] ) ? $iconDetails[ $icon ] : '';
 	}
 
 	$classes = array( 'wp-block-ub-social-share' );
@@ -91,7 +92,10 @@ function ub_render_social_share_block( $attributes, $_, $block ) {
  * @return string
  */
 
-function ub_prepare_social_share_icon($icon, $iconShape, $siteName, $link, $caption, $hasOutline, $icon_size, $attributes){
+function ub_prepare_social_share_icon($icon, $iconShape, $siteName, $link, $caption, $hasOutline, $icon_size, $attributes, $label = ''){
+	// Sites whose link does more than share the post say so to screen readers.
+	$aria_label = '' !== $label ? $label : $siteName . '-logo';
+
 	$icon_styles = array(
 		'width'  => ( $icon_size * 1.5 ) . 'px',
 		'height' => ( $icon_size * 1.5 ) . 'px',
@@ -125,7 +129,8 @@ function ub_prepare_social_share_icon($icon, $iconShape, $siteName, $link, $capt
 			'linkedin'  => '#2867b2',
 			'pinterest' => '#e60023',
 			'reddit'    => '#ff4500',
-			'tumblr'    => '#001935'
+			'tumblr'    => '#001935',
+			'google'    => '#4285f4'
 		);
 
 		foreach ( $siteColors as $site => $color ) {
@@ -150,7 +155,7 @@ function ub_prepare_social_share_icon($icon, $iconShape, $siteName, $link, $capt
 			Ultimate_Blocks\includes\generate_css_string($text_style)
 			) : '';
 		return sprintf(
-			'<a aria-label="%1$s-logo" target="_blank" rel="nofollow" href="%2$s" class="ub-social-share-%1$s-container" style="%8$s">
+			'<a aria-label="%9$s" target="_blank" rel="nofollow" href="%2$s" class="ub-social-share-%1$s-container" style="%8$s">
 				<span class="social-share-icon ub-social-share-%1$s%3$s" style="%6$s">%4$s</span>%5$s
 			</a>',
 			$siteName,
@@ -160,18 +165,19 @@ function ub_prepare_social_share_icon($icon, $iconShape, $siteName, $link, $capt
 			$caption_html,
 			Ultimate_Blocks\includes\generate_css_string($icon_styles),
 			Ultimate_Blocks\includes\generate_css_string($text_style),
-			Ultimate_Blocks\includes\generate_css_string($site_container_styles)
+			Ultimate_Blocks\includes\generate_css_string($site_container_styles),
+			esc_attr($aria_label)
 		);
 	} else {
 		$caption_html = $caption ? sprintf(
-			'<span><a style="%4$s" aria-label="%1$s-logo" target="_blank" href="%2$s">%3$s</a></span>',
-			$siteName,
+			'<span><a style="%4$s" aria-label="%1$s" target="_blank" href="%2$s">%3$s</a></span>',
+			esc_attr($aria_label),
 			esc_url($link),
 			wp_kses_post($caption),
 			Ultimate_Blocks\includes\generate_css_string($text_style)
 		) : '';
 		return sprintf(
-			'%1$s<a aria-label="%2$s-logo" target="_blank" rel="nofollow" href="%3$s" class="social-share-icon ub-social-share-%2$s %4$s%5$s" style="%7$s">%6$s</a>%8$s',
+			'%1$s<a aria-label="%9$s" target="_blank" rel="nofollow" href="%3$s" class="social-share-icon ub-social-share-%2$s %4$s%5$s" style="%7$s">%6$s</a>%8$s',
 			$caption ? '<div class="ub-social-share-' . $siteName . '-container" style="' . Ultimate_Blocks\includes\generate_css_string($site_container_styles) . '">' : '',
 			$siteName,
 			esc_url($link),
@@ -179,7 +185,8 @@ function ub_prepare_social_share_icon($icon, $iconShape, $siteName, $link, $capt
 			$iconShape === 'none' ? '' : ' ' . esc_attr($iconShape),
 			$icon,
 			Ultimate_Blocks\includes\generate_css_string($icon_styles),
-			$caption ? $caption_html . '</div>' : ''
+			$caption ? $caption_html . '</div>' : '',
+			esc_attr($aria_label)
 		);
 	}
 }
@@ -369,6 +376,48 @@ function ub_get_tumblr_icon( $attributes, $icon_size, $iconShape, $caption, $has
 		. '&title=' . rawurlencode( get_the_title() );
 
 	return ub_prepare_social_share_icon($tumblr_icon, $iconShape, 'tumblr', $tumblr_url, $caption, $hasOutline, $icon_size, $attributes);
+}
+
+/**
+ * Generate the Google preferred sources icon.
+ *
+ * It is not a share link: it opens Google's source preferences with this site
+ * filled in, so readers can mark it as a preferred source in Top Stories.
+ * Google only lists sites on their own domain or subdomain, so the home URL is
+ * passed as it is, path included.
+ *
+ * @see https://developers.google.com/search/docs/appearance/preferred-sources
+ *
+ * @param  array   $attributes Options of the block.
+ * @param  integer $icon_size Size of Icon.
+ * @param  string  $iconShape Shape of Icon.
+ * @return string
+ */
+function ub_get_google_preferred_source_icon( $attributes, $icon_size, $iconShape, $caption, $hasOutline ) {
+	$button_color = isset( $attributes['buttonColor'] ) ? $attributes['buttonColor'] : '';
+
+	$google_icon = google_icon(
+		array(
+			'width'  => $icon_size,
+			'height' => $icon_size,
+			'color'  => $iconShape === 'none' ? ( $button_color ?: '#4285f4' ) : '',
+		)
+	);
+
+	$site       = untrailingslashit( preg_replace( '#^https?://#', '', home_url() ) );
+	$google_url = 'https://www.google.com/preferences/source?q=' . rawurlencode( $site );
+
+	return ub_prepare_social_share_icon(
+		$google_icon,
+		$iconShape,
+		'google',
+		$google_url,
+		$caption,
+		$hasOutline,
+		$icon_size,
+		$attributes,
+		__( 'Add as a preferred source on Google', 'ultimate-blocks' )
+	);
 }
 
 /**

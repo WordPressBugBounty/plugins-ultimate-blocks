@@ -7,7 +7,7 @@ import {
 	fontFamilyOptions,
 } from "./settings-options";
 import { h1Icon, h2Icon, h3Icon, h4Icon, h5Icon, h6Icon } from "./icons";
-import { SpacingControl } from "../components";
+import { CustomToggleGroupControl, SpacingControl } from "../components";
 import { generateStyles, getSpacingCss } from "../utils/styling-helpers";
 import { getParentBlock } from "../../common";
 import { isNumber } from "lodash";
@@ -23,13 +23,12 @@ import {
 import {
 	PanelBody,
 	Button,
-	ButtonGroup,
 	RangeControl,
 	SelectControl,
-	DropdownMenu,
+	ToolbarGroup,
+	ToolbarDropdownMenu,
 } from "@wordpress/components";
 import { createRef, useEffect } from "@wordpress/element";
-import { createBlock } from "@wordpress/blocks";
 import GenericStyleControl, {
 	createStyleClipboard,
 } from "$Inc/components/GenericStyleControl";
@@ -157,23 +156,24 @@ const AdvancedHeadingEdit = ({
 		<div {...useBlockProps()}>
 			<InspectorControls group="settings">
 				<PanelBody title={__("General", "ultimate-blocks")} intialOpen={true}>
-					<p>{__("Heading Level", "ultimate-blocks")}</p>
-					<ButtonGroup aria-label={__("Heading Level", "ultimate-blocks")}>
-						{headingIcons.map((h, i) => (
-							<Button
-								onClick={() => {
-									setAttributes({
-										level: `h${i + 1}`,
-										fontSize: 0,
-										lineHeight: 0,
-									});
-								}}
-								icon={h}
-								key={i}
-								isPrimary={level === `h${i + 1}`}
-							/>
-						))}
-					</ButtonGroup>
+					{/* CustomToggleGroupControl replaces ButtonGroup, deprecated since WP 6.8 (console: "wp.components.ButtonGroup is deprecated") */}
+					<CustomToggleGroupControl
+						isBlock
+						label={__("Heading Level", "ultimate-blocks")}
+						value={level}
+						onChange={(value) => {
+							setAttributes({
+								level: value,
+								fontSize: 0,
+								lineHeight: 0,
+							});
+						}}
+						options={headingIcons.map((h, i) => ({
+							value: `h${i + 1}`,
+							icon: h,
+							label: `H${i + 1}`,
+						}))}
+					/>
 					<p>{__("Heading Alignment", "ultimate-blocks")}</p>
 					<AlignmentToolbar
 						value={alignment}
@@ -263,34 +263,38 @@ const AdvancedHeadingEdit = ({
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
-				<DropdownMenu
-					className="ub_advanced_heading_toolbar_level_selector"
-					icon={
-						headingIcons[
-							[...Array(6).keys()].map((a) => `h${a + 1}`).indexOf(level)
-						]
-					}
-				>
-					{({ onClose }) => (
-						<>
-							{headingIcons.map((h, i) => (
-								<Button
-									icon={h}
-									onClick={() => {
-										setAttributes({
-											level: `h${i + 1}`,
-											fontSize: 0,
-											lineHeight: 0,
-										});
-										onClose();
-									}}
-									key={i}
-									isPrimary={level === `h${i + 1}`}
-								/>
-							))}
-						</>
-					)}
-				</DropdownMenu>
+				{/* only toolbar items may sit in the block toolbar, a plain DropdownMenu is deprecated since WP 5.6 (console: "Using custom components as toolbar controls is deprecated") */}
+				<ToolbarGroup>
+					<ToolbarDropdownMenu
+						className="ub_advanced_heading_toolbar_level_selector"
+						label={__("Change heading level", "ultimate-blocks")}
+						icon={
+							headingIcons[
+								[...Array(6).keys()].map((a) => `h${a + 1}`).indexOf(level)
+							]
+						}
+					>
+						{({ onClose }) => (
+							<>
+								{headingIcons.map((h, i) => (
+									<Button
+										icon={h}
+										onClick={() => {
+											setAttributes({
+												level: `h${i + 1}`,
+												fontSize: 0,
+												lineHeight: 0,
+											});
+											onClose();
+										}}
+										key={i}
+										isPrimary={level === `h${i + 1}`}
+									/>
+								))}
+							</>
+						)}
+					</ToolbarDropdownMenu>
+				</ToolbarGroup>
 				<GenericStyleControl
 					attributes={attributes}
 					setAttributes={setAttributes}
@@ -310,15 +314,8 @@ const AdvancedHeadingEdit = ({
 				onChange={(value) => setAttributes({ content: value })}
 				style={generateStyles(styles)}
 				identifier="content"
-				onSplit={(contentFragment) =>
-					contentFragment
-						? createBlock("ub/advanced-heading", {
-								...attributes,
-								blockID: "",
-								content: contentFragment,
-							})
-						: createBlock("core/paragraph")
-				}
+				//the onSplit prop of RichText is deprecated since WP 6.4 (console: "wp.blockEditor.RichText onSplit prop is deprecated"), and WordPress has not called it since then;
+				//Enter splits the heading through "splitting" in block.json
 				onReplace={onReplace}
 			/>
 		</div>

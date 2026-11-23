@@ -18,12 +18,15 @@ import { registerBlockType, createBlock } from "@wordpress/blocks";
 
 import {
 	InspectorControls,
-	HeightControl,
 	BlockAlignmentControl,
 	BlockControls,
 } from "@wordpress/block-editor";
 import metadata from "./block.json";
-import { PanelBody, RangeControl, SelectControl } from "@wordpress/components";
+import {
+	PanelBody,
+	RangeControl,
+	SelectControl,
+} from "@wordpress/components";
 import { CustomToggleGroupControl, SpacingControl } from "../components";
 import GenericStyleControl, {
 	createStyleClipboard,
@@ -32,7 +35,11 @@ import { useSelect } from "@wordpress/data";
 import { AVAILABLE_JUSTIFICATIONS, getParentBlock } from "../../common";
 import classNames from "classnames";
 import { isEmpty } from "lodash";
-import { generateStyles, getSpacingCss } from "../utils/styling-helpers";
+import {
+	generateStyles,
+	getSpacingCss,
+	getSpacingPresetCssVar,
+} from "../utils/styling-helpers";
 
 const attributes = {
 	blockID: {
@@ -126,19 +133,20 @@ function DividerBlock(props) {
 				}
 			: {
 					width: "fit-content",
-					height: lineHeight,
+					//a theme spacing preset is saved as var:preset|spacing|x, CSS needs its variable
+					height: getSpacingPresetCssVar(lineHeight),
 				};
 
 	const dividerWrapperStyles =
 		orientation === "horizontal"
 			? {
-					width: dividerWidth,
+					width: getSpacingPresetCssVar(dividerWidth),
 					marginBottom: borderHeight + "px",
 					height: `${borderHeight}px`,
 				}
 			: {
 					width: borderSize + "px",
-					height: lineHeight,
+					height: getSpacingPresetCssVar(lineHeight),
 				};
 
 	const styles = {
@@ -230,22 +238,22 @@ function DividerBlock(props) {
 										beforeIcon="minus"
 										allowReset
 									/>
-									<HeightControl
+									{/* replaces wp.blockEditor.HeightControl, deprecated since WP 7.0 and removed in 7.2 (console: "wp.blockEditor.HeightControl is deprecated") */}
+									<SpacingControl
 										label={__("Width", "ultimate-blocks-pro")}
-										value={dividerWidth}
-										onChange={(value) => setAttributes({ dividerWidth: value })}
-										allowReset
+										attrKey="dividerWidth"
+										singleValue
 									/>
 									<br></br>
 								</>
 							)}
 							{orientation === "vertical" && (
 								<>
-									<HeightControl
+									{/* replaces wp.blockEditor.HeightControl, deprecated since WP 7.0 and removed in 7.2 (console: "wp.blockEditor.HeightControl is deprecated") */}
+									<SpacingControl
 										label={__("Line Height")}
-										value={lineHeight}
-										onChange={(value) => setAttributes({ lineHeight: value })}
-										allowReset
+										attrKey="lineHeight"
+										singleValue
 									/>
 									<br></br>
 								</>

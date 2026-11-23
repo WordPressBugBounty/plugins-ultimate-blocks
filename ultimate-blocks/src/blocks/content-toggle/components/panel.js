@@ -1,6 +1,6 @@
 import icon from "../icons/icon";
 import icons from "../icons/icons";
-import { plus, closeSmall, Icon } from "@wordpress/icons";
+import { plus, closeSmall, chevronDown, Icon } from "@wordpress/icons";
 
 import { panel_version_1_1_9 } from "../oldVersions";
 import { useState, useEffect } from "react";
@@ -39,15 +39,16 @@ import {
 } from "../../utils/styling-helpers";
 
 import {
-	FormToggle,
 	PanelBody,
 	PanelRow,
 	SelectControl,
-	ButtonGroup,
 	Button,
 	ToggleControl,
-	Dropdown,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
 } from "@wordpress/components";
+import { TITLE_TAG_OPTIONS } from "./constants";
 
 const attributes = {
 	index: {
@@ -213,47 +214,37 @@ function ContentTogglePanel(props) {
 	return (
 		<div {...blockProps}>
 			<InspectorControls group="settings">
-				<PanelBody title={__("Panel Title")} initialOpen={false}>
-					<div
-						style={{
-							display: "grid",
-							gridTemplateColumns: "5fr 1fr",
-							padding: "0 16px",
+				<PanelBody title={__("Title", "ultimate-blocks")} initialOpen={false}>
+					<SelectControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label={__("Title tag", "ultimate-blocks")}
+						options={TITLE_TAG_OPTIONS}
+						value={titleTag}
+						onChange={(titleTag) => {
+							setAttributes({ titleTag });
+							if (titleTag === "p" && useToggleInToC) {
+								setAttributes({ useToggleInToC: false });
+							}
 						}}
-					>
-						<p>{__("Select Heading Tag", "ultimate-blocks")}</p>
-						<SelectControl
-							options={[
-								{ value: "h1", label: __("H1", "ultimate-blocks") },
-								{ value: "h2", label: __("H2", "ultimate-blocks") },
-								{ value: "h3", label: __("H3", "ultimate-blocks") },
-								{ value: "h4", label: __("H4", "ultimate-blocks") },
-								{ value: "h5", label: __("H5", "ultimate-blocks") },
-								{ value: "h6", label: __("H6", "ultimate-blocks") },
-								{ value: "p", label: __("P", "ultimate-blocks") },
-							]}
-							value={titleTag}
-							onChange={(titleTag) => {
-								setAttributes({ titleTag });
-								if (titleTag === "p" && useToggleInToC) {
-									setAttributes({ useToggleInToC: false });
-								}
-							}}
-						/>
-					</div>
+					/>
 				</PanelBody>
-				<PanelBody title={__("Toggle State")} initialOpen={false}>
+				<PanelBody
+					title={__("Open / Close behavior", "ultimate-blocks")}
+					initialOpen={false}
+				>
+					<div className="ub-content-toggle-behavior-controls">
 					{blockParent && //compatibility with v 2.0.0
 						!blockParent.attributes.individualCollapse &&
 						!collapsedOnMobile && (
-							<PanelRow>
-								<label htmlFor="ub-content-toggle-amount">
-									{__("Show only one panel at a time")}
-								</label>
-								<FormToggle
-									id="ub-content-toggle-amount"
-									label={__("Show only one panel at a time")}
-									checked={showOnlyOne}
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={__("Only one panel open at a time", "ultimate-blocks")}
+								help={__(
+									"Opening a panel closes the others.",
+									"ultimate-blocks",
+								)}
+								checked={showOnlyOne}
 									onChange={() => {
 										setAttributes({ showOnlyOne: !showOnlyOne });
 										if (!showOnlyOne) {
@@ -264,19 +255,18 @@ function ContentTogglePanel(props) {
 											});
 										}
 									}}
-								/>
-							</PanelRow>
+							/>
 						)}
 					{!preventCollapse && (
 						<>
-							<PanelRow>
-								<label htmlFor="ub-content-toggle-state">
-									{__("Collapsed")}
-								</label>
-								<FormToggle
-									id="ub-content-toggle-state"
-									label={__("Collapsed")}
-									checked={collapsed}
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={__("Starts closed", "ultimate-blocks")}
+								help={__(
+									"The panel is closed when the page loads.",
+									"ultimate-blocks",
+								)}
+								checked={collapsed}
 									onChange={() => {
 										setAttributes({ collapsed: !collapsed });
 
@@ -284,11 +274,13 @@ function ContentTogglePanel(props) {
 											setAttributes({ preventCollapse: false });
 										}
 									}}
-								/>
-							</PanelRow>
-							{collapsed && (
+							/>
+							{/* every panel sets its own state when they are set one by one */}
+							{collapsed && !blockParent?.attributes?.individualCollapse && (
 								<SelectControl
-									label={__("Default Open", "ultimate-blocks")}
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									label={__("Panel that starts open", "ultimate-blocks")}
 									options={defaultOpenOptions}
 									value={
 										panels.find((panel) => panel?.attributes?.defaultOpen)
@@ -310,22 +302,21 @@ function ContentTogglePanel(props) {
 								/>
 							)}
 							{!showOnlyOne && (
-								<PanelRow>
-									<label htmlFor="ub-content-toggle-mobile-state">
-										{__("Collapsed on mobile")}
-									</label>
-									<FormToggle
-										id="ub-content-toggle-mobile-state"
-										label={__("Collapsed on mobile")}
-										checked={collapsedOnMobile}
+								<ToggleControl
+									__nextHasNoMarginBottom
+									label={__("Collapsed on mobile", "ultimate-blocks")}
+									help={__(
+										"On phones the panel starts closed.",
+										"ultimate-blocks",
+									)}
+									checked={collapsedOnMobile}
 										onChange={() => {
 											setAttributes({ collapsedOnMobile: !collapsedOnMobile });
 											if (!collapsedOnMobile) {
 												setAttributes({ showOnlyOne: false });
 											}
 										}}
-									/>
-								</PanelRow>
+								/>
 							)}
 						</>
 					)}
@@ -334,48 +325,50 @@ function ContentTogglePanel(props) {
 						!collapsed &&
 						!collapsedOnMobile &&
 						!showOnlyOne && (
-							<PanelRow>
-								<label htmlFor="ub-content-toggle-state">
-									{__("Prevent collapse")}
-								</label>
-								<FormToggle
-									id="ub-content-toggle-state"
-									label={__("Prevent collapse")}
-									checked={preventCollapse}
-									onChange={() =>
-										setAttributes({ preventCollapse: !preventCollapse })
-									}
-								/>
-							</PanelRow>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={__("Prevent collapse", "ultimate-blocks")}
+								help={__(
+									"The panel stays open and visitors can't close it.",
+									"ultimate-blocks",
+								)}
+								checked={preventCollapse}
+								onChange={() =>
+									setAttributes({ preventCollapse: !preventCollapse })
+								}
+							/>
 						)}
+					</div>
 				</PanelBody>
 				<PanelBody title={__("FAQ Schema")} initialOpen={false}>
-					<PanelRow>
-						<label htmlFor="ub-content-toggle-faq-schema">
-							{__("Enable FAQ Schema")}
-						</label>
-						<FormToggle
-							id="ub-content-toggle-faq-schema"
-							label={__("Enable FAQ Schema")}
-							checked={hasFAQSchema}
-							onChange={() => setAttributes({ hasFAQSchema: !hasFAQSchema })}
-						/>
-					</PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={__("Enable FAQ Schema")}
+						help={__(
+							"Adds FAQ structured data so search engines can read the panels as questions and answers.",
+							"ultimate-blocks",
+						)}
+						checked={hasFAQSchema}
+						onChange={() => setAttributes({ hasFAQSchema: !hasFAQSchema })}
+					/>
 				</PanelBody>
 			</InspectorControls>
 			<InspectorControls group="color">
 				<ColorSettings
 					attrKey="theme"
-					label={__("Title Container Color")}
+					label={__("Title Background", "ultimate-blocks")}
 				/>
-				<ColorSettings attrKey="titleColor" label={__("Title Color")} />
+				<ColorSettings
+					attrKey="titleColor"
+					label={__("Title Text", "ultimate-blocks")}
+				/>
 				<ColorSettings
 					attrKey="titleLinkColor"
-					label={__("Title link Color")}
+					label={__("Title Link", "ultimate-blocks")}
 				/>
 				<ColorSettings
 					attrKey="toggleColor"
-					label={__("Toggle Icon Color")}
+					label={__("Toggle Icon", "ultimate-blocks")}
 				/>
 			</InspectorControls>
 			<InspectorControls group="styles">
@@ -410,75 +403,52 @@ function ContentTogglePanel(props) {
 					/>
 				)}
 				<PanelBody
-					title={__("Toggle Status Icon", "ultimate-blocks")}
+					title={__("Toggle Icon", "ultimate-blocks")}
 					initialOpen={false}
 				>
-					{toggleIcon !== "none" && (
-						<PanelRow>
-							<label htmlFor="ub-content-toggle-status-location">
-								{__("Location", "ultimate-blocks")}
-							</label>
-							<ButtonGroup
-								id="ub-content-toggle-status-location"
-								aria-label={__("toggle icon position", "ultimate-blocks")}
+					<div className="ub-content-toggle-behavior-controls">
+						<ToggleGroupControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							isBlock
+							label={__("Icon", "ultimate-blocks")}
+							value={toggleIcon}
+							onChange={(value) => setAttributes({ toggleIcon: value })}
+						>
+							<ToggleGroupControlOption
+								value="none"
+								label={__("None", "ultimate-blocks")}
+							/>
+							<ToggleGroupControlOptionIcon
+								value="chevron"
+								icon={chevronDown}
+								label={__("Chevron", "ultimate-blocks")}
+							/>
+							<ToggleGroupControlOptionIcon
+								value="plus"
+								icon={plus}
+								label={__("Plus", "ultimate-blocks")}
+							/>
+						</ToggleGroupControl>
+						{toggleIcon !== "none" && (
+							<ToggleGroupControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								isBlock
+								label={__("Position", "ultimate-blocks")}
+								value={toggleLocation}
+								onChange={(value) => setAttributes({ toggleLocation: value })}
 							>
-								{Object.keys(toggleIconPositions).map((p) => {
-									if (
-										Object.prototype.hasOwnProperty.call(toggleIconPositions, p)
-									) {
-										return (
-											<Button
-												isLarge
-												aria-pressed={toggleLocation === p}
-												isPrimary={toggleLocation === p}
-												onClick={() => setAttributes({ toggleLocation: p })}
-											>
-												{toggleIconPositions[p]}
-											</Button>
-										);
-									}
-								})}
-							</ButtonGroup>
-						</PanelRow>
-					)}
-					<PanelRow>
-						<label htmlFor="ub-content-toggle-status-icon">
-							{__("Icon", "ultimate-blocks")}
-						</label>
-						<Dropdown
-							position="bottom right"
-							renderToggle={({ onToggle, isOpen }) => (
-								<Button isLarge onClick={onToggle} area-expanded={isOpen}>
-									{icons[toggleIcon] === "none" ? (
-										<span>{__("None")}</span>
-									) : (
-										<span className={icons[toggleIcon]} />
-									)}
-								</Button>
-							)}
-							renderContent={() => (
-								<div className="wp-block-ub-content-toggle-customize-icons-wrap">
-									{Object.keys(icons).map((i) => {
-										if (Object.prototype.hasOwnProperty.call(icons, i)) {
-											return (
-												<Button
-													isPrimary={toggleIcon === i}
-													isLarge
-													onClick={() => setAttributes({ toggleIcon: i })}
-												>
-													{icons[i] === "none" ? (
-														__("None")
-													) : (
-														<span className={icons[i]} />
-													)}
-												</Button>
-											);
-										}
-									})}
-								</div>
-							)}
-						/>
-					</PanelRow>
+								{Object.keys(toggleIconPositions).map((p) => (
+									<ToggleGroupControlOption
+										key={p}
+										value={p}
+										label={toggleIconPositions[p]}
+									/>
+								))}
+							</ToggleGroupControl>
+						)}
+					</div>
 				</PanelBody>
 				<PanelBody
 					title={__("Dimension Settings", "ultimate-blocks")}
@@ -591,7 +561,11 @@ function ContentTogglePanel(props) {
 					>
 						<RichText
 							tagName={titleTag}
-							style={{ color: titleColor }}
+							style={{
+								color: titleColor,
+								// Same variable block.php sets, read by `> a` in style.scss.
+								"--ub-content-toggle-title-link-color": titleLinkColor || undefined,
+							}}
 							className={`wp-block-ub-content-toggle-accordion-title ub-accordion-title-${blockParentId}`}
 							value={panelTitle}
 							allowedFormats={["core/bold", "core/italic", "core/link"]}

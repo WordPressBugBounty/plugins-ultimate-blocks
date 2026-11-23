@@ -5,7 +5,11 @@ import { isUndefined, trim, isEmpty, omitBy, isNumber } from "lodash";
 /**
  * Custom Dependencies
  */
-import { getBorderVariablesCss, getSpacingCss } from "../utils/styling-helpers";
+import {
+	getBorderVariablesCss,
+	getSpacingCss,
+	getSpacingPresetCssVar,
+} from "../utils/styling-helpers";
 /**
  *
  * @param {Array} attributes
@@ -22,7 +26,9 @@ export function getStyles(attributes) {
 	const border = getBorderVariablesCss(attributes.border, "icon");
 	let styles = {
 		"--ub-icon-rotation": rotation,
-		"--ub-icon-size": attributes?.size,
+		//a theme spacing preset is saved as var:preset|spacing|x, CSS needs its variable;
+		//any other value stays as it was so saved icons still validate
+		"--ub-icon-size": getSpacingPresetCssVar(attributes?.size) ?? attributes?.size,
 		"--ub-icon-color": attributes?.iconColor,
 		"--ub-icon-bg-color": !isEmpty(attributes?.iconBackground)
 			? attributes.iconBackground

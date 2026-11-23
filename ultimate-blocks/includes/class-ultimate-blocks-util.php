@@ -161,6 +161,16 @@ class Ultimate_Blocks_Util {
 				'name'   => 'ub/image',
 				'active' => true,
 			),
+			array(
+				'label'  => 'Author Bio',
+				'name'   => 'ub/author-bio',
+				'active' => true,
+			),
+			array(
+				'label'  => 'Image Comparison',
+				'name'   => 'ub/image-comparison',
+				'active' => true,
+			),
 		);
 	}
 	/**

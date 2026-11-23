@@ -63,6 +63,10 @@
       "type": "string",
       "default": "share"
     },
+    "googleCaption": {
+      "type": "string",
+      "default": "prefer"
+    },
     "iconSize": {
       "type": "string",
       "default": "normal"

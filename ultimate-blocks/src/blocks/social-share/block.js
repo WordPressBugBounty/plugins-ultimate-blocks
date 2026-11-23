@@ -20,6 +20,7 @@ import {
 	PinterestIcon,
 	RedditIcon,
 	TumblrIcon,
+	GoogleIcon,
 	icon,
 } from "./icons/icons";
 
@@ -114,6 +115,16 @@ const SortableItem = SortableElement(
 						width={iconSize}
 						height={iconSize}
 						color={iconShape === "none" ? color || "#001935" : "#ffffff"}
+					/>
+				),
+			},
+			google: {
+				bgColor: color || "#4285f4",
+				main: (
+					<GoogleIcon
+						width={iconSize}
+						height={iconSize}
+						color={iconShape === "none" ? color || "#4285f4" : "#ffffff"}
 					/>
 				),
 			},
@@ -255,7 +266,10 @@ function SocialShareMain(props) {
 		if (!hasTransitioned) {
 			if (Object.values(enabledIcon).includes(false)) {
 				setAttributes({
-					iconOrder: iconOrder.filter((iconName) => enabledIcon[iconName]),
+					//icons without an old show* switch, like google, stay as they are
+					iconOrder: iconOrder.filter(
+						(iconName) => enabledIcon[iconName] !== false,
+					),
 					showFacebookIcon: true,
 					showTwitterIcon: true,
 					showLinkedInIcon: true,
@@ -352,6 +366,7 @@ function SocialShareMain(props) {
 							pinterest: attributes.pinterestCaption,
 							reddit: attributes.redditCaption,
 							tumblr: attributes.tumblrCaption,
+							google: attributes.googleCaption,
 						}}
 					/>
 				</div>

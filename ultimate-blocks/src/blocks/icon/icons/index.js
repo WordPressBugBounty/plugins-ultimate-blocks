@@ -239,6 +239,21 @@ import {
 	video,
 	warning,
 	widget,
+	border,
+	caption,
+	chevronUpDown,
+	copy,
+	drawerLeft,
+	drawerRight,
+	filter,
+	justifyStretch,
+	listItem,
+	lockOutline,
+	lockSmall,
+	seen,
+	shadow,
+	shuffle,
+	unseen,
 } from "@wordpress/icons";
 
 /**
@@ -286,6 +301,9 @@ import {
 	vimeo,
 	vk,
 	wordpress,
+	threads,
+	whatsapp,
+	x,
 	yelp,
 	youtube,
 } from "./wordpress/social";
@@ -541,6 +559,13 @@ const wordpressSocialIcons = [
 		categories: ["logos"],
 	},
 	{
+		name: "threads",
+		title: "Threads",
+		type: "wordpress",
+		icon: threads,
+		categories: ["logos"],
+	},
+	{
 		name: "tiktok",
 		title: "TikTok",
 		type: "wordpress",
@@ -581,6 +606,20 @@ const wordpressSocialIcons = [
 		title: "VK",
 		type: "wordpress",
 		icon: vk,
+		categories: ["logos"],
+	},
+	{
+		name: "whatsapp",
+		title: "WhatsApp",
+		type: "wordpress",
+		icon: whatsapp,
+		categories: ["logos"],
+	},
+	{
+		name: "x",
+		title: "X",
+		type: "wordpress",
+		icon: x,
 		categories: ["logos"],
 	},
 	{
@@ -723,6 +762,12 @@ const wordpressIcons = [
 		icon: blockTable,
 	},
 	{
+		name: "border",
+		title: __("Border", "ultimate-blocks"),
+		type: "wordpress",
+		icon: border,
+	},
+	{
 		name: "box",
 		title: __("Box", "ultimate-blocks"),
 		type: "wordpress",
@@ -766,6 +811,12 @@ const wordpressIcons = [
 		title: __("Cancel - Circle Filled", "ultimate-blocks"),
 		type: "wordpress",
 		icon: cancelCircleFilled,
+	},
+	{
+		name: "caption",
+		title: __("Caption", "ultimate-blocks"),
+		type: "wordpress",
+		icon: caption,
 	},
 	{
 		name: "capturePhoto",
@@ -833,6 +884,13 @@ const wordpressIcons = [
 		title: __("Chevron Up", "ultimate-blocks"),
 		type: "wordpress",
 		icon: chevronUp,
+		categories: ["arrows"],
+	},
+	{
+		name: "chevronUpDown",
+		title: __("Chevron Up/Down", "ultimate-blocks"),
+		type: "wordpress",
+		icon: chevronUpDown,
 		categories: ["arrows"],
 	},
 	{
@@ -943,6 +1001,12 @@ const wordpressIcons = [
 		categories: ["blocks"],
 	},
 	{
+		name: "copy",
+		title: __("Copy", "ultimate-blocks"),
+		type: "wordpress",
+		icon: copy,
+	},
+	{
 		name: "cover",
 		title: __("Cover", "ultimate-blocks"),
 		type: "wordpress",
@@ -999,6 +1063,18 @@ const wordpressIcons = [
 		icon: dragHandle,
 	},
 	{
+		name: "drawerLeft",
+		title: __("Drawer Left", "ultimate-blocks"),
+		type: "wordpress",
+		icon: drawerLeft,
+	},
+	{
+		name: "drawerRight",
+		title: __("Drawer Right", "ultimate-blocks"),
+		type: "wordpress",
+		icon: drawerRight,
+	},
+	{
 		name: "download",
 		title: __("Download", "ultimate-blocks"),
 		type: "wordpress",
@@ -1022,6 +1098,12 @@ const wordpressIcons = [
 		title: __("File", "ultimate-blocks"),
 		type: "wordpress",
 		icon: file,
+	},
+	{
+		name: "filter",
+		title: __("Filter", "ultimate-blocks"),
+		type: "wordpress",
+		icon: filter,
 	},
 	{
 		name: "flipHorizontal",
@@ -1294,6 +1376,13 @@ const wordpressIcons = [
 		categories: ["editor"],
 	},
 	{
+		name: "justifyStretch",
+		title: __("Justify Stretch", "ultimate-blocks"),
+		type: "wordpress",
+		icon: justifyStretch,
+		categories: ["editor"],
+	},
+	{
 		name: "key",
 		title: __("Key", "ultimate-blocks"),
 		type: "wordpress",
@@ -1366,6 +1455,13 @@ const wordpressIcons = [
 		categories: ["blocks"],
 	},
 	{
+		name: "listItem",
+		title: __("List Item", "ultimate-blocks"),
+		type: "wordpress",
+		icon: listItem,
+		categories: ["blocks"],
+	},
+	{
 		name: "listView",
 		title: __("List View", "ultimate-blocks"),
 		type: "wordpress",
@@ -1377,6 +1473,20 @@ const wordpressIcons = [
 		title: __("Lock", "ultimate-blocks"),
 		type: "wordpress",
 		icon: lock,
+		categories: ["editor"],
+	},
+	{
+		name: "lockOutline",
+		title: __("Lock Outline", "ultimate-blocks"),
+		type: "wordpress",
+		icon: lockOutline,
+		categories: ["editor"],
+	},
+	{
+		name: "lockSmall",
+		title: __("Lock Small", "ultimate-blocks"),
+		type: "wordpress",
+		icon: lockSmall,
 		categories: ["editor"],
 	},
 	{
@@ -1816,6 +1926,12 @@ const wordpressIcons = [
 		categories: ["magnifying glass"],
 	},
 	{
+		name: "seen",
+		title: __("Seen", "ultimate-blocks"),
+		type: "wordpress",
+		icon: seen,
+	},
+	{
 		name: "separator",
 		title: __("Separator", "ultimate-blocks"),
 		type: "wordpress",
@@ -1827,6 +1943,12 @@ const wordpressIcons = [
 		title: __("Settings", "ultimate-blocks"),
 		type: "wordpress",
 		icon: settings,
+	},
+	{
+		name: "shadow",
+		title: __("Shadow", "ultimate-blocks"),
+		type: "wordpress",
+		icon: shadow,
 	},
 	{
 		name: "share",
@@ -1846,6 +1968,12 @@ const wordpressIcons = [
 		type: "wordpress",
 		icon: shortcode,
 		categories: ["blocks"],
+	},
+	{
+		name: "shuffle",
+		title: __("Shuffle", "ultimate-blocks"),
+		type: "wordpress",
+		icon: shuffle,
 	},
 	{
 		name: "siteLogo",
@@ -2107,6 +2235,12 @@ const wordpressIcons = [
 		type: "wordpress",
 		icon: unlock,
 		categories: ["editor"],
+	},
+	{
+		name: "unseen",
+		title: __("Unseen", "ultimate-blocks"),
+		type: "wordpress",
+		icon: unseen,
 	},
 	{
 		name: "update",

@@ -130,20 +130,22 @@
 	}
 }
 
+/**
+ * A range with its unit toggle (px/em, px/%) on one row. The rules here were made
+ * for the old ButtonGroup, which was shorter and nudged down with a transform; the
+ * toggle group that replaced it was stretched to the full height of the row and sat
+ * at its top. Now the range takes the room left and both meet at the bottom.
+ */
 #ub-button-radius-panel {
 	display: flex;
-	.components {
-		&-range-control {
-			width: 180px;
-		}
-		&-button {
-			height: 30px;
-			font-size: 11px;
-		}
-		&-button-group {
-			display: flex;
-			transform: translateY(30%);
-		}
+	align-items: flex-end;
+	gap: 8px;
+	margin-bottom: 16px;
+
+	.components-range-control {
+		flex: 1;
+		min-width: 0;
+		margin-bottom: 0;
 	}
 }
 
